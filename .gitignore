@@ -1,0 +1,39 @@
+# macOS / OS Files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.token
+
+# Local Agent & MCP Secrets
+.agents/mcp_config.json
+.agents/secrets.json
+
+# Node & Python & Flutter Build Artifacts
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Flutter / Dart
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.pub-cache/
+app/.pub/
+app/build/
+app/ios/Pods/
+app/ios/.symlinks/
