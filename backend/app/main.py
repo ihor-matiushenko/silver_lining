@@ -1,8 +1,22 @@
+import sys
+import os
+
+# Ensure backend directory is on sys.path for clean import resolution
+backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app.models.schemas import ReframeRequest, ReframeResponse
-from app.services.safety_service import SafetyService
-from app.services.llm_service import LLMService
+
+try:
+    from app.models.schemas import ReframeRequest, ReframeResponse
+    from app.services.safety_service import SafetyService
+    from app.services.llm_service import LLMService
+except ImportError:
+    from .models.schemas import ReframeRequest, ReframeResponse
+    from .services.safety_service import SafetyService
+    from .services.llm_service import LLMService
 
 app = FastAPI(
     title="Silver Lining AI Backend",

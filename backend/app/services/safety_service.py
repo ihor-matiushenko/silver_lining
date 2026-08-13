@@ -1,4 +1,7 @@
-from app.models.schemas import ReframeResponse
+try:
+    from app.models.schemas import ReframeResponse
+except ImportError:
+    from ..models.schemas import ReframeResponse
 
 class SafetyService:
     """3-Tier Safety Engine for detecting self-harm, crime, and illegal acts."""
