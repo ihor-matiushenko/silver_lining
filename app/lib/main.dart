@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const SilverLiningApp());
@@ -26,7 +28,7 @@ class SilverLiningApp extends StatelessWidget {
   }
 }
 
-/// 📱 Home Screen (Stateful Widget - Handles input state and AI safety responses)
+/// 📱 Home Screen (Stateful Widget - Handles input state and API HTTP requests)
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -37,11 +39,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _controller = TextEditingController();
   
+  // Base API URL (Update for local host, Android emulator, or production server)
+  final String _apiUrl = "http://localhost:8000/api/v1/reframe";
+
   // State variables (Equivalent to React useState)
   bool _isLoading = false;
   String? _reframedOutput;
   bool _isCrisisTriggered = false;
   bool _isCrimeTriggered = false;
+  String? _errorMessage;
 
   final Map<String, String> _presets = {
     'failed_job': "I prepared for weeks for my final round interview and still got rejected today. I feel like a failure.",
@@ -56,8 +62,9 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _processInput() {
-    final text = _controller.text.trim().toLowerCase();
+  /// ⚡ Real HTTP Network Request to Python FastAPI Backend
+  Future<void> _processInput() async {
+    final text = _controller.text.trim();
     if (text.isEmpty) return;
 
     setState(() {
@@ -65,34 +72,59 @@ class _HomeScreenState extends State<HomeScreen> {
       _reframedOutput = null;
       _isCrisisTriggered = false;
       _isCrimeTriggered = false;
+      _errorMessage = null;
     });
 
-    // Simulated AI & Safety Guardrail Check
-    Future.delayed(const Duration(milliseconds: 600), () {
+    try {
+      final response = await http.post(
+        Uri.parse(_apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'input_text': text}),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final bool isSafe = data['is_safe'] ?? true;
+        final String category = data['safety_category'] ?? 'none';
+
+        setState(() {
+          _isLoading = false;
+          if (!isSafe) {
+            if (category == 'self_harm') {
+              _isCrisisTriggered = true;
+            } else {
+              _isCrimeTriggered = true;
+            }
+          } else {
+            _reframedOutput = data['reframed_text'];
+          }
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = "Server returned status ${response.statusCode}.";
+        });
+      }
+    } catch (e) {
+      // Offline / Local API connection fallback handler
       setState(() {
         _isLoading = false;
-
-        // Safety Guardrail 1: Self-Harm / Crisis
-        if (text.contains('hurt myself') || 
-            text.contains('ending everything') || 
-            text.contains('suicide') || 
-            text.contains('end it all')) {
-          _isCrisisTriggered = true;
-        } 
-        // Safety Guardrail 2: Crime / Illegal Acts
-        else if (text.contains('stole') || 
-                 text.contains('robbed') || 
-                 text.contains('hack') || 
-                 text.contains('drug deal')) {
-          _isCrimeTriggered = true;
-        } 
-        // Safe Input: AI Reframing Perspective
-        else {
-          _reframedOutput = 
-            "Rejection is often redirection towards a better alignment. Experiencing setbacks shows you were brave enough to put yourself out there. This moment is not a measure of your worth, but a stepping stone toward finding an environment that truly values your potential.";
-        }
+        _handleOfflineFallback(text);
       });
-    });
+    }
+  }
+
+  /// Offline / Dev Fallback if backend server is not running locally yet
+  void _handleOfflineFallback(String text) {
+    final textLower = text.toLowerCase();
+    if (textLower.contains('hurt myself') || textLower.contains('suicide') || textLower.contains('end it all')) {
+      _isCrisisTriggered = true;
+    } else if (textLower.contains('stole') || textLower.contains('robbed') || textLower.contains('hack')) {
+      _isCrimeTriggered = true;
+    } else {
+      _reframedOutput = 
+        "Setbacks often serve as redirection toward better alignment. Experiencing this struggle demonstrates your courage to put yourself out there. This moment does not define your worth, but serves as a stepping stone toward finding an environment that truly recognizes and values your full potential.";
+    }
   }
 
   @override
@@ -226,6 +258,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             const SizedBox(height: 24),
+
+            // ⚠️ Error Message Banner
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Text(_errorMessage!, style: const TextStyle(color: Colors.amber, fontSize: 13)),
+              ),
 
             // 🎯 Output Cards
             if (_isCrisisTriggered) _buildCrisisCard(),
