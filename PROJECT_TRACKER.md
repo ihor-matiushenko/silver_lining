@@ -5,62 +5,27 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 
 ---
 
-## 📌 Phase Overview & Status
+## 📌 Full-Stack Feature Development Roadmap
 
-| Phase | Description | Status |
+| Feature Milestone | Description | Status |
 |---|---|---|
-| **Phase 1** | Product Research & UX Design (Wireframes, Persona, Free Google tools / HTML prototypes) | 🟢 Complete (Interactive Prototype Ready) |
-| **Phase 2** | AI Guardrail & Safety Architecture (Taxonomy, Moderation Pipeline, Hotline Routing) | 🟢 Specification Complete |
-| **Phase 3** | System Architecture & Tech Stack Selection (Flutter + Custom Python/FastAPI Backend) | 🟢 Architecture Defined |
-| **Phase 4** | Cost Estimation & Unit Economics (Models, API fees, Serverless infrastructure) | 🟢 Calculated |
-| **Phase 5** | Testing & CI/CD Pipeline Strategy | 🟢 Defined |
-| **Phase 6** | Agentic Harness & MCP Setup (Figma MCP, GitHub MCP, Subagents & Skills) | 🟢 Fully Configured |
-| **Phase 7** | Mobile App Development (Flutter) | 🟢 Scaffolding & Mobile UI Complete |
-| **Phase 8** | Custom Backend Development (Python 3.11 + FastAPI) | 🟢 Initialized & Pushed to GitHub |
-| **Phase 9** | IDE & Workspace Optimization | 🟢 Monorepo VS Code / Antigravity Settings Configured |
+| **Feature 1** | **End-to-End Reframing Connection** (Connecting Flutter App to Live Python FastAPI Backend) | 🔵 Active Development |
+| **Feature 2** | **Reframing History & DB Persistence** (SQLite/SQLModel + Local Caching) | ⏳ Up Next |
+| **Feature 3** | **Bookmarking & Favorite Silver Linings** (Favorites Collection & Tab Navigation) | ⏳ Planned |
+| **Feature 4** | **Word-by-Word AI Text Streaming** (Server-Sent Events + Typewriter UI Animation) | ⏳ Planned |
+| **Feature 5** | **1-Tap Emergency Hotline Integration** (Native Phone Dialer `url_launcher`) | ⏳ Planned |
 
 ---
 
-## 📋 Task Checklist
+## 📋 Completed Foundations & Architecture
 
-### Phase 1: Product Research & UX Design
-- [x] Define User Personas & Value Proposition
-- [x] Design User Journey & Tone of Voice guidelines
-- [x] Build interactive HTML/CSS UI mockups (`/prototype/index.html`)
-- [x] Document Figma integration path & design tokens
-
-### Phase 2: Safety & Moderation Engine (Critical Core)
-- [x] Define Content Risk Taxonomy (Self-Harm, Illegal Acts, Violence, Hate, Crisis)
-- [x] Design 3-tier Guardrail Architecture (Pre-filter Moderation API -> Pydantic Schema Rules -> Output Sanitization)
-- [x] Design Crisis Intervention UX (Direct hotline numbers, emergency buttons, compassionate refusal messages)
-
-### Phase 3: Technical Architecture
-- [x] Mobile Stack: **Flutter (Dart)** - iOS & Android cross-platform UI
-- [x] Backend Stack: **Custom Python Standalone Server (FastAPI + Pydantic + Uvicorn)**
-- [x] AI Models: **Gemini 1.5 Flash** (Reframing) + **OpenAI Moderation API / Google Safety API** (Guardrails)
-
-### Phase 4: Cost Analysis
-- [x] Cost breakdown per 1,000 active users (~$0.086 per 1k requests)
-- [x] Monthly cost comparison across scales (1K, 10K, 100K DAU)
-
-### Phase 5: Testing & CI/CD
-- [x] Define testing stack (Flutter widget tests, Pytest, Safety Red-Teaming suite)
-- [x] CI/CD configuration setup (GitHub Actions + Fastlane)
-
-### Phase 6: Agentic Harness & MCP Setup
-- [x] Configure GitHub MCP server integration (`@modelcontextprotocol/server-github`)
-- [x] Configure Figma MCP server integration (`@modelcontextprotocol/server-figma`)
-- [x] Save Personal Access Tokens in local `.agents/mcp_config.json` (ignored by Git)
-- [x] Link Git remote `git@github.com:ihor-matiushenko/silver_lining.git`
-
-### Phase 7, 8 & 9: Codebase & IDE Setup
-- [x] Install Flutter SDK 3.44.8 (`/opt/homebrew/bin/flutter`)
-- [x] Scaffold Flutter app (`flutter create --org com.silverlining app`)
-- [x] Translate HTML glassmorphism UI into Flutter Widgets (`app/lib/main.dart`)
-- [x] Initialize Python FastAPI backend inside `backend/` (`main.py`, `schemas.py`, `safety_service.py`, `llm_service.py`)
-- [x] Containerize backend with Dockerfile
-- [x] Configure `.vscode/settings.json` and dynamic `sys.path` import resolution for clean IDE analysis
-- [x] Push clean build to GitHub main branch
+- [x] Product Research & UX Design (Interactive Web Prototype in `/prototype/index.html`)
+- [x] 3-Tier AI Safety & Guardrails Architecture Specification (`SAFETY_POLICIES.md`)
+- [x] Flutter SDK 3.44.8 & Mobile UI Scaffold (`app/lib/main.dart`)
+- [x] Python 3.11 FastAPI Custom Backend Codebase (`backend/app/main.py`)
+- [x] Agentic Harness & MCP Setup (`.agents/mcp_config.json` with GitHub & Figma tokens)
+- [x] Monorepo IDE Resolution (`.vscode/settings.json` & `pyrightconfig.json`)
+- [x] Git & GitHub Remote Synced (`git@github.com:ihor-matiushenko/silver_lining.git`)
 
 ---
 *Updated: 2026-08-13*
