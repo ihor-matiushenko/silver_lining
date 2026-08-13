@@ -17,6 +17,7 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Phase 6** | Agentic Harness & MCP Setup (Figma MCP, GitHub MCP, Subagents & Skills) | 🟢 Fully Configured |
 | **Phase 7** | Mobile App Development (Flutter) | 🟢 Scaffolding & Mobile UI Complete |
 | **Phase 8** | Custom Backend Development (Python 3.11 + FastAPI) | 🟢 Initialized & Pushed to GitHub |
+| **Phase 9** | IDE & Workspace Optimization | 🟢 Monorepo VS Code / Antigravity Settings Configured |
 
 ---
 
@@ -49,15 +50,17 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 ### Phase 6: Agentic Harness & MCP Setup
 - [x] Configure GitHub MCP server integration (`@modelcontextprotocol/server-github`)
 - [x] Configure Figma MCP server integration (`@modelcontextprotocol/server-figma`)
+- [x] Save Personal Access Tokens in local `.agents/mcp_config.json` (ignored by Git)
 - [x] Link Git remote `git@github.com:ihor-matiushenko/silver_lining.git`
 
-### Phase 7 & 8: Codebase Implementation
+### Phase 7, 8 & 9: Codebase & IDE Setup
 - [x] Install Flutter SDK 3.44.8 (`/opt/homebrew/bin/flutter`)
 - [x] Scaffold Flutter app (`flutter create --org com.silverlining app`)
 - [x] Translate HTML glassmorphism UI into Flutter Widgets (`app/lib/main.dart`)
 - [x] Initialize Python FastAPI backend inside `backend/` (`main.py`, `schemas.py`, `safety_service.py`, `llm_service.py`)
 - [x] Containerize backend with Dockerfile
+- [x] Configure `.vscode/settings.json` and dynamic `sys.path` import resolution for clean IDE analysis
 - [x] Push clean build to GitHub main branch
 
 ---
-*Updated: 2026-08-11*
+*Updated: 2026-08-13*
