@@ -1,0 +1,20 @@
+{
+  "include": [
+    "backend"
+  ],
+  "extraPaths": [
+    "backend",
+    "backend/.venv/lib/python3.11/site-packages",
+    "/Users/ihormatiushenko/Library/Python/3.9/lib/python/site-packages"
+  ],
+  "executionEnvironments": [
+    {
+      "root": "backend",
+      "pythonPath": "backend/.venv/bin/python",
+      "extraPaths": [
+        "backend",
+        "backend/.venv/lib/python3.11/site-packages"
+      ]
+    }
+  ]
+}
