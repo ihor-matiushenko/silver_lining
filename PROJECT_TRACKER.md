@@ -5,15 +5,16 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 
 ---
 
-## 📌 Full-Stack Feature Development Roadmap
+## 📌 Frontend-First (Mocked Services) Development Roadmap
 
-| Feature Milestone | Description | Status |
+| Step | Component / Screen | Status |
 |---|---|---|
-| **Feature 1** | **End-to-End Reframing Connection** (Connecting Flutter App to Live Python FastAPI Backend) | 🔵 Active Development |
-| **Feature 2** | **Reframing History & DB Persistence** (SQLite/SQLModel + Local Caching) | ⏳ Up Next |
-| **Feature 3** | **Bookmarking & Favorite Silver Linings** (Favorites Collection & Tab Navigation) | ⏳ Planned |
-| **Feature 4** | **Word-by-Word AI Text Streaming** (Server-Sent Events + Typewriter UI Animation) | ⏳ Planned |
-| **Feature 5** | **1-Tap Emergency Hotline Integration** (Native Phone Dialer `url_launcher`) | ⏳ Planned |
+| **Step 1** | **Mock Reframing & Safety Service Layer** (`lib/services/mock_reframing_service.dart`) | 🔵 Active Development |
+| **Step 2** | **App Design System & Theme** (`lib/theme/app_theme.dart` - Glassmorphism, Colors, Fonts) | ⏳ Up Next |
+| **Step 3** | **Interactive Reframing Home Screen** (`lib/screens/home_screen.dart` - Chips, Card, Loading) | ⏳ Planned |
+| **Step 4** | **Crisis Intervention Shield View** (`lib/widgets/crisis_shield_card.dart` - 988 Hotline) | ⏳ Planned |
+| **Step 5** | **Reframing History & Favorites Screen** (`lib/screens/history_screen.dart` - Tab Navigation) | ⏳ Planned |
+| **Step 6** | **Swap Mock Service to Real Python Backend** (`lib/services/api_reframing_service.dart`) | ⏳ Future Phase |
 
 ---
 
@@ -28,4 +29,4 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] Git & GitHub Remote Synced (`git@github.com:ihor-matiushenko/silver_lining.git`)
 
 ---
-*Updated: 2026-08-13*
+*Updated: 2026-08-18*
