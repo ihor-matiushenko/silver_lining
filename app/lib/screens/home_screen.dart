@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/reframe_response.dart';
 import '../services/mock_reframing_service.dart';
 import '../services/reframing_service_interface.dart';
-import '../theme/app_typography.dart';
-import '../widgets/app_text_field.dart';
-import '../widgets/glass_card.dart';
-import '../widgets/primary_button.dart';
+import '../widgets/app_bar/home_app_bar.dart';
+import '../widgets/forms/input_form_card.dart';
 import '../widgets/result_card.dart';
 
 /// 📱 HomeScreen: Page layout component for entering concerns and displaying AI reframings.
@@ -46,40 +44,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Silver Lining AI'),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      appBar: const HomeAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Styled Glassmorphism Input Form Card
-            GlassCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("What's weighing on your mind?", style: AppTypography.subtitle),
-                  const SizedBox(height: 12),
-                  AppTextField(
-                    controller: _controller,
-                    hintText: "Share what happened today, your concerns, or what feels tough...",
-                  ),
-                  const SizedBox(height: 16),
-                  PrimaryButton(
-                    label: 'Reframe Thought ✨',
-                    isLoading: _isLoading,
-                    onPressed: _processInput,
-                  ),
-                ],
-              ),
+            // Reusable Input Form Component
+            InputFormCard(
+              controller: _controller,
+              isLoading: _isLoading,
+              onSubmit: _processInput,
             ),
             const SizedBox(height: 24),
 
-            // Render Result Card Widget
+            // Declarative Result Card Router
             if (_response != null) ResultCard(response: _response!),
           ],
         ),
