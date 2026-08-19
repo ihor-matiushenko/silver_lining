@@ -24,6 +24,12 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = false;
   ReframeResponse? _response;
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   Future<void> _processInput() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
@@ -34,6 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     final result = await _service.reframeThought(text);
+
+    if (!mounted) return;
 
     setState(() {
       _isLoading = false;
