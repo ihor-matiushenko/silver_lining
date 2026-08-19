@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'models/reframe_response.dart';
 import 'services/mock_reframing_service.dart';
 import 'services/reframing_service_interface.dart';
+import 'theme/app_colors.dart';
+import 'widgets/glass_card.dart';
+import 'widgets/status_badge.dart';
 
 void main() {
   runApp(const SilverLiningApp());
@@ -17,11 +20,11 @@ class SilverLiningApp extends StatelessWidget {
       title: 'Silver Lining AI',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF0F172A),
+        scaffoldBackgroundColor: AppColors.background,
         colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF6366F1),
-          secondary: Color(0xFFEC4899),
-          surface: Color(0xFF1E293B),
+          primary: AppColors.primary,
+          secondary: AppColors.secondary,
+          surface: AppColors.surface,
         ),
       ),
       home: const HomeScreen(),
@@ -56,7 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _response = null;
     });
 
-    // Call service interface method
     final result = await _service.reframeThought(text);
 
     setState(() {
@@ -79,38 +81,52 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // User Text Input
-            TextField(
-              controller: _controller,
-              maxLines: 3,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: "What is on your mind today?",
-                filled: true,
-                fillColor: const Color(0xFF1E293B),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
+            // Styled Glassmorphism Input Card
+            GlassCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "What's weighing on your mind?",
+                    style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _controller,
+                    maxLines: 3,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: "Share what happened today, your concerns, or what feels tough...",
+                      hintStyle: TextStyle(color: Colors.grey.shade600),
+                      filled: true,
+                      fillColor: AppColors.background.withValues(alpha: 0.6),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _processInput,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            )
+                          : const Text('Reframe Thought ✨', style: TextStyle(fontSize: 16, color: Colors.white)),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 16),
-
-            // Submit Button with Loading Indicator
-            ElevatedButton(
-              onPressed: _isLoading ? null : _processInput,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6366F1),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                    )
-                  : const Text('Reframe Thought ✨', style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
             const SizedBox(height: 24),
 
@@ -122,28 +138,32 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// 🎯 Helper method returning reusable Styled Components
   Widget _buildResultCard(ReframeResponse res) {
     // Case 1: Safety Shield Activated (Self-Harm Crisis)
     if (res.crisisTriggered) {
-      return Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.red.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.redAccent),
-        ),
+      return GlassCard(
+        borderColor: AppColors.danger,
+        backgroundColor: AppColors.danger.withValues(alpha: 0.1),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('🚨 Safety Shield Activated', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            const Text('We hear you, and your life matters. Our AI will not reframe self-harm, but 24/7 support is available.', style: TextStyle(color: Colors.white70)),
+            const StatusBadge(label: '🚨 Safety Shield Activated', color: AppColors.danger),
+            const SizedBox(height: 10),
+            const Text(
+              'We hear you, and your life matters. Our AI will not reframe self-harm, but 24/7 support is available.',
+              style: TextStyle(color: Colors.white70, height: 1.4),
+            ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: () {}, // Trigger phone call
+              onPressed: () {}, // Will trigger 988 phone call
               icon: const Icon(Icons.phone, color: Colors.white),
               label: const Text('Call 988 Crisis Lifeline'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.danger,
+                minimumSize: const Size(double.infinity, 44),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             )
           ],
         ),
@@ -152,31 +172,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Case 2: Crime Policy Refusal
     if (!res.isSafe) {
-      return Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.amber.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.amber),
+      return GlassCard(
+        borderColor: AppColors.warning,
+        backgroundColor: AppColors.warning.withValues(alpha: 0.1),
+        child: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            StatusBadge(label: '🛡️ Safety Policy Notice', color: AppColors.warning),
+            SizedBox(height: 10),
+            Text(
+              'Silver Lining AI cannot provide positive reframing or perspective on illegal activities.',
+              style: TextStyle(color: Colors.white70, height: 1.4),
+            ),
+          ],
         ),
-        child: const Text('🛡️ Silver Lining AI cannot provide positive reframing or perspective on illegal activities.', style: TextStyle(color: Colors.white70)),
       );
     }
 
-    // Case 3: Safe Reframed Perspective Output
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.5)),
-      ),
+    // Case 3: Safe Positive Perspective
+    return GlassCard(
+      borderColor: AppColors.success,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('✨ Silver Lining Perspective', style: TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold)),
+          const StatusBadge(label: '✨ Silver Lining Perspective', color: AppColors.success),
           const SizedBox(height: 12),
-          Text(res.reframedText ?? '', style: const TextStyle(fontSize: 15, height: 1.5, color: Colors.white)),
+          Text(
+            res.reframedText ?? '',
+            style: const TextStyle(fontSize: 15, height: 1.5, color: Colors.white),
+          ),
         ],
       ),
     );
