@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
+import 'preset_chip.dart';
 
-/// 🏷️ Reusable Preset Scenario Chips Component
+/// 🏷️ Reusable Preset Scenario Chips List Component
 class PresetChips extends StatelessWidget {
   final Function(String sampleText) onSelectPreset;
 
@@ -39,31 +39,10 @@ class PresetChips extends StatelessWidget {
         final sampleText = entry.value['text'] as String;
         final isDanger = entry.value['isDanger'] as bool;
 
-        return InkWell(
+        return PresetChip(
+          label: label,
+          isDanger: isDanger,
           onTap: () => onSelectPreset(sampleText),
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: isDanger 
-                  ? AppColors.danger.withValues(alpha: 0.15) 
-                  : Colors.white.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isDanger 
-                    ? AppColors.danger.withValues(alpha: 0.4) 
-                    : Colors.white.withValues(alpha: 0.1),
-              ),
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: isDanger ? Colors.redAccent : Colors.grey.shade300,
-              ),
-            ),
-          ),
         );
       }).toList(),
     );
