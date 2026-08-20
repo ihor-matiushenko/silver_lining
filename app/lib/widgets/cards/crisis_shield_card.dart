@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/emergency_launcher_service.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_typography.dart';
 import '../glass_card.dart';
@@ -6,12 +7,22 @@ import '../status_badge.dart';
 
 /// 🚨 Standalone Card Component for Self-Harm Crisis Intervention
 class CrisisShieldCard extends StatelessWidget {
+  final String hotlinePhone;
   final VoidCallback? onCallHotline;
 
   const CrisisShieldCard({
     super.key,
+    this.hotlinePhone = '988',
     this.onCallHotline,
   });
+
+  void _handleCall() {
+    if (onCallHotline != null) {
+      onCallHotline!();
+    } else {
+      EmergencyLauncherService.makePhoneCall(hotlinePhone);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +40,9 @@ class CrisisShieldCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
-            onPressed: onCallHotline ?? () {}, // Trigger 988 phone call
+            onPressed: _handleCall,
             icon: const Icon(Icons.phone, color: Colors.white),
-            label: const Text('Call 988 Crisis Lifeline'),
+            label: Text('Call $hotlinePhone Crisis Lifeline'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.danger,
               minimumSize: const Size(double.infinity, 44),
