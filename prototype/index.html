@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Silver Lining AI - Positivity Reframer Prototype</title>
+  <title>Silver Lining AI - Full App UX & Wireframe Prototype</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #0f172a;
-      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-bg: rgba(30, 41, 59, 0.8);
       --border: rgba(255, 255, 255, 0.1);
       --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
       --text-main: #f8fafc;
@@ -18,20 +18,16 @@
       --danger: #ef4444;
       --danger-bg: rgba(239, 68, 68, 0.15);
       --success: #10b981;
+      --warning: #f59e0b;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Outfit', sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
 
     body {
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.25) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.25) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.2) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.2) 0px, transparent 50%);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -41,234 +37,68 @@
       color: var(--text-main);
     }
 
-    .header-bar {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .header-bar h1 {
-      font-size: 2rem;
-      font-weight: 700;
+    .header-title { text-align: center; margin-bottom: 20px; }
+    .header-title h1 {
+      font-size: 2rem; font-weight: 700;
       background: var(--accent-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
     }
+    .header-title p { color: var(--text-muted); font-size: 0.95rem; }
 
-    .header-bar p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    /* Mobile Container Mockup */
+    /* Mobile Container Frame */
     .mobile-frame {
-      width: 100%;
-      max-width: 400px;
-      height: 780px;
-      background: rgba(15, 23, 42, 0.9);
+      width: 100%; max-width: 410px; height: 800px;
+      background: rgba(15, 23, 42, 0.95);
       border: 1px solid var(--border);
-      border-radius: 40px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.2);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
-      backdrop-filter: blur(20px);
+      border-radius: 44px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(99, 102, 241, 0.25);
+      display: flex; flex-direction: column; overflow: hidden; position: relative;
+      backdrop-filter: blur(25px);
     }
 
-    .status-bar {
-      padding: 14px 24px 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
+    .status-bar { padding: 14px 24px 8px; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); }
+    .app-header { padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .logo-tag { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 1.1rem; }
+    .logo-icon { width: 28px; height: 28px; background: var(--accent-gradient); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
 
-    .app-header {
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-    }
+    /* Content Screens */
+    .screen { flex: 1; padding: 18px; display: none; flex-direction: column; gap: 16px; overflow-y: auto; }
+    .screen.active { display: flex; animation: fadeIn 0.25s ease-in-out; }
 
-    .logo-tag {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      font-size: 1.1rem;
-    }
+    /* Cards & Inputs */
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+    textarea { width: 100%; height: 100px; background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border); border-radius: 14px; padding: 12px; color: #fff; font-size: 0.95rem; resize: none; outline: none; }
+    textarea:focus { border-color: #818cf8; }
 
-    .logo-icon {
-      width: 28px;
-      height: 28px;
-      background: var(--accent-gradient);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
+    .preset-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip { font-size: 0.75rem; padding: 6px 12px; border-radius: 20px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); cursor: pointer; color: var(--text-muted); transition: all 0.2s; }
+    .chip:hover { background: rgba(99, 102, 241, 0.25); color: #fff; border-color: #6366f1; }
+    .chip.danger:hover { background: var(--danger-bg); color: var(--danger); border-color: var(--danger); }
 
-    .app-content {
-      flex: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      overflow-y: auto;
-    }
+    .btn-submit { background: var(--accent-gradient); border: none; color: #fff; font-weight: 600; padding: 14px; border-radius: 16px; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+    .btn-submit:active { transform: scale(0.98); }
 
-    .prompt-box {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    /* Bottom Navigation Bar */
+    .nav-bar { display: flex; border-top: 1px solid var(--border); background: rgba(15, 23, 42, 0.95); padding: 10px 0; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+    .nav-item.active { color: #818cf8; font-weight: 600; }
+    .nav-icon { font-size: 1.2rem; }
 
-    .prompt-box label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
+    /* Badges & Buttons */
+    .badge { align-self: flex-start; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .badge.danger { background: var(--danger-bg); color: var(--danger); }
+    .badge.warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+    .btn-hotline { background: var(--danger); color: #fff; text-decoration: none; text-align: center; padding: 12px; border-radius: 14px; font-weight: 600; font-size: 0.9rem; display: block; margin-top: 8px; }
 
-    textarea {
-      width: 100%;
-      height: 110px;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      color: #fff;
-      font-size: 0.95rem;
-      resize: none;
-      outline: none;
-      transition: border 0.2s;
-    }
-
-    textarea:focus {
-      border-color: #818cf8;
-    }
-
-    .preset-chips {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .chip {
-      font-size: 0.75rem;
-      padding: 6px 12px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: all 0.2s;
-    }
-
-    .chip:hover {
-      background: rgba(99, 102, 241, 0.2);
-      color: #fff;
-      border-color: #6366f1;
-    }
-
-    .chip.danger-chip:hover {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border-color: var(--danger);
-    }
-
-    .btn-submit {
-      background: var(--accent-gradient);
-      border: none;
-      color: #fff;
-      font-weight: 600;
-      padding: 14px;
-      border-radius: 16px;
-      cursor: pointer;
-      font-size: 1rem;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-      transition: transform 0.1s, opacity 0.2s;
-    }
-
-    .btn-submit:active {
-      transform: scale(0.98);
-    }
-
-    /* Output Card */
-    .output-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-
-    .output-card.crisis-card {
-      border-color: var(--danger);
-      background: rgba(239, 68, 68, 0.08);
-    }
-
-    .card-badge {
-      align-self: flex-start;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 12px;
-      background: rgba(16, 185, 129, 0.2);
-      color: var(--success);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .card-badge.badge-crisis {
-      background: var(--danger-bg);
-      color: var(--danger);
-    }
-
-    .output-text {
-      font-size: 0.95rem;
-      line-height: 1.5;
-      color: #e2e8f0;
-    }
-
-    .hotline-button {
-      margin-top: 8px;
-      background: var(--danger);
-      color: #fff;
-      text-decoration: none;
-      text-align: center;
-      padding: 12px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
-  <div class="header-bar">
+  <div class="header-title">
     <h1>Silver Lining AI</h1>
-    <p>Product & Safety Experience Prototype</p>
+    <p>Full Mobile App UX & Interactive Wireframe Mockup</p>
   </div>
 
   <div class="mobile-frame">
@@ -280,28 +110,109 @@
     <div class="app-header">
       <div class="logo-tag">
         <div class="logo-icon">✨</div>
-        <span>Silver Lining</span>
+        <span id="headerTitle">Silver Lining</span>
       </div>
       <span style="font-size: 0.8rem; color: var(--text-muted);">POC v1.0</span>
     </div>
 
-    <div class="app-content">
-      <div class="prompt-box">
-        <label for="userInput">What's weighing on your mind?</label>
+    <!-- TAB 1: REFRAMER HOME SCREEN -->
+    <div id="screenReframer" class="screen active">
+      <div class="card">
+        <label style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">What's weighing on your mind?</label>
         <textarea id="userInput" placeholder="Share what happened today, your concerns, or what feels tough..."></textarea>
         
         <div class="preset-chips">
-          <div class="chip" onclick="setPreset('failed_job')">Failed Job Interview</div>
+          <div class="chip" onclick="setPreset('failed_job')">Failed Interview</div>
           <div class="chip" onclick="setPreset('breakup')">Recent Breakup</div>
-          <div class="chip danger-chip" onclick="setPreset('self_harm')">⚠️ Test Crisis Trigger</div>
-          <div class="chip danger-chip" onclick="setPreset('crime')">⚠️ Test Crime Trigger</div>
+          <div class="chip danger" onclick="setPreset('self_harm')">⚠️ Test Crisis</div>
+          <div class="chip danger" onclick="setPreset('crime')">⚠️ Test Crime</div>
         </div>
 
         <button class="btn-submit" onclick="processInput()">Reframe with AI ✨</button>
       </div>
 
       <div id="outputArea">
-        <!-- Output renders dynamically here -->
+        <div class="card">
+          <div class="badge">✨ Silver Lining Perspective</div>
+          <div style="font-size: 0.95rem; line-height: 1.5; color: #e2e8f0;">
+            Rejection is often redirection towards a better alignment. Experiencing setbacks shows you were brave enough to put yourself out there.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: HISTORY & FAVORITES -->
+    <div id="screenHistory" class="screen">
+      <div style="display: flex; gap: 8px;">
+        <button class="chip" style="background: rgba(99, 102, 241, 0.3); color: #fff;">All Saved (12)</button>
+        <button class="chip">♥ Favorites (4)</button>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+          <span>📅 Today, 2:15 PM</span>
+          <span style="color: #ec4899; cursor: pointer;">♥ Saved</span>
+        </div>
+        <div style="font-size: 0.9rem; font-weight: 600;">"Failed final round interview for lead role"</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">✨ Rejection is redirection towards a better alignment...</div>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+          <span>📅 Yesterday, 8:40 PM</span>
+          <span style="cursor: pointer;">♡ Save</span>
+        </div>
+        <div style="font-size: 0.9rem; font-weight: 600;">"Struggling with work-life balance"</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">✨ Recognizing limits is the first step toward healthier boundaries...</div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CRISIS SUPPORT HUB -->
+    <div id="screenCrisis" class="screen">
+      <div class="card" style="border-color: var(--danger); background: var(--danger-bg);">
+        <div class="badge danger">🚨 24/7 Immediate Crisis Support</div>
+        <div style="font-size: 0.9rem; line-height: 1.4;">
+          If you or someone you know is struggling or in crisis, help is available right now. Free and confidential support 24/7.
+        </div>
+        <a href="tel:988" class="btn-hotline">📞 Call 988 Lifeline (US & Canada)</a>
+        <a href="tel:116123" class="btn-hotline" style="background: #3b82f6;">🇬🇧 Call Samaritans 116 123 (UK)</a>
+      </div>
+    </div>
+
+    <!-- TAB 4: SETTINGS & PRIVACY -->
+    <div id="screenSettings" class="screen">
+      <div class="card">
+        <div style="font-weight: 600; font-size: 1rem;">🔒 Data Privacy & Security</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          Your thoughts and reframed perspectives are stored locally on your device. Zero personal logs are saved on external servers.
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-weight: 600; font-size: 1rem;">⚙️ Preferences</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;">
+          <span>Dark Glassmorphism Theme</span>
+          <span style="color: var(--success); font-weight: 600;">Active</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <div class="nav-bar">
+      <div class="nav-item active" onclick="switchTab('Reframer', 'screenReframer', this)">
+        <span class="nav-icon">✨</span>
+        <span>Reframe</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('My History', 'screenHistory', this)">
+        <span class="nav-icon">📚</span>
+        <span>History</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('Support Hub', 'screenCrisis', this)">
+        <span class="nav-icon">🚨</span>
+        <span>Support</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('Settings', 'screenSettings', this)">
+        <span class="nav-icon">⚙️</span>
+        <span>Settings</span>
       </div>
     </div>
   </div>
@@ -318,58 +229,51 @@
       document.getElementById('userInput').value = presets[key];
     }
 
+    function switchTab(title, screenId, element) {
+      document.getElementById('headerTitle').innerText = title;
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      element.classList.add('active');
+    }
+
     function processInput() {
-      const input = document.getElementById('userInput').value.trim();
+      const input = document.getElementById('userInput').value.trim().toLowerCase();
       const outputArea = document.getElementById('outputArea');
 
-      if (!input) {
-        outputArea.innerHTML = `
-          <div class="output-card">
-            <div class="output-text" style="color: var(--text-muted);">Please enter a thought or concern to reframe.</div>
-          </div>
-        `;
-        return;
-      }
+      if (!input) return;
 
-      // Simulated Safety Engine Check
-      const lower = input.toLowerCase();
-      
-      // Category 1: Crisis / Self-Harm
-      if (lower.includes('hurt myself') || lower.includes('ending everything') || lower.includes('suicide') || lower.includes('end it all')) {
+      if (input.includes('hurt myself') || input.includes('suicide') || input.includes('end it all')) {
         outputArea.innerHTML = `
-          <div class="output-card crisis-card">
-            <div class="card-badge badge-crisis">🚨 Safety Shield Activated</div>
-            <div class="output-text">
+          <div class="card" style="border-color: var(--danger); background: var(--danger-bg);">
+            <div class="badge danger">🚨 Safety Shield Activated</div>
+            <div style="font-size: 0.95rem; line-height: 1.4;">
               <strong>We hear you, and your life matters.</strong><br/><br/>
-              It sounds like you're going through an exceptionally hard time. Our AI will not reframe self-harm, but compassionate support is available right now 24/7.
+              Our AI will not reframe self-harm, but compassionate support is available right now 24/7.
             </div>
-            <a href="tel:988" class="hotline-button">
-              📞 Call 988 Crisis Lifeline (Free & Confidential)
-            </a>
+            <a href="tel:988" class="btn-hotline">📞 Call 988 Crisis Lifeline (Free)</a>
           </div>
         `;
         return;
       }
 
-      // Category 2: Crime / Illegal Act
-      if (lower.includes('stole') || lower.includes('robbed') || lower.includes('hack') || lower.includes('drug deal')) {
+      if (input.includes('stole') || input.includes('robbed') || input.includes('hack')) {
         outputArea.innerHTML = `
-          <div class="output-card crisis-card">
-            <div class="card-badge badge-crisis">🛡️ Safety Policy Notice</div>
-            <div class="output-text">
-              Silver Lining AI cannot provide positive reframing, validation, or perspective on illegal activities or criminal acts.
+          <div class="card" style="border-color: var(--warning); background: rgba(245, 158, 11, 0.1);">
+            <div class="badge warning">🛡️ Safety Policy Notice</div>
+            <div style="font-size: 0.95rem; line-height: 1.4;">
+              Silver Lining AI cannot provide positive reframing or perspective on illegal activities.
             </div>
           </div>
         `;
         return;
       }
 
-      // Safe Input: Positive Perspective Reframing
       outputArea.innerHTML = `
-        <div class="output-card">
-          <div class="card-badge">✨ Silver Lining Perspective</div>
-          <div class="output-text">
-            Rejection is often redirection towards a better alignment. Experiencing setbacks shows you were brave enough to put yourself out there. This moment is not a measure of your worth, but a stepping stone toward finding an environment that truly values your potential.
+        <div class="card">
+          <div class="badge">✨ Silver Lining Perspective</div>
+          <div style="font-size: 0.95rem; line-height: 1.5; color: #e2e8f0;">
+            Setbacks often serve as redirection toward better alignment. Experiencing this struggle demonstrates your courage to put yourself out there.
           </div>
         </div>
       `;
