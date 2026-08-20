@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_typography.dart';
 import '../app_text_field.dart';
+import '../chips/preset_chips.dart';
 import '../glass_card.dart';
 import '../primary_button.dart';
 
@@ -17,6 +18,10 @@ class InputFormCard extends StatelessWidget {
     required this.onSubmit,
   });
 
+  void _onSelectPreset(String sampleText) {
+    controller.text = sampleText;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GlassCard(
@@ -29,7 +34,12 @@ class InputFormCard extends StatelessWidget {
             controller: controller,
             hintText: "Share what happened today, your concerns, or what feels tough...",
           ),
+          const SizedBox(height: 14),
+
+          // Preset Scenario Chips (1-tap selection)
+          PresetChips(onSelectPreset: _onSelectPreset),
           const SizedBox(height: 16),
+
           PrimaryButton(
             label: 'Reframe Thought ✨',
             isLoading: isLoading,
