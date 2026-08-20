@@ -12,8 +12,8 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 1** | **Mock Reframing & Safety Service Layer** (`lib/services/mock_reframing_service.dart`) | 🟢 Complete |
 | **Step 2** | **App Design System & Theme** (`lib/theme/app_colors.dart` & `app_typography.dart`) | 🟢 Complete |
 | **Step 3** | **Preset Scenario Chips Component** (`lib/widgets/chips/preset_chips.dart`) | 🟢 Complete (1-Tap Selection Active) |
-| **Step 4** | **Native Emergency Phone Dialer Plugin** (`url_launcher` for 988 Crisis Lifeline) | 🔵 Active Development |
-| **Step 5** | **Bottom Navigation & History / Favorites Screen** (`lib/screens/history_screen.dart`) | ⏳ Up Next |
+| **Step 4** | **Native Emergency Phone Dialer Plugin** (`lib/services/emergency_launcher_service.dart`) | 🟢 Complete (`url_launcher` Active) |
+| **Step 5** | **Bottom Navigation & History / Favorites Screen** (`lib/screens/history_screen.dart`) | 🔵 Active Development |
 | **Step 6** | **Swap Mock Service to Real Python Backend** (`lib/services/api_reframing_service.dart`) | ⏳ Future Phase |
 
 ---
