@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_navigation_screen.dart';
 import 'theme/app_colors.dart';
 
 void main() {
@@ -23,7 +23,7 @@ class SilverLiningApp extends StatelessWidget {
           surface: AppColors.surface,
         ),
       ),
-      home: const HomeScreen(),
+      home: const MainNavigationScreen(),
     );
   }
 }
