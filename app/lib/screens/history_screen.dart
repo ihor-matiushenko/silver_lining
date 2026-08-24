@@ -1,27 +1,11 @@
 import 'package:flutter/material.dart';
-import '../models/reframe_response.dart';
+import '../models/history_item.dart';
+import '../services/storage_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_typography.dart';
 import '../widgets/glass_card.dart';
 
-/// 📚 History & Favorites Item Model
-class HistoryItem {
-  final String id;
-  final String dateString;
-  final String promptText;
-  final ReframeResponse response;
-  bool isFavorite;
-
-  HistoryItem({
-    required this.id,
-    required this.dateString,
-    required this.promptText,
-    required this.response,
-    this.isFavorite = false,
-  });
-}
-
-/// 📚 History & Favorites Screen Component
+/// 📚 History & Favorites Screen Component (Connected to StorageService)
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
 
@@ -31,45 +15,37 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   bool _showFavoritesOnly = false;
+  bool _isLoading = true;
+  List<HistoryItem> _historyItems = [];
 
-  // Sample Mock History Data
-  final List<HistoryItem> _historyItems = [
-    HistoryItem(
-      id: '1',
-      dateString: 'Today, 2:15 PM',
-      promptText: 'Failed final round interview for lead role',
-      isFavorite: true,
-      response: const ReframeResponse(
-        isSafe: true,
-        safetyCategory: 'none',
-        reframedText: 'Rejection is often redirection toward a better alignment. Experiencing this struggle demonstrates your courage to put yourself out there.',
-        crisisTriggered: false,
-      ),
-    ),
-    HistoryItem(
-      id: '2',
-      dateString: 'Yesterday, 8:40 PM',
-      promptText: 'Struggling with work-life balance and burnout',
-      isFavorite: false,
-      response: const ReframeResponse(
-        isSafe: true,
-        safetyCategory: 'none',
-        reframedText: 'Recognizing your limits is the first necessary step toward establishing healthier personal boundaries and long-term well-being.',
-        crisisTriggered: false,
-      ),
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadHistory();
+  }
 
-  void _toggleFavorite(HistoryItem item) {
+  Future<void> _loadHistory() async {
+    setState(() => _isLoading = true);
+    final items = await StorageService.loadHistoryItems();
+    if (!mounted) return;
     setState(() {
-      item.isFavorite = !item.isFavorite;
+      _historyItems = items;
+      _isLoading = false;
     });
   }
 
-  void _deleteItem(HistoryItem item) {
+  Future<void> _toggleFavorite(HistoryItem item) async {
+    setState(() {
+      item.isFavorite = !item.isFavorite;
+    });
+    await StorageService.toggleFavorite(item.id);
+  }
+
+  Future<void> _deleteItem(HistoryItem item) async {
     setState(() {
       _historyItems.removeWhere((i) => i.id == item.id);
     });
+    await StorageService.deleteHistoryItem(item.id);
   }
 
   @override
@@ -111,53 +87,55 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
             // History Cards List View
             Expanded(
-              child: displayedItems.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No saved silver linings yet.',
-                        style: AppTypography.subtitle,
-                      ),
-                    )
-                  : ListView.separated(
-                      itemCount: displayedItems.length,
-                      separatorBuilder: (context, index) => const SizedBox(height: 14),
-                      itemBuilder: (context, index) {
-                        final item = displayedItems[index];
-                        return GlassCard(
-                          borderColor: item.isFavorite ? AppColors.secondary : AppColors.primary,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                  : displayedItems.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'No saved silver linings yet.',
+                            style: AppTypography.subtitle,
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: displayedItems.length,
+                          separatorBuilder: (context, index) => const SizedBox(height: 14),
+                          itemBuilder: (context, index) {
+                            final item = displayedItems[index];
+                            return GlassCard(
+                              borderColor: item.isFavorite ? AppColors.secondary : AppColors.primary,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(item.dateString, style: AppTypography.subtitle),
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          item.isFavorite ? Icons.favorite : Icons.favorite_border,
-                                          color: item.isFavorite ? AppColors.secondary : Colors.grey,
-                                          size: 20,
-                                        ),
-                                        onPressed: () => _toggleFavorite(item),
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.delete_outline, color: Colors.grey, size: 20),
-                                        onPressed: () => _deleteItem(item),
-                                      ),
+                                      Text(item.dateString, style: AppTypography.subtitle),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              item.isFavorite ? Icons.favorite : Icons.favorite_border,
+                                              color: item.isFavorite ? AppColors.secondary : Colors.grey,
+                                              size: 20,
+                                            ),
+                                            onPressed: () => _toggleFavorite(item),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete_outline, color: Colors.grey, size: 20),
+                                            onPressed: () => _deleteItem(item),
+                                          ),
+                                        ],
+                                      )
                                     ],
-                                  )
+                                  ),
+                                  Text('"${item.promptText}"', style: AppTypography.titleBold),
+                                  const SizedBox(height: 8),
+                                  Text(item.response.reframedText ?? '', style: AppTypography.bodyMuted),
                                 ],
                               ),
-                              Text('"${item.promptText}"', style: AppTypography.titleBold),
-                              const SizedBox(height: 8),
-                              Text(item.response.reframedText ?? '', style: AppTypography.bodyMuted),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                            );
+                          },
+                        ),
             ),
           ],
         ),

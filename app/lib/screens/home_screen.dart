@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../models/history_item.dart';
 import '../models/reframe_response.dart';
 import '../services/mock_reframing_service.dart';
 import '../services/reframing_service_interface.dart';
+import '../services/storage_service.dart';
 import '../widgets/app_bar/home_app_bar.dart';
 import '../widgets/forms/input_form_card.dart';
 import '../widgets/result_card.dart';
@@ -47,6 +49,21 @@ class _HomeScreenState extends State<HomeScreen> {
       _isLoading = false;
       _response = result;
     });
+
+    // Auto-save safe reframed responses to local history storage!
+    if (result.isSafe && !result.crisisTriggered && result.reframedText != null) {
+      final now = DateTime.now();
+      final dateStr = 'Today, ${now.hour}:${now.minute.toString().padLeft(2, '0')}';
+
+      final newItem = HistoryItem(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        dateString: dateStr,
+        promptText: text,
+        response: result,
+      );
+
+      await StorageService.saveHistoryItem(newItem);
+    }
   }
 
   @override
