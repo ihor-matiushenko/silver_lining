@@ -13,8 +13,9 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 2** | **App Design System & Theme** (`lib/theme/app_colors.dart` & `app_typography.dart`) | 🟢 Complete |
 | **Step 3** | **Preset Scenario Chips Component** (`lib/widgets/chips/preset_chips.dart`) | 🟢 Complete |
 | **Step 4** | **Native Emergency Phone Dialer Plugin** (`lib/services/emergency_launcher_service.dart`) | 🟢 Complete |
-| **Step 5** | **Bottom Navigation & History / Favorites Screen** (`lib/screens/history_screen.dart`) | 🟢 Complete (Tab Bar & Favorites Active) |
-| **Step 6** | **Swap Mock Service to Real Python Backend** (`lib/services/api_reframing_service.dart`) | 🔵 Ready to Connect! |
+| **Step 5** | **Animated Typewriter AI Text** (`lib/widgets/animations/typewriter_text.dart`) | 🟢 Complete |
+| **Step 6** | **Offline Local Persistence** (`lib/services/storage_service.dart` & `shared_preferences`) | 🟢 Complete |
+| **Step 7** | **Swap Mock Service to Real Python Backend** (`lib/services/api_reframing_service.dart`) | 🔵 Ready to Connect! |
 
 ---
 
@@ -29,4 +30,4 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] Git & GitHub Remote Synced (`git@github.com:ihor-matiushenko/silver_lining.git`)
 
 ---
-*Updated: 2026-08-20*
+*Updated: 2026-08-24*
