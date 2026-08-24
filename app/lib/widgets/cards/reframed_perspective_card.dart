@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_typography.dart';
+import '../animations/typewriter_text.dart';
 import '../glass_card.dart';
 import '../status_badge.dart';
 
-/// ✨ Standalone Card Component for Safe Positive AI Perspective Output
+/// ✨ Standalone Card Component for Safe Positive AI Perspective Output (with Typewriter Animation)
 class ReframedPerspectiveCard extends StatelessWidget {
   final String text;
 
@@ -22,8 +23,8 @@ class ReframedPerspectiveCard extends StatelessWidget {
         children: [
           const StatusBadge(label: '✨ Silver Lining Perspective', color: AppColors.success),
           const SizedBox(height: 12),
-          Text(
-            text,
+          TypewriterText(
+            text: text,
             style: AppTypography.body,
           ),
         ],
