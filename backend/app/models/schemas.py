@@ -4,7 +4,6 @@ from typing import Optional
 # 📝 Pydantic Schema for incoming HTTP POST request payload from mobile app
 class ReframeRequest(BaseModel):
     input_text: str = Field(
-        ...,
         min_length=1,
         description="Raw problem, stress point, or thought entered by the user"
     )
@@ -12,7 +11,6 @@ class ReframeRequest(BaseModel):
 # 📦 Pydantic Schema for outgoing HTTP response payload returned to mobile app
 class ReframeResponse(BaseModel):
     is_safe: bool = Field(
-        ...,
         description="True if input passed all safety checks, False if refused"
     )
     safety_category: str = Field(
