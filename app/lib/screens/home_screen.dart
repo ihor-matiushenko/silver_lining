@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/history_item.dart';
 import '../models/reframe_response.dart';
-import '../services/mock_reframing_service.dart';
+import '../services/api_reframing_service.dart';
 import '../services/reframing_service_interface.dart';
 import '../services/storage_service.dart';
 import '../widgets/app_bar/home_app_bar.dart';
@@ -19,8 +19,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _controller = TextEditingController();
 
-  // Inject Reframing Service Interface (Currently using MockReframingService)
-  final ReframingServiceInterface _service = MockReframingService();
+  // Inject Real Live API Reframing Service connecting Flutter to Python FastAPI & Ollama AI
+  final ReframingServiceInterface _service = ApiReframingService();
 
   // Reactive state variables
   bool _isLoading = false;
