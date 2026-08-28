@@ -5,7 +5,7 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 
 ---
 
-## 📌 Frontend-First (Mocked Services) Development Roadmap
+## 📌 Full-Stack Development Roadmap
 
 | Step | Component / Screen | Status |
 |---|---|---|
@@ -15,7 +15,8 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 4** | **Native Emergency Phone Dialer Plugin** (`lib/services/emergency_launcher_service.dart`) | 🟢 Complete |
 | **Step 5** | **Animated Typewriter AI Text** (`lib/widgets/animations/typewriter_text.dart`) | 🟢 Complete |
 | **Step 6** | **Offline Local Persistence** (`lib/services/storage_service.dart` & `shared_preferences`) | 🟢 Complete |
-| **Step 7** | **Swap Mock Service to Real Python Backend** (`lib/services/api_reframing_service.dart`) | 🔵 Ready to Connect! |
+| **Step 7** | **Python FastAPI 3-Tier Safety & AI Backend** (`backend/app/main.py`) | 🟢 Complete |
+| **Step 8** | **Live Flutter-to-Python HTTP Integration** (`lib/services/api_reframing_service.dart`) | 🟢 100% Complete & Verified! |
 
 ---
 
@@ -25,9 +26,10 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] 3-Tier AI Safety & Guardrails Architecture Specification (`SAFETY_POLICIES.md`)
 - [x] Flutter SDK 3.44.8 & Mobile UI Scaffold (`app/lib/main.dart`)
 - [x] Python 3.11 FastAPI Custom Backend Codebase (`backend/app/main.py`)
+- [x] AI Strategy Pattern (Seamless 1-Second Switch between Ollama & Gemini AI)
 - [x] Agentic Harness & MCP Setup (`.agents/mcp_config.json` with GitHub & Figma tokens)
 - [x] Monorepo IDE Resolution (`.vscode/settings.json` & `pyrightconfig.json`)
 - [x] Git & GitHub Remote Synced (`git@github.com:ihor-matiushenko/silver_lining.git`)
 
 ---
-*Updated: 2026-08-24*
+*Updated: 2026-08-28*
