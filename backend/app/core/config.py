@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     APP_NAME: str = "Silver Lining AI Backend"
     ENVIRONMENT: str = "development"
     
+    # 🗄️ Database Connection URL (SQLite default, PostgreSQL configurable)
+    DATABASE_URL: str = "sqlite:///./silver_lining.db"
+    
     # 🤖 AI Provider Strategy Configuration ("ollama" or "gemini")
     LLM_PROVIDER: str = "ollama"
     
