@@ -6,8 +6,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "Silver Lining AI Backend"
     ENVIRONMENT: str = "development"
     
-    # 🐘 Local PostgreSQL Database Connection URL
-    DATABASE_URL: str = "postgresql://ihormatiushenko@127.0.0.1:5432/silver_lining"
+    # 🐘 Generic PostgreSQL Database Connection URL (Overridden by .env)
+    DATABASE_URL: str = "postgresql://postgres:postgres@127.0.0.1:5432/silver_lining"
     
     # 🤖 AI Provider Strategy Configuration ("ollama" or "gemini")
     LLM_PROVIDER: str = "ollama"
