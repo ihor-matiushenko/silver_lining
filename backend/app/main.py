@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
@@ -7,10 +8,17 @@ from app.models.schemas import ReframeRequest, ReframeResponse
 from app.services.safety_service import SafetyService
 from app.services.llm_service import LLMService
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Modern FastAPI Lifespan Handler: Auto-creates DB tables on startup"""
+    init_db()
+    yield
+
 app = FastAPI(
     title="Silver Lining AI Backend",
     description="API for perspective reframing with 3-tier safety guardrails, SQLModel DB, and Local Ollama AI",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan,
 )
 
 # Enable CORS (Cross-Origin Resource Sharing) for Flutter mobile app requests
@@ -21,11 +29,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-@app.on_event("startup")
-def on_startup():
-    """Auto-create database tables on server startup"""
-    init_db()
 
 @app.get("/")
 async def root():

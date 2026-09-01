@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from sqlmodel import SQLModel, Field
 
@@ -9,7 +9,7 @@ class User(SQLModel, table=True):
     email: str = Field(unique=True, index=True)
     hashed_password: Optional[str] = Field(default=None)
     auth_provider: str = Field(default="email") # "email", "google", "apple"
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 # 📚 Reframing History Entity (Stores all safe & reframed user thoughts)
 class ReframeRecord(SQLModel, table=True):
@@ -20,7 +20,7 @@ class ReframeRecord(SQLModel, table=True):
     is_safe: bool = Field(default=True)
     safety_category: str = Field(default="none")
     is_favorite: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 # 🛡️ Safety Engine Audit Log Entity (Audits triggered crisis/crime inputs)
 class SafetyLog(SQLModel, table=True):
@@ -28,4 +28,4 @@ class SafetyLog(SQLModel, table=True):
     user_id: Optional[str] = Field(default=None, foreign_key="user.id")
     safety_category: str
     flagged_text: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
