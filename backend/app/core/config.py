@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     # 🐘 Generic PostgreSQL Database Connection URL (Overridden by .env)
     DATABASE_URL: str = "postgresql://postgres:postgres@127.0.0.1:5432/silver_lining"
     
+    # 🔐 Supabase / Auth JWT Secret Key (Minimum 32 bytes for HS256 security)
+    SUPABASE_JWT_SECRET: str = "dev-secret-key-must-be-at-least-32-bytes-long-for-jwt-security"
+    
     # 🤖 AI Provider Strategy Configuration ("ollama" or "gemini")
     LLM_PROVIDER: str = "ollama"
     

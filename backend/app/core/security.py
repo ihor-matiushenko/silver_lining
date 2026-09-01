@@ -1,0 +1,41 @@
+import jwt
+from typing import Optional
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from app.core.config import settings
+
+# 🛡️ HTTPBearer automatically parses "Authorization: Bearer <token>" from HTTP headers
+security = HTTPBearer(auto_error=False)
+
+def verify_jwt_token(token: str) -> dict:
+    """
+    Decodes and cryptographically verifies JWT token signature using SUPABASE_JWT_SECRET.
+    Throws HTTP 401 Unauthorized if the token is forged, expired, or invalid.
+    """
+    try:
+        payload = jwt.decode(
+            token,
+            settings.SUPABASE_JWT_SECRET,
+            algorithms=["HS256"],
+            options={"verify_aud": False}
+        )
+        return payload
+    except jwt.PyJWTError:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired authentication token"
+        )
+
+async def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
+) -> Optional[dict]:
+    """
+    FastAPI Security Dependency:
+    - If Authorization header is missing: returns None (Guest User).
+    - If Authorization header is present: verifies JWT token and returns payload dict containing user_id & email!
+    """
+    if credentials is None:
+        return None  # Guest User!
+
+    token = credentials.credentials
+    return verify_jwt_token(token)
