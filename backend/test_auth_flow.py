@@ -24,20 +24,22 @@ def run_auth_verification_tests():
     # 🆓 TEST 1: Guest Mode Request (No Authorization Header)
     # -------------------------------------------------------------
     print("\n1️⃣ Testing Guest Request (No Authorization Header)...")
+    guest_prompt = "I feel overwhelmed with work deadlines today"
     response_guest = client.post(
         "/api/v1/reframe",
-        json={"input_text": "I feel overwhelmed with work deadlines"}
+        json={"input_text": guest_prompt}
     )
 
     assert response_guest.status_code == 200, f"Expected 200, got {response_guest.status_code}"
     data_guest = response_guest.json()
     assert data_guest["is_safe"] is True
-    print("   ✅ Guest Request Succeeded! HTTP 200 OK")
+    print("   ✅ Guest Request Succeeded! HTTP 200 OK (Local-only response)")
 
     # -------------------------------------------------------------
     # 🔓 TEST 2: Authenticated Request (Valid JWT Token)
     # -------------------------------------------------------------
     print("\n2️⃣ Testing Authenticated Request (Valid JWT Token)...")
+    auth_prompt = "Failed my driving test today"
     test_token = jwt.encode(
         {"sub": test_user_id, "email": "ihor@example.com"},
         settings.SUPABASE_JWT_SECRET,
@@ -46,7 +48,7 @@ def run_auth_verification_tests():
 
     response_auth = client.post(
         "/api/v1/reframe",
-        json={"input_text": "Failed my driving test today"},
+        json={"input_text": auth_prompt},
         headers={"Authorization": f"Bearer {test_token}"}
     )
 
@@ -76,22 +78,21 @@ def run_auth_verification_tests():
     print("\n4️⃣ Querying PostgreSQL Database Records...")
     with Session(engine) as db:
         guest_record = db.exec(
-            select(ReframeRecord).where(ReframeRecord.prompt_text == "I feel overwhelmed with work deadlines")
+            select(ReframeRecord).where(ReframeRecord.prompt_text == guest_prompt)
         ).first()
 
         auth_record = db.exec(
-            select(ReframeRecord).where(ReframeRecord.prompt_text == "Failed my driving test today")
+            select(ReframeRecord).where(ReframeRecord.prompt_text == auth_prompt)
         ).first()
 
-        assert guest_record is not None
-        assert guest_record.user_id is None, f"Expected guest user_id to be None, got {guest_record.user_id}"
-        print("   ✅ Guest Record Verified in PostgreSQL! user_id = None")
+        assert guest_record is None, "Guest request should NOT create a row in PostgreSQL DB!"
+        print("   ✅ Guest Record Verified! No row created in PostgreSQL (0 DB bloat!).")
 
         assert auth_record is not None
         assert auth_record.user_id == test_user_id, f"Expected user_id {test_user_id}, got {auth_record.user_id}"
         print(f"   ✅ Authenticated Record Verified in PostgreSQL! user_id = '{test_user_id}'")
 
-    print("\n" + "=" * 55 + "\n🎉 ALL 4 AUTHENTICATION & SECURITY TESTS PASSED 100%!\n")
+    print("\n" + "=" * 55 + "\n🎉 ALL 4 AUTHENTICATION & BUSINESS LOGIC TESTS PASSED 100%!\n")
 
 if __name__ == "__main__":
     run_auth_verification_tests()

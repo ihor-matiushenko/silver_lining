@@ -51,7 +51,7 @@ async def reframe_thought(
     1. Validates input text using Pydantic.
     2. Runs 3-Tier Safety Engine checks.
     3. If safe, calls Local Ollama AI to generate reframed perspective.
-    4. Persists record in SQLModel Database (linking user_id if authenticated).
+    4. Persists record in SQLModel Database ONLY for authenticated users.
     """
     input_text = payload.input_text.strip()
     if not input_text:
@@ -76,16 +76,17 @@ async def reframe_thought(
     # Step 2: Safe input -> Call Local Ollama AI Service
     reframed_text = await LLMService.generate_reframed_perspective(input_text)
 
-    # Step 3: Save safe reframed record to SQLModel database
-    record = ReframeRecord(
-        user_id=user_id,
-        prompt_text=input_text,
-        reframed_text=reframed_text,
-        is_safe=True,
-        safety_category="none",
-    )
-    db.add(record)
-    db.commit()
+    # Step 3: ONLY save reframed record to PostgreSQL if the user is logged in!
+    if user_id:
+        record = ReframeRecord(
+            user_id=user_id,
+            prompt_text=input_text,
+            reframed_text=reframed_text,
+            is_safe=True,
+            safety_category="none",
+        )
+        db.add(record)
+        db.commit()
 
     return ReframeResponse(
         is_safe=True,
