@@ -2,14 +2,11 @@ from sqlmodel import SQLModel, create_engine, Session
 from app.core.config import settings
 from app.models.db_models import User, ReframeRecord, SafetyLog
 
-# Check if using SQLite to add connect_args
-connect_args = {"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
-
-# Create SQLModel Database Engine
+# 🐘 Create SQLModel PostgreSQL Database Engine
 engine = create_engine(
     settings.DATABASE_URL,
     echo=False,
-    connect_args=connect_args,
+    pool_pre_ping=True,  # Auto-reconnects if PostgreSQL drops idle connections
 )
 
 def init_db():
