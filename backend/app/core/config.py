@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     # 🔐 Supabase / Auth JWT Secret Key (Minimum 32 bytes for HS256 security)
     SUPABASE_JWT_SECRET: str = "dev-secret-key-must-be-at-least-32-bytes-long-for-jwt-security"
     
+    # 🛡️ Guest Rate Limit Settings (Configurable via .env, default 5 reframings / day)
+    GUEST_DAILY_LIMIT: int = 5
+    
     # 🤖 AI Provider Strategy Configuration ("ollama" or "gemini")
     LLM_PROVIDER: str = "ollama"
     

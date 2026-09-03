@@ -1,10 +1,15 @@
 from contextlib import asynccontextmanager
 from typing import Optional
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
+from slowapi.errors import RateLimitExceeded
+
+from app.core.config import settings
 from app.core.database import init_db, get_session
 from app.core.security import get_current_user_optional
+from app.core.limiter import limiter, get_guest_rate_limit
 from app.models.db_models import ReframeRecord, SafetyLog
 from app.models.schemas import ReframeRequest, ReframeResponse
 from app.services.safety_service import SafetyService
@@ -18,10 +23,24 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Silver Lining AI Backend",
-    description="API for perspective reframing with 3-tier safety guardrails, SQLModel DB, and JWT Auth",
+    description="API for perspective reframing with 3-tier safety guardrails, SQLModel DB, JWT Auth, and Rate Limiter",
     version="1.0.0",
     lifespan=lifespan,
 )
+
+# 🛡️ Configure slowapi Rate Limiter state & custom type-safe 429 exception handler
+app.state.limiter = limiter
+
+async def custom_rate_limit_exceeded_handler(request: Request, exc: Exception) -> JSONResponse:
+    """Type-safe exception handler for Pyright/VSCode returning brand-aligned 429 JSON error"""
+    return JSONResponse(
+        status_code=429,
+        content={
+            "detail": f"Guest daily limit reached ({settings.GUEST_DAILY_LIMIT}/day). Create a free account for unlimited reframings!"
+        }
+    )
+
+app.add_exception_handler(RateLimitExceeded, custom_rate_limit_exceeded_handler)
 
 # Enable CORS (Cross-Origin Resource Sharing) for Flutter mobile app requests
 app.add_middleware(
@@ -41,17 +60,20 @@ async def root():
     }
 
 @app.post("/api/v1/reframe", response_model=ReframeResponse)
+@limiter.limit(get_guest_rate_limit)
 async def reframe_thought(
+    request: Request,
     payload: ReframeRequest,
     db: Session = Depends(get_session),
     user: Optional[dict] = Depends(get_current_user_optional)
 ):
     """
     Main API Endpoint:
-    1. Validates input text using Pydantic.
-    2. Runs 3-Tier Safety Engine checks.
-    3. If safe, calls Local Ollama AI to generate reframed perspective.
-    4. Persists record in SQLModel Database ONLY for authenticated users.
+    1. Enforces rate limits dynamically via slowapi (default 5/day for guests).
+    2. Validates input text using Pydantic.
+    3. Runs 3-Tier Safety Engine checks.
+    4. If safe, calls Local Ollama AI to generate reframed perspective.
+    5. Persists record in SQLModel Database ONLY for authenticated users.
     """
     input_text = payload.input_text.strip()
     if not input_text:
