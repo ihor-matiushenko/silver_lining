@@ -1,15 +1,13 @@
 from contextlib import asynccontextmanager
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Depends, Request
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
 from slowapi.errors import RateLimitExceeded
 
-from app.core.config import settings
 from app.core.database import init_db, get_session
 from app.core.security import get_current_user_optional
-from app.core.limiter import limiter, get_guest_rate_limit
+from app.core.limiter import limiter, get_guest_rate_limit, custom_rate_limit_exceeded_handler
 from app.models.db_models import ReframeRecord, SafetyLog
 from app.models.schemas import ReframeRequest, ReframeResponse
 from app.services.safety_service import SafetyService
@@ -30,16 +28,6 @@ app = FastAPI(
 
 # 🛡️ Configure slowapi Rate Limiter state & custom type-safe 429 exception handler
 app.state.limiter = limiter
-
-async def custom_rate_limit_exceeded_handler(request: Request, exc: Exception) -> JSONResponse:
-    """Type-safe exception handler for Pyright/VSCode returning brand-aligned 429 JSON error"""
-    return JSONResponse(
-        status_code=429,
-        content={
-            "detail": f"Guest daily limit reached ({settings.GUEST_DAILY_LIMIT}/day). Create a free account for unlimited reframings!"
-        }
-    )
-
 app.add_exception_handler(RateLimitExceeded, custom_rate_limit_exceeded_handler)
 
 # Enable CORS (Cross-Origin Resource Sharing) for Flutter mobile app requests
