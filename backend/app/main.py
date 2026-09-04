@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
-from sqlmodel import Session, select
+from sqlmodel import Session, select, desc
 from slowapi.errors import RateLimitExceeded
 
 from app.core.database import init_db, get_session
@@ -120,7 +120,7 @@ async def get_user_history(
     statement = (
         select(ReframeRecord)
         .where(ReframeRecord.user_id == user_id)
-        .order_by(ReframeRecord.created_at.desc())
+        .order_by(desc(ReframeRecord.created_at))
     )
     records = db.exec(statement).all()
     return records
