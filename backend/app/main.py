@@ -124,3 +124,51 @@ async def get_user_history(
     )
     records = db.exec(statement).all()
     return records
+
+@app.post("/api/v1/history/{record_id}/favorite", response_model=ReframeRecord)
+async def toggle_favorite(
+    record_id: str,
+    db: Session = Depends(get_session),
+    user: dict = Depends(get_current_user)
+):
+    """
+    Toggle Heart Favorite Endpoint:
+    Flips is_favorite (True <-> False) on a record in PostgreSQL.
+    Enforces record ownership validation (HTTP 403 if user doesn't own the record).
+    """
+    user_id = user["sub"]
+    record = db.get(ReframeRecord, record_id)
+    if not record:
+        raise HTTPException(status_code=404, detail="Reframing record not found")
+
+    if record.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Forbidden: You do not own this record")
+
+    record.is_favorite = not record.is_favorite
+    db.add(record)
+    db.commit()
+    db.refresh(record)
+    return record
+
+@app.delete("/api/v1/history/{record_id}")
+async def delete_history_record(
+    record_id: str,
+    db: Session = Depends(get_session),
+    user: dict = Depends(get_current_user)
+):
+    """
+    Delete History Record Endpoint:
+    Deletes a saved reframing record from PostgreSQL.
+    Enforces record ownership validation (HTTP 403 if user doesn't own the record).
+    """
+    user_id = user["sub"]
+    record = db.get(ReframeRecord, record_id)
+    if not record:
+        raise HTTPException(status_code=404, detail="Reframing record not found")
+
+    if record.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Forbidden: You do not own this record")
+
+    db.delete(record)
+    db.commit()
+    return {"detail": "Record deleted successfully", "id": record_id}
