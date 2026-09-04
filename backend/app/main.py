@@ -1,12 +1,12 @@
 from contextlib import asynccontextmanager
-from typing import Optional
+from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
-from sqlmodel import Session
+from sqlmodel import Session, select
 from slowapi.errors import RateLimitExceeded
 
 from app.core.database import init_db, get_session
-from app.core.security import get_current_user_optional
+from app.core.security import get_current_user_optional, get_current_user
 from app.core.limiter import limiter, get_guest_rate_limit, custom_rate_limit_exceeded_handler
 from app.models.db_models import ReframeRecord, SafetyLog
 from app.models.schemas import ReframeRequest, ReframeResponse
@@ -105,3 +105,22 @@ async def reframe_thought(
         crisis_triggered=False,
         emergency_hotline=None
     )
+
+@app.get("/api/v1/history", response_model=List[ReframeRecord])
+async def get_user_history(
+    db: Session = Depends(get_session),
+    user: dict = Depends(get_current_user)
+):
+    """
+    Cloud History Endpoint:
+    Fetches all saved reframing records for the authenticated user from PostgreSQL.
+    Requires a valid JWT token.
+    """
+    user_id = user["sub"]
+    statement = (
+        select(ReframeRecord)
+        .where(ReframeRecord.user_id == user_id)
+        .order_by(ReframeRecord.created_at.desc())
+    )
+    records = db.exec(statement).all()
+    return records

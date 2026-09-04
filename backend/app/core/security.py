@@ -30,12 +30,27 @@ async def get_current_user_optional(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
 ) -> Optional[dict]:
     """
-    FastAPI Security Dependency:
+    FastAPI Security Dependency (Optional Auth):
     - If Authorization header is missing: returns None (Guest User).
-    - If Authorization header is present: verifies JWT token and returns payload dict containing user_id & email!
+    - If Authorization header is present: verifies JWT token and returns payload dict!
     """
     if credentials is None:
         return None  # Guest User!
 
     token = credentials.credentials
     return verify_jwt_token(token)
+
+async def get_current_user(
+    user: Optional[dict] = Depends(get_current_user_optional)
+) -> dict:
+    """
+    Strict FastAPI Security Dependency (Required Auth):
+    - Reuses get_current_user_optional.
+    - Throws HTTP 401 Unauthorized if request is unauthenticated (Guest).
+    """
+    if user is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required to access this resource"
+        )
+    return user
