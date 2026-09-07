@@ -17,7 +17,7 @@ def run_auth_verification_tests():
     with Session(engine) as db:
         existing_user = db.get(User, test_user_id)
         if not existing_user:
-            db.add(User(id=test_user_id, email="ihor@example.com", auth_provider="supabase"))
+            db.add(User(id=test_user_id, email="user@example.com", auth_provider="supabase"))
             db.commit()
 
     # -------------------------------------------------------------
@@ -41,7 +41,7 @@ def run_auth_verification_tests():
     print("\n2️⃣ Testing Authenticated Request (Valid JWT Token)...")
     auth_prompt = "Failed my driving test today"
     test_token = jwt.encode(
-        {"sub": test_user_id, "email": "ihor@example.com"},
+        {"sub": test_user_id, "email": "user@example.com"},
         settings.SUPABASE_JWT_SECRET,
         algorithm="HS256"
     )

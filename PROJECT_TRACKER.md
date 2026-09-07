@@ -35,7 +35,7 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] Python 3.11 FastAPI Modular Backend (`backend/app/main.py`)
 - [x] Pure PostgreSQL Database Architecture (Running on local port 5432)
 - [x] Multi-Agent Protocol Guide (`AGENTS.md`) & Technical Specification (`ARCHITECTURE.md`)
-- [x] Git & GitHub Remote Synced (`git@github.com:ihor-matiushenko/silver_lining.git`)
+- [x] Git & GitHub Remote Synced (`silver_lining.git`)
 
 ---
 *Updated: 2026-09-07*

@@ -4,8 +4,7 @@
   ],
   "extraPaths": [
     "backend",
-    "backend/.venv/lib/python3.11/site-packages",
-    "/Users/ihormatiushenko/Library/Python/3.9/lib/python/site-packages"
+    "backend/.venv/lib/python3.11/site-packages"
   ],
   "executionEnvironments": [
     {

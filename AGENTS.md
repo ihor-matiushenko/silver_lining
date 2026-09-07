@@ -9,7 +9,7 @@ Welcome, AI Agent / Developer! This document serves as the authoritative operati
 Silver Lining AI is a full-stack cross-platform mobile application that provides positive psychological perspective reframing for everyday stress and struggles, strictly guarded by a 3-tier safety engine.
 
 ```
-/Users/ihormatiushenko/Workspace/silver_lining/
+silver_lining/
 ├── app/                  # 📱 Flutter Mobile Application (iOS / Android / Web)
 └── backend/              # 🐍 Python FastAPI Backend Engine
     ├── app/

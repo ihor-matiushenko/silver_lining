@@ -84,4 +84,4 @@ We equip our development workspace with 3 specialized subagent roles:
 
 1. To configure GitHub MCP, generate a GitHub token and we can add it to your project's `.agents/mcp_config.json`.
 2. To configure Figma MCP, generate a Figma token whenever you're ready to bridge Figma files.
-3. Otherwise, we can initialize our **Python + FastAPI Backend Codebase** inside `/Users/ihormatiushenko/Workspace/silver_lining/backend` right now!
+3. Otherwise, we can initialize our **Python + FastAPI Backend Codebase** inside `./backend` right now!
