@@ -9,10 +9,15 @@ This document presents the complete technical architecture specification for the
 ```mermaid
 graph TD
     subgraph Mobile Application (Flutter Cross-Platform)
-        UI[Flutter UI Screens] --> Storage[Local Storage: shared_preferences]
-        UI --> Service[ApiReframingService]
-        Service -->|HTTP POST /api/v1/reframe| API[FastAPI Thin APIRouters]
-        Service -->|HTTP GET /api/v1/history| API
+        UI[Flutter UI Screens / AuthScreen 2FA Form] --> Storage[Local Storage: shared_preferences]
+        UI --> AuthService[AuthService Facade]
+        AuthService --> StrategyAuth[IAuthProvider Interface]
+        StrategyAuth -->|isSupabaseConfigured=true| SupabaseProvider[SupabaseAuthProvider]
+        StrategyAuth -->|isSupabaseConfigured=false| MockProvider[MockAuthProvider]
+        
+        UI --> ApiService[ApiReframingService]
+        ApiService -->|HTTP POST /api/v1/reframe| API[FastAPI Thin APIRouters]
+        ApiService -->|HTTP GET /api/v1/history| API
     end
 
     subgraph Backend Services (3-Tier Layered Python Services)
@@ -30,6 +35,7 @@ graph TD
     end
 
     subgraph Data & Auth Persistence
+        SupabaseProvider -->|OAuth / Email| SupabaseCloud[(Supabase Auth Cloud)]
         ORM --> PostgreSQL[(PostgreSQL Database: port 5432)]
         API --> JWT[Supabase JWT Verification]
     end
@@ -37,11 +43,12 @@ graph TD
 
 ---
 
-## 🏛️ 2. 3-Tier Layered Architecture Pattern
+## 🏛️ 2. Flutter Auth Provider Strategy Pattern
 
-- **Router Layer** (`app/api/v1/`): Thin 1-line controllers handling HTTP request/response routing.
-- **Service Layer** (`app/services/`): Pure Python business logic (`ReframingService`, `HistoryService`, `SafetyService`, `LLMService`).
-- **Database Layer** (`app/models/db_models.py`): Pure PostgreSQL `SQLModel` ORM entities (`User`, `ReframeRecord`, `SafetyLog`).
+- **`IAuthProvider`** (`lib/services/providers/i_auth_provider.dart`): Abstract interface defining authentication contracts.
+- **`SupabaseAuthProvider`**: Production implementation using live `Supabase.instance.client.auth`.
+- **`MockAuthProvider`**: Isolated mock implementation for dev & offline testing.
+- **`AuthService`**: Clean facade delegating to the active provider.
 
 ---
 

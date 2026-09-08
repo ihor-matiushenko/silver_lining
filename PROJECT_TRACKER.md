@@ -23,7 +23,8 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 12** | **Dynamic Guest Rate Limiter** (`slowapi` enforcing `GUEST_DAILY_LIMIT=5` / day for guests) | 🟢 Complete |
 | **Step 13** | **Cloud History & Favorites API Endpoints** (`GET /history`, `POST /favorite`, `DELETE /history`) | 🟢 Complete |
 | **Step 14** | **Modular APIRouter Architecture Refactoring** (`main.py` entrypoint clean-up) | 🟢 Complete |
-| **Step 15** | **Supabase Auth UI & Cloud History Sync in Flutter App** | ⏳ Next Phase |
+| **Step 15** | **Supabase Auth UI, 2FA Support, & Provider Strategy in Flutter** | 🟢 Complete |
+| **Step 16** | **Live Supabase Credentials Setup & End-to-End Cloud History Sync** | ⏳ Tomorrow |
 
 ---
 
@@ -34,8 +35,9 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] Flutter SDK 3.44.8 & Mobile UI Scaffold (`app/lib/main.dart`)
 - [x] Python 3.11 FastAPI Modular Backend (`backend/app/main.py`)
 - [x] Pure PostgreSQL Database Architecture (Running on local port 5432)
+- [x] Flutter Auth Strategy Pattern (`IAuthProvider`, `SupabaseAuthProvider`, `MockAuthProvider`)
 - [x] Multi-Agent Protocol Guide (`AGENTS.md`) & Technical Specification (`ARCHITECTURE.md`)
 - [x] Git & GitHub Remote Synced (`silver_lining.git`)
 
 ---
-*Updated: 2026-09-07*
+*Updated: 2026-09-08*
