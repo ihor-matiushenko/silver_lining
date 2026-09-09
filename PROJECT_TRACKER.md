@@ -24,7 +24,7 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 13** | **Cloud History & Favorites API Endpoints** (`GET /history`, `POST /favorite`, `DELETE /history`) | 🟢 Complete |
 | **Step 14** | **Modular APIRouter Architecture Refactoring** (`main.py` entrypoint clean-up) | 🟢 Complete |
 | **Step 15** | **Supabase Auth UI, 2FA Support, & Provider Strategy in Flutter** | 🟢 Complete |
-| **Step 16** | **Live Supabase Credentials Setup & End-to-End Cloud History Sync** | ⏳ Tomorrow |
+| **Step 16** | **End-to-End Cloud History Sync & JWT Auth Header in Flutter** | 🟢 Complete |
 
 ---
 
@@ -36,8 +36,9 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] Python 3.11 FastAPI Modular Backend (`backend/app/main.py`)
 - [x] Pure PostgreSQL Database Architecture (Running on local port 5432)
 - [x] Flutter Auth Strategy Pattern (`IAuthProvider`, `SupabaseAuthProvider`, `MockAuthProvider`)
+- [x] End-to-End Cloud History Sync (`ApiReframingService` + `HistoryScreen`)
 - [x] Multi-Agent Protocol Guide (`AGENTS.md`) & Technical Specification (`ARCHITECTURE.md`)
 - [x] Git & GitHub Remote Synced (`silver_lining.git`)
 
 ---
-*Updated: 2026-09-08*
+*Updated: 2026-09-09*

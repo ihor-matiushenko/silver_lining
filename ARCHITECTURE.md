@@ -16,8 +16,8 @@ graph TD
         StrategyAuth -->|isSupabaseConfigured=false| MockProvider[MockAuthProvider]
         
         UI --> ApiService[ApiReframingService]
-        ApiService -->|HTTP POST /api/v1/reframe| API[FastAPI Thin APIRouters]
-        ApiService -->|HTTP GET /api/v1/history| API
+        ApiService -->|HTTP POST /api/v1/reframe + Bearer JWT| API[FastAPI Thin APIRouters]
+        ApiService -->|HTTP GET /api/v1/history + Bearer JWT| API
     end
 
     subgraph Backend Services (3-Tier Layered Python Services)
@@ -43,7 +43,27 @@ graph TD
 
 ---
 
-## 🏛️ 2. Flutter Auth Provider Strategy Pattern
+## 🔄 2. End-to-End Cloud History Sync Protocol
+
+```
+📱 Flutter App                         🐍 Python FastAPI                         🐘 PostgreSQL
+   │                                      │                                         │
+   ├── POST /api/v1/reframe ────────────► │                                         │
+   │   (Header: Bearer <jwt_token>)       ├── Verify JWT Signature                  │
+   │                                      ├── Extract user_id ('usr_123')           │
+   │                                      ├── Generate Reframed Text                │
+   │                                      └── INSERT INTO reframerecord ──────────► │
+   │                                          (user_id='usr_123')                   │
+   │                                                                                │
+   ├── GET /api/v1/history ─────────────► │                                         │
+   │   (Header: Bearer <jwt_token>)       ├── Verify JWT Signature                  │
+   │                                      └── SELECT * FROM reframerecord ────────► │
+   │ ◄── Returns JSON List of Records ────┤   WHERE user_id='usr_123'               │
+```
+
+---
+
+## 🏛️ 3. Flutter Auth Provider Strategy Pattern
 
 - **`IAuthProvider`** (`lib/services/providers/i_auth_provider.dart`): Abstract interface defining authentication contracts.
 - **`SupabaseAuthProvider`**: Production implementation using live `Supabase.instance.client.auth`.
@@ -52,7 +72,7 @@ graph TD
 
 ---
 
-## 🗄️ 3. Database Schema (SQLModel Entities)
+## 🗄️ 4. Database Schema (SQLModel Entities)
 
 Defined in `backend/app/models/db_models.py`:
 
@@ -87,7 +107,7 @@ class SafetyLog(SQLModel, table=True):
 
 ---
 
-## 📡 4. API REST Endpoint Contracts
+## 📡 5. API REST Endpoint Contracts
 
 | Method | Endpoint | Auth Required | Description |
 |---|---|---|---|
