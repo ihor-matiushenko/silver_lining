@@ -52,10 +52,10 @@ Before committing any changes, AI agents MUST run all automated verification sui
 ### 1. Backend Verification:
 ```bash
 cd backend
-.venv/bin/python test_auth_flow.py
-.venv/bin/python test_history_api.py
-.venv/bin/python test_favorites_and_delete.py
-.venv/bin/python test_rate_limiter.py
+PYTHONPATH=. .venv/bin/python tests/test_auth_flow.py
+PYTHONPATH=. .venv/bin/python tests/test_history_api.py
+PYTHONPATH=. .venv/bin/python tests/test_favorites_and_delete.py
+PYTHONPATH=. .venv/bin/python tests/test_rate_limiter.py
 ```
 
 ### 2. Flutter Mobile Verification:

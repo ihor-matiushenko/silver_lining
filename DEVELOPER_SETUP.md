@@ -80,10 +80,10 @@ Before pushing code changes, always run the full automated verification test sui
 ### Backend Test Suites:
 ```bash
 cd backend
-.venv/bin/python test_auth_flow.py            # Tests JWT Auth & Guest DB Skip
-.venv/bin/python test_history_api.py           # Tests GET /history
-.venv/bin/python test_favorites_and_delete.py  # Tests Favorite & Delete endpoints
-.venv/bin/python test_rate_limiter.py         # Tests slowapi Guest Rate Limiter
+PYTHONPATH=. .venv/bin/python tests/test_auth_flow.py            # Tests JWT Auth & Guest DB Skip
+PYTHONPATH=. .venv/bin/python tests/test_history_api.py           # Tests GET /history
+PYTHONPATH=. .venv/bin/python tests/test_favorites_and_delete.py  # Tests Favorite & Delete endpoints
+PYTHONPATH=. .venv/bin/python tests/test_rate_limiter.py         # Tests slowapi Guest Rate Limiter
 ```
 
 ### Flutter Mobile Test Suites:
