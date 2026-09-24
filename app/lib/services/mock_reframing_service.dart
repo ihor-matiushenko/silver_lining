@@ -4,9 +4,9 @@ import 'reframing_service_interface.dart';
 /// 🎭 Mock implementation of the Reframing Service for Frontend-First UI testing.
 class MockReframingService implements ReframingServiceInterface {
   @override
-  Future<ReframeResponse> reframeThought(String inputText) async {
-    // Simulate 600ms network latency
-    await Future.delayed(const Duration(milliseconds: 600));
+  Future<ReframeResponse> reframeThought(String inputText, {String targetLanguage = 'auto'}) async {
+    // Simulate 100ms network latency
+    await Future.delayed(const Duration(milliseconds: 100));
 
     final lower = inputText.toLowerCase().trim();
 

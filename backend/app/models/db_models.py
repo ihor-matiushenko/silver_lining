@@ -17,6 +17,7 @@ class ReframeRecord(SQLModel, table=True):
     user_id: Optional[str] = Field(default=None, foreign_key="user.id", index=True)
     prompt_text: str
     reframed_text: Optional[str] = Field(default=None)
+    language: str = Field(default="auto", index=True)
     is_safe: bool = Field(default=True)
     safety_category: str = Field(default="none")
     is_favorite: bool = Field(default=False)

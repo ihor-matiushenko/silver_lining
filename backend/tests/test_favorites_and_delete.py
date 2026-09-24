@@ -1,8 +1,10 @@
 import jwt
 from fastapi.testclient import TestClient
 from sqlmodel import Session
-from app.main import app
 from app.core.config import settings
+settings.LLM_PROVIDER = "mock"
+
+from app.main import app
 from app.core.database import engine
 from app.models.db_models import User, ReframeRecord
 

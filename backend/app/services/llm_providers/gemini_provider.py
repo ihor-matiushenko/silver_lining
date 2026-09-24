@@ -4,8 +4,8 @@ from app.services.llm_providers.base_provider import BaseLLMProvider
 
 # ✨ Concrete Provider for Google Gemini 1.5 Flash AI
 class GeminiProvider(BaseLLMProvider):
-    
-    async def generate_perspective(self, input_text: str) -> str:
+
+    async def generate_perspective(self, input_text: str, target_language: str = "auto") -> str:
         if not settings.GEMINI_API_KEY:
             return (
                 "Gemini API key is missing in .env configuration. "
@@ -17,12 +17,14 @@ class GeminiProvider(BaseLLMProvider):
             f"{settings.GEMINI_MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
         )
 
+        lang_override = f"\nTarget Language Request: {target_language}" if target_language != "auto" else ""
+
         payload = {
             "contents": [
                 {
                     "parts": [
                         {
-                            "text": f"{self.SYSTEM_PROMPT}\n\nUser Stress Point: \"{input_text}\"\n\nSilver Lining Perspective:"
+                            "text": f"{self.SYSTEM_PROMPT}{lang_override}\n\nUser Stress Point: \"{input_text}\"\n\nSilver Lining Perspective:"
                         }
                     ]
                 }
@@ -34,7 +36,7 @@ class GeminiProvider(BaseLLMProvider):
                 response = await client.post(gemini_url, json=payload)
                 response.raise_for_status()
                 data = response.json()
-                
+
                 candidates = data.get("candidates", [])
                 if candidates:
                     parts = candidates[0].get("content", {}).get("parts", [])

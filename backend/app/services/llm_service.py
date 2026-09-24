@@ -2,6 +2,7 @@ from app.core.config import settings
 from app.services.llm_providers.base_provider import BaseLLMProvider
 from app.services.llm_providers.ollama_provider import OllamaProvider
 from app.services.llm_providers.gemini_provider import GeminiProvider
+from app.services.llm_providers.mock_provider import MockLLMProvider
 
 # 🤖 Strategy Factory Service for LLM Generation
 class LLMService:
@@ -10,16 +11,20 @@ class LLMService:
     def get_provider() -> BaseLLMProvider:
         """
         Factory method that selects the active AI provider based on LLM_PROVIDER setting.
+        Supports: 'ollama', 'gemini', 'mock'.
         """
         provider_type = settings.LLM_PROVIDER.lower().strip()
-        
+
+        if provider_type == "mock":
+            return MockLLMProvider()
+
         if provider_type == "gemini":
             return GeminiProvider()
-        
+
         # Default fallback is 100% Free Local Ollama Provider!
         return OllamaProvider()
 
     @staticmethod
-    async def generate_reframed_perspective(input_text: str) -> str:
+    async def generate_reframed_perspective(input_text: str, target_language: str = "auto") -> str:
         provider = LLMService.get_provider()
-        return await provider.generate_perspective(input_text)
+        return await provider.generate_perspective(input_text, target_language=target_language)

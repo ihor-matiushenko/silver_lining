@@ -36,7 +36,7 @@ class ApiReframingService implements ReframingServiceInterface {
   }
 
   @override
-  Future<ReframeResponse> reframeThought(String inputText) async {
+  Future<ReframeResponse> reframeThought(String inputText, {String targetLanguage = 'auto'}) async {
     final uri = Uri.parse('$baseUrl/api/v1/reframe');
 
     try {
@@ -45,6 +45,7 @@ class ApiReframingService implements ReframingServiceInterface {
         headers: _buildHeaders(),
         body: jsonEncode({
           'input_text': inputText,
+          'target_language': targetLanguage,
         }),
       );
 

@@ -23,7 +23,7 @@ class ReframingService:
         Processes a perspective reframing request:
         1. Validates non-empty input.
         2. Runs 3-Tier Safety Engine checks.
-        3. If safe, calls AI Strategy Engine (Ollama/Gemini).
+        3. If safe, calls AI Strategy Engine (Ollama/Gemini/Mock).
         4. Persists record in PostgreSQL ONLY if the request is authenticated.
         """
         input_text = payload.input_text.strip()
@@ -45,8 +45,12 @@ class ReframingService:
             db.commit()
             return safety_result
 
-        # Step 2: Safe input -> Call Local Ollama / Gemini AI Strategy Provider
-        reframed_text = await LLMService.generate_reframed_perspective(input_text)
+        # Step 2: Safe input -> Call AI Strategy Provider with target_language
+        target_lang = payload.target_language if payload.target_language else "auto"
+        reframed_text = await LLMService.generate_reframed_perspective(
+            input_text=input_text,
+            target_language=target_lang
+        )
 
         # Step 3: ONLY save reframed record to PostgreSQL if the user is authenticated!
         if user_id:
@@ -54,6 +58,7 @@ class ReframingService:
                 user_id=user_id,
                 prompt_text=input_text,
                 reframed_text=reframed_text,
+                language=target_lang,
                 is_safe=True,
                 safety_category="none",
             )
@@ -64,6 +69,7 @@ class ReframingService:
             is_safe=True,
             safety_category="none",
             reframed_text=reframed_text,
+            language=target_lang,
             crisis_triggered=False,
             emergency_hotline=None
         )

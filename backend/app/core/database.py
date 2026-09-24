@@ -1,4 +1,5 @@
 from sqlmodel import SQLModel, create_engine, Session
+from sqlalchemy import text
 from app.core.config import settings
 from app.models.db_models import User, ReframeRecord, SafetyLog
 
@@ -12,6 +13,9 @@ engine = create_engine(
 def init_db():
     """Auto-creates all SQLModel database tables on startup if they don't exist."""
     SQLModel.metadata.create_all(engine)
+    with engine.connect() as conn:
+        conn.execute(text("ALTER TABLE reframerecord ADD COLUMN IF NOT EXISTS language VARCHAR DEFAULT 'auto';"))
+        conn.commit()
 
 def get_session():
     """FastAPI Dependency for database sessions per HTTP request."""
