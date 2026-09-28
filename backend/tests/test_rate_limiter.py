@@ -30,7 +30,19 @@ def run_rate_limiter_verification():
     print(f"   Response Payload: {response_exceeded.text}")
 
     assert response_exceeded.status_code == 429
-    print("\n" + "=" * 55 + "\n🎉 RATE LIMITER TEST PASSED 100%! HTTP 429 TOO MANY REQUESTS VERIFIED!\n")
+    print("   ✅ Guest Request 6 Blocked as expected! HTTP 429 Too Many Requests")
+
+    print("\n🔓 Testing Authenticated Request from same IP (Exemption Check)...")
+    response_auth = client.post(
+        "/api/v1/reframe",
+        json={"input_text": "Authenticated prompt should bypass guest limit"},
+        headers={"Authorization": "Bearer dev_mock_jwt_token"}
+    )
+    print(f"   Authenticated Request Status: HTTP {response_auth.status_code}")
+    assert response_auth.status_code == 200
+    print("   ✅ Authenticated User Successfully Exempted from Guest Limit! HTTP 200 OK")
+
+    print("\n" + "=" * 55 + "\n🎉 RATE LIMITER & AUTH EXEMPTION TEST PASSED 100%!\n")
 
 if __name__ == "__main__":
     run_rate_limiter_verification()

@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import HTTPException
 from sqlmodel import Session
 
-from app.models.db_models import ReframeRecord, SafetyLog
+from app.models.db_models import User, ReframeRecord, SafetyLog
 from app.models.schemas import ReframeRequest, ReframeResponse
 from app.services.safety_service import SafetyService
 from app.services.llm_service import LLMService
@@ -54,6 +54,13 @@ class ReframingService:
 
         # Step 3: ONLY save reframed record to PostgreSQL if the user is authenticated!
         if user_id:
+            # Auto-provision user record in PostgreSQL if not yet created (satisfies Foreign Key constraint)
+            existing_user = db.get(User, user_id)
+            if not existing_user:
+                user_email = (user.get("email") if user else None) or f"{user_id}@example.com"
+                db.add(User(id=user_id, email=user_email, auth_provider="supabase"))
+                db.commit()
+
             record = ReframeRecord(
                 user_id=user_id,
                 prompt_text=input_text,

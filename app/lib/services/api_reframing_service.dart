@@ -19,7 +19,11 @@ class ApiReframingService implements ReframingServiceInterface {
     if (kIsWeb) {
       return 'http://127.0.0.1:8000';
     }
-    // For native Android emulator, localhost is 10.0.2.2; for macOS/iOS it is 127.0.0.1
+    // For native Android emulator, localhost is mapped to 10.0.2.2
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return 'http://10.0.2.2:8000';
+    }
+    // For iOS simulator and macOS desktop, localhost is 127.0.0.1
     return 'http://127.0.0.1:8000';
   }
 

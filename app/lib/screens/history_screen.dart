@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/history_item.dart';
+import '../screens/auth_screen.dart';
 import '../services/api_reframing_service.dart';
 import '../services/auth_service.dart';
 import '../services/storage_service.dart';
@@ -86,6 +87,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: isAuth
+            ? [
+                IconButton(
+                  tooltip: 'Sign Out',
+                  icon: const Icon(Icons.logout, size: 20),
+                  onPressed: () async {
+                    await AuthService().signOut();
+                    _loadHistory();
+                  },
+                ),
+              ]
+            : null,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -100,14 +113,39 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: AppColors.warning),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: AppColors.warning, size: 18),
-                    SizedBox(width: 8),
-                    Expanded(
+                    const Icon(Icons.info_outline, color: AppColors.warning, size: 18),
+                    const SizedBox(width: 8),
+                    const Expanded(
                       child: Text(
-                        'Guest Mode: History stored on device. Sign in to back up to Cloud!',
+                        'Guest Mode: History on device.',
                         style: AppTypography.bodyMuted,
+                      ),
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: AppColors.warning.withValues(alpha: 0.2),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      ),
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => AuthScreen(
+                              onAuthSuccess: () => Navigator.of(context).pop(),
+                              onContinueAsGuest: () => Navigator.of(context).pop(),
+                            ),
+                          ),
+                        );
+                        _loadHistory();
+                      },
+                      child: const Text(
+                        'Sign In',
+                        style: TextStyle(
+                          color: AppColors.warning,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],

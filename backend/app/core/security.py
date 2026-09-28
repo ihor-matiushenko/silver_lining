@@ -12,6 +12,14 @@ def verify_jwt_token(token: str) -> dict:
     Decodes and cryptographically verifies JWT token signature using SUPABASE_JWT_SECRET.
     Throws HTTP 401 Unauthorized if the token is forged, expired, or invalid.
     """
+    # 🧪 Development / Mock mode bypass: enables seamless offline testing with MockAuthProvider
+    if settings.ENVIRONMENT == "development" and token == "dev_mock_jwt_token":
+        return {
+            "sub": "usr_mock_logged_in_123",
+            "email": "mock_user@example.com",
+            "role": "authenticated"
+        }
+
     try:
         payload = jwt.decode(
             token,

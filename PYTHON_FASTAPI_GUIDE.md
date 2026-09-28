@@ -26,21 +26,32 @@ FastAPI uses **type hints** (like TypeScript) and **Pydantic** (like Zod), and a
 ```
 silver_lining/backend/
 ├── app/
-│   ├── main.py              <-- FastAPI App Entry Point (like app.ts)
-│   ├── api/
-│   │   └── v1/
-│   │       └── reframe.py   <-- Route Endpoints (like routes/reframe.ts)
-│   ├── core/
-│   │   ├── config.py        <-- Env variables & Settings (like dotenv)
-│   │   └── safety.py        <-- AI Safety Guardrail Logic
-│   ├── models/
-│   │   └── schemas.py       <-- Pydantic Request/Response Models (like DTOs)
-│   └── services/
-│       └── llm_service.py   <-- Gemini & Safety API Integrations
-├── requirements.txt         <-- Dependencies (like package.json)
-├── Dockerfile               <-- Container definition
-└── README.md
+│   ├── main.py                  # FastAPI App Entry Point (like app.ts / server.ts)
+│   ├── api/v1/                  # Thin HTTP Routers (like routes/reframe.ts)
+│   │   ├── reframe_router.py    # POST /api/v1/reframe
+│   │   ├── history_router.py    # GET/POST/DELETE /api/v1/history
+│   │   └── localization_router.py# GET /api/v1/l10n/{lang}
+│   ├── core/                    # Cross-cutting concerns & middleware
+│   │   ├── config.py            # Typed Env Settings (like zod + dotenv)
+│   │   ├── database.py          # PostgreSQL Connection Pool & Session Generator
+│   │   ├── security.py          # JWT Auth Guard (like passport/express middleware)
+│   │   └── limiter.py           # Rate Limiter (like express-rate-limit)
+│   ├── models/                  # Data Models & Schemas
+│   │   ├── schemas.py           # Pydantic DTOs for Request/Response validation
+│   │   └── db_models.py         # SQLModel ORM Tables (like Prisma / TypeORM entities)
+│   └── services/                # Pure Business Logic (Decoupled from HTTP)
+│       ├── reframing_service.py # Reframing orchestrator
+│       ├── safety_service.py    # 3-Tier Guardrails
+│       ├── history_service.py   # Cloud history & ownership checks
+│       ├── localization_service.py# Dynamic UI translations
+│       ├── llm_service.py       # AI Provider Factory
+│       └── llm_providers/       # Strategy implementations (Ollama, Gemini, Mock)
+├── tests/                       # Unit & API verification test suites
+├── requirements.txt             # Python Dependencies (like package.json)
+└── Dockerfile                   # Container definition
 ```
+
+*(For detailed line-by-line file explanations and architectural rationales, see [ARCHITECTURE.md](file:///Users/ihormatiushenko/Workspace/silver_lining/ARCHITECTURE.md)).*
 
 ---
 

@@ -50,7 +50,93 @@ graph TD
 
 ---
 
-## 🌐 2. Dynamic Universal Multi-Language Architecture
+## 🐍 2. Backend Architecture & File-by-File Specification
+
+The backend adheres strictly to a **3-Tier Layered Architecture** (Controller $\rightarrow$ Business Service $\rightarrow$ Data Persistence):
+
+```
+       [ Client: Flutter Mobile App / Web / Curl ]
+                           │ HTTP Request
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 1. ROUTER / API LAYER (app/api/v1/)                         │
+│    - Thin HTTP Controllers (1–3 lines per endpoint)         │
+│    - Handles HTTP status codes, query params, request bodies│
+│    - Injects dependencies (Auth, DB session, Rate Limiter)  │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ Pure Python Calls
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 2. SERVICE / BUSINESS LOGIC LAYER (app/services/)           │
+│    - Pure domain logic, completely decoupled from HTTP       │
+│    - ReframingService, SafetyService, HistoryService        │
+│    - LLM Strategy Pattern (Ollama, Gemini, Mock)           │
+│    - LocalizationService (UI translations)                  │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ ORM Models & Queries
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 3. DATA & PERSISTENCE LAYER (app/models/ & app/core/)       │
+│    - SQLModel ORM (PostgreSQL tables: User, ReframeRecord)  │
+│    - Pydantic DTO Schemas (Request/Response validation)     │
+│    - Engine, Connection Pool, Supabase JWT verification     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Complete Backend Directory Anatomy & File Purposes
+
+```
+backend/
+├── app/
+│   ├── main.py                  # 🔌 Application Entry Point & Lifespan
+│   ├── core/                    # ⚙️ Infrastructure & Cross-Cutting Concerns
+│   │   ├── config.py            # Strongly-typed environment settings (BaseSettings)
+│   │   ├── database.py          # PostgreSQL engine, pool & session generator
+│   │   ├── security.py          # Supabase JWT signature verification & Auth dependencies
+│   │   └── limiter.py           # slowapi rate limiter configuration (5/day guests)
+│   ├── models/                  # 📄 Data Structures & Entities
+│   │   ├── db_models.py         # PostgreSQL Database Tables via SQLModel (ORM)
+│   │   └── schemas.py           # HTTP Request & Response Schemas via Pydantic (DTOs)
+│   ├── api/v1/                  # 🌐 Thin HTTP APIRouters (Controllers)
+│   │   ├── reframe_router.py    # POST /api/v1/reframe controller
+│   │   ├── history_router.py    # GET/POST/DELETE /api/v1/history controllers
+│   │   └── localization_router.py# GET /api/v1/l10n/{lang_code} controller
+│   └── services/                # 🧠 Pure Business Logic Services
+│       ├── reframing_service.py # Orchestrates safety + LLM strategy + DB persistence
+│       ├── safety_service.py    # 3-tier guardrails (self-harm crisis / crime refusal)
+│       ├── history_service.py   # Cloud history retrieval, favorites, ownership checks
+│       ├── localization_service.py# In-memory dictionary + on-demand AI translation
+│       ├── llm_service.py       # Factory method for AI Provider strategy
+│       └── llm_providers/       # Strategy Pattern implementations
+│           ├── base_provider.py # Abstract Base Class (ABC) interface & system prompt
+│           ├── ollama_provider.py # Free local Ollama integration (qwen3-vl:8b)
+│           ├── gemini_provider.py # Google Gemini 1.5 Flash cloud API integration
+│           └── mock_provider.py # Instant <1ms zero-CPU provider for test suites
+├── tests/                       # 🧪 Automated Test Verification Suites
+└── requirements.txt             # 📦 Backend Dependencies
+```
+
+### Why Each File Exists:
+
+1. **`app/main.py`**: Minimal 50-line bootstrap using FastAPI's `@asynccontextmanager` `lifespan` handler to auto-create tables on startup, register CORS for Flutter, bind `slowapi` exception handlers, and mount modular routers.
+2. **`app/core/config.py`**: Pydantic `BaseSettings` singleton validating all environment variables at startup (fail-fast principle). Auto-parses `.env`.
+3. **`app/core/database.py`**: Sets up SQLAlchemy connection pooling (`pool_pre_ping=True` to auto-heal dropped connections) and exposes the `get_session()` generator dependency to automatically open and close database sessions per request.
+4. **`app/core/security.py`**: Validates Supabase JWTs via `HS256`. Exposes `get_current_user_optional` (allowing guest access) and `get_current_user` (requiring authentication).
+5. **`app/core/limiter.py`**: Protects AI resources and costs by enforcing the guest daily limit (5/day) using `slowapi`.
+6. **`app/models/schemas.py`**: Pydantic DTO models (`ReframeRequest`, `ReframeResponse`) ensuring strict incoming payload validation and automatic OpenAPI Swagger docs generation at `/docs`.
+7. **`app/models/db_models.py`**: SQLModel ORM models (`User`, `ReframeRecord`, `SafetyLog`) defining table schemas, indices, and foreign keys.
+8. **`app/api/v1/reframe_router.py`**: HTTP controller for thought reframing, delegating work directly to `ReframingService`.
+9. **`app/api/v1/history_router.py`**: HTTP controllers for user history, favorite toggles, and deletions with ownership validation.
+10. **`app/api/v1/localization_router.py`**: HTTP controller returning UI translation key-value maps.
+11. **`app/services/reframing_service.py`**: Encapsulates the entire reframing business flow: validation $\rightarrow$ safety check $\rightarrow$ AI generation $\rightarrow$ conditional PostgreSQL save for authenticated users.
+12. **`app/services/safety_service.py`**: Zero-tolerance guardrail engine evaluating crisis/self-harm and criminal policy violations.
+13. **`app/services/history_service.py`**: PostgreSQL query logic ensuring users can only read, favorite, or delete their own records.
+14. **`app/services/localization_service.py`**: Dynamic translation engine combining base English strings, cached common languages, and on-demand AI translation for any ISO code.
+15. **`app/services/llm_service.py` & `llm_providers/`**: Implements the Strategy Pattern. Decouples the application from any single AI vendor (seamlessly switching between Ollama, Gemini, and Mock providers).
+
+---
+
+## 🌐 3. Dynamic Universal Multi-Language Architecture
 
 The system implements a **zero-hardcoding universal multi-language architecture**:
 
@@ -64,7 +150,7 @@ The system implements a **zero-hardcoding universal multi-language architecture*
 
 ---
 
-## 🔒 3. Authentication & PostgreSQL Database Schema
+## 🔒 4. Authentication & PostgreSQL Database Schema
 
 ### `User` Table Model
 * `id`: String (UUID primary key)
@@ -86,7 +172,7 @@ The system implements a **zero-hardcoding universal multi-language architecture*
 
 ---
 
-## 🧪 4. Automated Verification & Testing
+## 🧪 5. Automated Verification & Testing
 
 All backend unit and API test suites use `settings.LLM_PROVIDER = "mock"` to ensure **instant test execution (<3 seconds total)** with **0% extra CPU load**:
 1. `tests/test_auth_flow.py`: 100% Pass

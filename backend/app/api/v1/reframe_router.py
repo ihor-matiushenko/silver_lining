@@ -10,8 +10,12 @@ from app.services.reframing_service import ReframingService
 
 reframe_router = APIRouter(tags=["Reframing AI"])
 
+def is_authenticated_request(request: Request) -> bool:
+    """Exempts authenticated requests containing Authorization header from guest rate limits"""
+    return bool(request.headers.get("authorization"))
+
 @reframe_router.post("/reframe", response_model=ReframeResponse)
-@limiter.limit(get_guest_rate_limit)
+@limiter.limit(get_guest_rate_limit, exempt_when=is_authenticated_request)
 async def reframe_thought(
     request: Request,
     payload: ReframeRequest,

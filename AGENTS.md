@@ -76,3 +76,5 @@ flutter test
 2. **Python / FastAPI**:
    - Keep routers thin! Delegate business logic to `app/services/`.
    - Use Pydantic v2 syntax (avoid positional `Field(...)` ellipsis for required fields).
+3. **Continuous Documentation Sync**:
+   - Whenever any new file, endpoint, database model, or architectural pattern is created, modified, or deleted in the backend or frontend, AI agents MUST immediately update [ARCHITECTURE.md](file:///Users/ihormatiushenko/Workspace/silver_lining/ARCHITECTURE.md) to keep the system diagrams and file-by-file breakdown 100% accurate and up to date.
