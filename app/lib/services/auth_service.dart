@@ -1,10 +1,12 @@
+import 'package:flutter/foundation.dart';
 import '../config/app_config.dart';
 import 'providers/i_auth_provider.dart';
 import 'providers/mock_auth_provider.dart';
 import 'providers/supabase_auth_provider.dart';
 
 /// 🔐 AuthService: Clean facade delegating to live Supabase or Mock Auth Provider
-class AuthService implements IAuthProvider {
+/// Extends ChangeNotifier to allow UI components (AppBars, History, Profile) to reactively rebuild!
+class AuthService extends ChangeNotifier implements IAuthProvider {
   static final AuthService _instance = AuthService._internal();
   factory AuthService() => _instance;
 
@@ -42,16 +44,24 @@ class AuthService implements IAuthProvider {
   Future<void> signUp({
     required String email,
     required String password,
-  }) =>
-      _provider.signUp(email: email, password: password);
+  }) async {
+    await _provider.signUp(email: email, password: password);
+    notifyListeners();
+  }
 
   @override
   Future<void> signIn({
     required String email,
     required String password,
-  }) =>
-      _provider.signIn(email: email, password: password);
+  }) async {
+    await _provider.signIn(email: email, password: password);
+    notifyListeners();
+  }
 
   @override
-  Future<void> signOut() => _provider.signOut();
+  Future<void> signOut() async {
+    await _provider.signOut();
+    notifyListeners();
+  }
 }
+

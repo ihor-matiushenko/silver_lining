@@ -136,7 +136,82 @@ backend/
 
 ---
 
-## 🌐 3. Dynamic Universal Multi-Language Architecture
+## 📱 3. Flutter Mobile Architecture & File-by-File Breakdown
+
+The Flutter mobile application follows a clean layered presentation $\rightarrow$ service/facade $\rightarrow$ persistence architecture:
+
+```
+app/lib/
+├── main.dart                       # 🚀 App entry point, MaterialApp & root theme
+├── config/
+│   └── app_config.dart             # ⚙️ Centralized environment flags, Supabase keys & apiBaseUrl
+├── models/                         # 📄 Strongly-typed Data Transfer Objects (DTOs)
+│   ├── app_language.dart           # Supported language codes & native display names
+│   ├── history_item.dart           # Reframing history record model (JSON serialization)
+│   └── reframe_response.dart       # API response model from /api/v1/reframe
+├── screens/                        # 📱 Full-screen page orchestrators
+│   ├── main_navigation_screen.dart # Persistent bottom bar & IndexedStack
+│   ├── home_screen.dart            # Main AI reframing interface (guest-only local storage guard)
+│   ├── history_screen.dart         # Dual-mode history (Local guest vs PostgreSQL cloud sync)
+│   └── auth_screen.dart            # Glassmorphic Login & Registration Form with 2FA Support
+├── services/                       # 🧠 Domain services & external integrations
+│   ├── auth_service.dart           # Facade extending ChangeNotifier for reactive auth state
+│   ├── api_reframing_service.dart  # HTTP API client (JWT injection & dual-mode sync)
+│   ├── storage_service.dart        # Local Key-Value store (shared_preferences)
+│   ├── dynamic_localization_service.dart # Real-time backend UI dictionary fetcher
+│   ├── emergency_launcher_service.dart   # Native OS phone intent launcher (url_launcher)
+│   ├── reframing_service_interface.dart  # Abstract contract for AI reframing service
+│   ├── mock_reframing_service.dart       # Offline mock AI service for UI testing
+│   └── providers/                  # 🔌 Strategy pattern for Authentication
+│       ├── i_auth_provider.dart        # Abstract IAuthProvider contract
+│       ├── supabase_auth_provider.dart # Live Supabase Auth client implementation
+│       └── mock_auth_provider.dart     # Offline development & test mock provider
+├── theme/                          # 🎨 Centralized Design System tokens
+│   ├── app_colors.dart             # Type-safe color palette & gradient tokens
+│   └── app_typography.dart         # Type-safe text styles & weights
+└── widgets/                        # 🧩 Reusable, modular UI components
+    ├── glass_card.dart             # Glassmorphism container with blur and border glow
+    ├── app_text_field.dart         # Dark translucent multiline text input
+    ├── primary_button.dart         # Gradient action button with loading spinner
+    ├── status_badge.dart           # Pill badge for safety category indication
+    ├── result_card.dart            # Declarative card dispatcher (Success / Crisis / Refusal)
+    ├── animations/
+    │   └── typewriter_text.dart    # 120 FPS character-by-character typewriter reveal
+    ├── app_bar/
+    │   └── home_app_bar.dart       # Reactive header with account dialog & sign-out
+    ├── cards/
+    │   ├── crisis_shield_card.dart # Tier 1: Red card with 1-tap 988 emergency dialer
+    │   ├── policy_refusal_card.dart# Tier 2: Amber card explaining prohibited prompts
+    │   ├── reframed_perspective_card.dart # Tier 3: Violet card showing AI silver lining
+    │   ├── history_card.dart       # Reusable card component for saved reframed thoughts
+    │   └── guest_history_banner.dart# Warning banner prompting guests to sign in
+    ├── chips/
+    │   ├── preset_chip.dart        # Individual tappable scenario pill
+    │   └── preset_chips.dart       # 4 test presets (Career, Breakup, Crisis, Crime)
+    └── forms/
+        ├── input_form_card.dart    # Thought input form card encapsulating chips & submit
+        ├── primary_auth_form.dart  # Modular Sign In / Sign Up form component
+        └── two_factor_auth_form.dart# Modular 2FA OTP code verification component
+```
+
+### Why Each Mobile Component Exists:
+
+1. **`config/app_config.dart`**: Single source of truth for Supabase keys and `apiBaseUrl` with cross-platform URL resolution (handling Android emulator `10.0.2.2:8000` vs iOS/web `127.0.0.1:8000`).
+2. **`services/auth_service.dart`**: Implements the Facade Pattern and extends `ChangeNotifier`. Notifies listeners on `signIn()`, `signUp()`, and `signOut()` so UI components (like `HomeAppBar` and `HistoryScreen`) rebuild reactively.
+3. **`services/providers/`**: Implements the Strategy Pattern for authentication (`IAuthProvider`). Decouples UI code from Supabase, enabling 100% offline development with `MockAuthProvider`.
+4. **`services/api_reframing_service.dart`**: Handles HTTP networking, automatic JWT Bearer token attachment, and HTTP 429 rate limit payload decoding.
+5. **`services/storage_service.dart`**: Encapsulates `shared_preferences` persistence for guest users.
+6. **`screens/main_navigation_screen.dart`**: Uses `IndexedStack` to preserve tab scroll position and form inputs in memory across tab switches.
+7. **`screens/home_screen.dart`**: High-level coordinator. Only persists safe reframed thoughts to local `StorageService` if the user is a guest, preventing data leakage for authenticated users whose history is stored in PostgreSQL.
+8. **`screens/history_screen.dart`**: Dual-mode history list listening to `AuthService`. Displays `GuestHistoryBanner` for guests and fetches from PostgreSQL for authenticated users. Uses modular `HistoryCard` items.
+9. **`screens/auth_screen.dart`**: Clean 80-line stateful container hosting `PrimaryAuthForm` and `TwoFactorAuthForm` inside a unified `GlassCard`.
+10. **`widgets/cards/history_card.dart` & `guest_history_banner.dart`**: Modular card widgets cleanly decoupled from screen-level orchestration.
+11. **`widgets/forms/primary_auth_form.dart` & `two_factor_auth_form.dart`**: Extracted form widgets with strict field validation, mode switching, and password obscuring.
+12. **`widgets/app_bar/home_app_bar.dart`**: Wraps actions in `ListenableBuilder` against `AuthService()`. Displays an Account Dialog with user email and "Sign Out" when authenticated, or opens `AuthScreen` when guest.
+
+---
+
+## 🌐 4. Dynamic Universal Multi-Language Architecture
 
 The system implements a **zero-hardcoding universal multi-language architecture**:
 
@@ -150,7 +225,7 @@ The system implements a **zero-hardcoding universal multi-language architecture*
 
 ---
 
-## 🔒 4. Authentication & PostgreSQL Database Schema
+## 🔒 5. Authentication & PostgreSQL Database Schema
 
 ### `User` Table Model
 * `id`: String (UUID primary key)
@@ -172,7 +247,7 @@ The system implements a **zero-hardcoding universal multi-language architecture*
 
 ---
 
-## 🧪 5. Automated Verification & Testing
+## 🧪 6. Automated Verification & Testing
 
 All backend unit and API test suites use `settings.LLM_PROVIDER = "mock"` to ensure **instant test execution (<3 seconds total)** with **0% extra CPU load**:
 1. `tests/test_auth_flow.py`: 100% Pass

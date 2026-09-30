@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../config/app_config.dart';
 import '../models/history_item.dart';
 import '../models/reframe_response.dart';
 import 'auth_service.dart';
@@ -12,20 +13,8 @@ class ApiReframingService implements ReframingServiceInterface {
 
   ApiReframingService({
     String? baseUrl,
-  }) : baseUrl = baseUrl ?? _getDefaultBaseUrl();
+  }) : baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
 
-  /// Automatically resolves the correct backend host URL based on platform
-  static String _getDefaultBaseUrl() {
-    if (kIsWeb) {
-      return 'http://127.0.0.1:8000';
-    }
-    // For native Android emulator, localhost is mapped to 10.0.2.2
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:8000';
-    }
-    // For iOS simulator and macOS desktop, localhost is 127.0.0.1
-    return 'http://127.0.0.1:8000';
-  }
 
   /// Builds standard HTTP headers, automatically attaching JWT token if user is authenticated
   Map<String, String> _buildHeaders() {

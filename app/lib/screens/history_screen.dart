@@ -6,7 +6,8 @@ import '../services/auth_service.dart';
 import '../services/storage_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_typography.dart';
-import '../widgets/glass_card.dart';
+import '../widgets/cards/guest_history_banner.dart';
+import '../widgets/cards/history_card.dart';
 
 /// 📚 History & Favorites Screen Component (Dual-Mode: Cloud Sync & Offline Storage)
 class HistoryScreen extends StatefulWidget {
@@ -24,11 +25,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void initState() {
     super.initState();
+    AuthService().addListener(_loadHistory);
     _loadHistory();
+  }
+
+  @override
+  void dispose() {
+    AuthService().removeListener(_loadHistory);
+    super.dispose();
   }
 
   Future<void> _loadHistory() async {
     setState(() => _isLoading = true);
+
 
     if (AuthService().isAuthenticated) {
       // ☁️ Authenticated User: Fetch Cloud History from PostgreSQL Backend!
@@ -106,50 +115,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
           children: [
             // Mode Banner
             if (!isAuth) ...[
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.warning),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.info_outline, color: AppColors.warning, size: 18),
-                    const SizedBox(width: 8),
-                    const Expanded(
-                      child: Text(
-                        'Guest Mode: History on device.',
-                        style: AppTypography.bodyMuted,
+              GuestHistoryBanner(
+                onSignInPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => AuthScreen(
+                        onAuthSuccess: () => Navigator.of(context).pop(),
+                        onContinueAsGuest: () => Navigator.of(context).pop(),
                       ),
                     ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: AppColors.warning.withValues(alpha: 0.2),
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      ),
-                      onPressed: () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => AuthScreen(
-                              onAuthSuccess: () => Navigator.of(context).pop(),
-                              onContinueAsGuest: () => Navigator.of(context).pop(),
-                            ),
-                          ),
-                        );
-                        _loadHistory();
-                      },
-                      child: const Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: AppColors.warning,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                  _loadHistory();
+                },
               ),
               const SizedBox(height: 12),
             ],
@@ -190,38 +167,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           separatorBuilder: (context, index) => const SizedBox(height: 14),
                           itemBuilder: (context, index) {
                             final item = displayedItems[index];
-                            return GlassCard(
-                              borderColor: item.isFavorite ? AppColors.secondary : AppColors.primary,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(item.dateString, style: AppTypography.subtitle),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: Icon(
-                                              item.isFavorite ? Icons.favorite : Icons.favorite_border,
-                                              color: item.isFavorite ? AppColors.secondary : Colors.grey,
-                                              size: 20,
-                                            ),
-                                            onPressed: () => _toggleFavorite(item),
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete_outline, color: Colors.grey, size: 20),
-                                            onPressed: () => _deleteItem(item),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  Text('"${item.promptText}"', style: AppTypography.titleBold),
-                                  const SizedBox(height: 8),
-                                  Text(item.response.reframedText ?? '', style: AppTypography.bodyMuted),
-                                ],
-                              ),
+                            return HistoryCard(
+                              item: item,
+                              onToggleFavorite: () => _toggleFavorite(item),
+                              onDelete: () => _deleteItem(item),
                             );
                           },
                         ),

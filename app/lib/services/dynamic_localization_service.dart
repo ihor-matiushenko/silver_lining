@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../config/app_config.dart';
 
 /// 🌐 Dynamic Backend-Driven UI Localization Service
 /// Fetches UI translations dynamically for ANY language code from /api/v1/l10n/{lang}
@@ -12,7 +13,8 @@ class DynamicLocalizationService {
 
   DynamicLocalizationService({
     String? baseUrl,
-  }) : baseUrl = baseUrl ?? 'http://127.0.0.1:8000';
+  }) : baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
+
 
   static final DynamicLocalizationService instance = DynamicLocalizationService();
 

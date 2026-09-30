@@ -5,9 +5,9 @@ This tracking document records our progress in mastering **Dart & Flutter** (Mob
 ---
 
 ## 📌 Status Summary
-* **Current Checkpoint**: Session 2 Completed! (Part 2: The AI Engine, 3-Tier Safety Engine & SQLModel ORM)
-* **Next Session**: Session 3 $\rightarrow$ **Part 3: Dart & Flutter Mobile UI & Design System**
-* **Context Preservation**: All architectural bugs identified and backend verification suites verified with 100% test pass rates!
+* **Current Checkpoint**: Session 3 Completed! (Part 3: Dart & Flutter Mobile UI & Design System)
+* **Next Session**: Session 4 $\rightarrow$ **Part 4: Mobile State, Networking, Auth & End-to-End Sync**
+* **Context Preservation**: All architectural bugs verified, all backend test suites 100% pass, flutter analyze & flutter test 100% pass!
 
 ---
 
@@ -28,27 +28,19 @@ This tracking document records our progress in mastering **Dart & Flutter** (Mob
 * 🐞 **Bug 5: Multi-Language Safety Bypass & False Positives**: In [`safety_service.py`](file:///Users/ihormatiushenko/Workspace/silver_lining/backend/app/services/safety_service.py), added multi-lingual crisis keywords (Ukrainian, Spanish, German, French) and switched to regex word boundaries (`\b`) to prevent false positives like "my account was hacked".
 * 🐞 **Bug 7: Android Emulator URL**: In [`api_reframing_service.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/api_reframing_service.dart), configured host mapping to `10.0.2.2:8000` when running on Android.
 
+### 3. Mobile Architectural Refactoring & Bug Fixes (Session 3)
+* 🐞 **Bug: Authenticated Thought Leakage into Local Storage**: In [`home_screen.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/screens/home_screen.dart), added `!AuthService().isAuthenticated` check before saving to `StorageService` (`shared_preferences`), preventing logged-in user thoughts from leaking into offline guest storage.
+* 🐞 **Bug: Inconsistent Android Emulator Host**: Moved platform-aware `apiBaseUrl` (`10.0.2.2:8000` on Android, `127.0.0.1:8000` on iOS/web) into [`app_config.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/config/app_config.dart), used by both `ApiReframingService` and `DynamicLocalizationService`.
+* 🐞 **Bug: Broken Profile/Sign-Out Flow**: Updated [`home_app_bar.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/app_bar/home_app_bar.dart) with `ListenableBuilder` and an Account Dialog showing email and "Sign Out" when authenticated, instead of forcing the user back to the login screen.
+* 🧼 **Modularization: Card Decomposition**: Extracted inline widgets from `HistoryScreen` into reusable [`HistoryCard`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/cards/history_card.dart) and [`GuestHistoryBanner`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/cards/guest_history_banner.dart). Added unit and widget tests in [`cards_test.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/test/cards_test.dart).
+* 🧼 **Modularization: AuthScreen Decomposition**: Decomposed 395-line `AuthScreen` into modular [`PrimaryAuthForm`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/forms/primary_auth_form.dart) and [`TwoFactorAuthForm`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/forms/two_factor_auth_form.dart), reusing `GlassCard`.
+* ⚡ **Reactive State**: Made [`AuthService`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/auth_service.dart) extend `ChangeNotifier` so all UI elements reactively update on sign-in and sign-out.
+
 ---
 
 ## 🚀 Upcoming Deep Dive Roadmap
 
-### 📍 Session 2 (Tomorrow): Part 2 - AI Engine, 3-Tier Safety & SQLModel ORM
-* **Goal**: Understand Python AI integration, prompt engineering, guardrails, and database ORM design.
-* **Files to Explore in Detail**:
-  1. [`backend/app/services/safety_service.py`](file:///Users/ihormatiushenko/Workspace/silver_lining/backend/app/services/safety_service.py): How deterministic regex & classification guardrails work before any LLM token is billed.
-  2. [`backend/app/services/llm_service.py`](file:///Users/ihormatiushenko/Workspace/silver_lining/backend/app/services/llm_service.py) & [`llm_providers/`](file:///Users/ihormatiushenko/Workspace/silver_lining/backend/app/services/llm_providers/): The Strategy Pattern in Python (`BaseLLMProvider`, `OllamaProvider`, `GeminiProvider`, `MockLLMProvider`).
-  3. [`backend/app/services/localization_service.py`](file:///Users/ihormatiushenko/Workspace/silver_lining/backend/app/services/localization_service.py): Dynamic prompt auto-translation pass and memory caching.
-  4. [`backend/app/models/db_models.py`](file:///Users/ihormatiushenko/Workspace/silver_lining/backend/app/models/db_models.py): SQLModel vs Prisma/TypeORM, declarative table declarations, foreign keys, and indexes.
-
-### 📍 Session 3: Part 3 - Dart & Flutter Mobile UI & Design System
-* **Goal**: Map React/TS frontend paradigms to Dart and Flutter widget trees.
-* **Files to Explore in Detail**:
-  1. [`app/lib/main.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/main.dart) & [`app/lib/screens/main_navigation_screen.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/screens/main_navigation_screen.dart): App bootstrap, MaterialApp, `IndexedStack`, and Bottom Navigation.
-  2. [`app/lib/theme/app_colors.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/theme/app_colors.dart) & [`app_typography.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/theme/app_typography.dart): Design tokens in Flutter vs CSS variables / Tailwind.
-  3. [`app/lib/widgets/glass_card.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/glass_card.dart) & [`app/lib/widgets/animations/typewriter_text.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/animations/typewriter_text.dart): Custom graphics, `BackdropFilter`, animations, and Ticker lifecycles.
-  4. [`app/lib/widgets/forms/input_form_card.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/forms/input_form_card.dart) & [`chips/preset_chips.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/chips/preset_chips.dart): `TextEditingController` vs React controlled inputs (`useState`).
-
-### 📍 Session 4: Part 4 - Mobile State, Networking, Auth & End-to-End Sync
+### 📍 Session 4 (Next Time): Part 4 - Mobile State, Networking, Auth & End-to-End Sync
 * **Goal**: Master mobile asynchronous operations, offline persistence, and cloud synchronization.
 * **Files to Explore in Detail**:
   1. [`app/lib/services/providers/`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/providers/): Abstract Auth Provider interface (`IAuthProvider`), live Supabase implementation vs Mock implementation.

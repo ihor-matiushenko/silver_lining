@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/history_item.dart';
 import '../models/reframe_response.dart';
 import '../services/api_reframing_service.dart';
+import '../services/auth_service.dart';
 import '../services/reframing_service_interface.dart';
 import '../services/storage_service.dart';
 import '../widgets/app_bar/home_app_bar.dart';
@@ -50,8 +51,12 @@ class _HomeScreenState extends State<HomeScreen> {
       _response = result;
     });
 
-    // Auto-save safe reframed responses to local history storage!
-    if (result.isSafe && !result.crisisTriggered && result.reframedText != null) {
+    // Only save to local device storage if the user is a GUEST!
+    // (Authenticated users have their thoughts synced to PostgreSQL by the backend)
+    if (!AuthService().isAuthenticated &&
+        result.isSafe &&
+        !result.crisisTriggered &&
+        result.reframedText != null) {
       final now = DateTime.now();
       final dateStr = 'Today, ${now.hour}:${now.minute.toString().padLeft(2, '0')}';
 
