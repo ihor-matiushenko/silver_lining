@@ -19,4 +19,8 @@ abstract class IAuthProvider {
   });
 
   Future<void> signOut();
+
+  /// Permanently deletes user account and purges all cloud data
+  Future<void> deleteAccount();
 }
+

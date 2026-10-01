@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../config/app_config.dart';
+import '../api_reframing_service.dart';
 import 'i_auth_provider.dart';
 
 /// ⚡ SupabaseAuthProvider: Production implementation using live Supabase Flutter SDK
@@ -70,4 +71,18 @@ class SupabaseAuthProvider implements IAuthProvider {
     await Supabase.instance.client.auth.signOut();
     debugPrint('🔒 [SupabaseAuthProvider] Signed out.');
   }
+
+  @override
+  Future<void> deleteAccount() async {
+    try {
+      // Call backend to cascade-delete all DB records
+      await ApiReframingService().deleteAccount();
+    } catch (e) {
+      debugPrint('⚠️ [SupabaseAuthProvider] Error during backend account deletion: $e');
+    }
+    // Sign out to clear tokens & session
+    await signOut();
+    debugPrint('🗑️ [SupabaseAuthProvider] User account permanently deleted.');
+  }
 }
+

@@ -4,6 +4,18 @@ Welcome, AI Agent / Developer! This document serves as the authoritative operati
 
 ---
 
+## 🚨 MANDATORY OPERATIONAL PROTOCOL: PROPOSE BEFORE ACTING
+
+**CRITICAL RULE FOR ALL AI ASSISTANTS:**
+AI Agents must **NEVER** modify files, create files, or execute implementation steps without FIRST:
+1. **Clearly explaining what is being analyzed or planned.**
+2. **Presenting the step-by-step plan and proposed technical design to the user.**
+3. **Getting explicit confirmation or feedback from the user before executing the changes.**
+
+*Failure to communicate the plan prior to execution is a direct violation of repository developer protocols.*
+
+---
+
 ## 🏛️ Repository Overview & Architecture Principles
 
 Silver Lining AI is a full-stack cross-platform mobile application that provides positive psychological perspective reframing for everyday stress and struggles, strictly guarded by a 3-tier safety engine.

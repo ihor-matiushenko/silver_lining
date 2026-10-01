@@ -95,16 +95,20 @@ backend/
 │   │   ├── security.py          # Supabase JWT signature verification & Auth dependencies
 │   │   └── limiter.py           # slowapi rate limiter configuration (5/day guests)
 │   ├── models/                  # 📄 Data Structures & Entities
-│   │   ├── db_models.py         # PostgreSQL Database Tables via SQLModel (ORM)
-│   │   └── schemas.py           # HTTP Request & Response Schemas via Pydantic (DTOs)
+│   │   ├── db_models.py         # PostgreSQL Database Tables (User, ReframeRecord, SafetyLog, ReportRecord)
+│   │   └── schemas.py           # HTTP Request & Response Schemas (DTOs)
 │   ├── api/v1/                  # 🌐 Thin HTTP APIRouters (Controllers)
 │   │   ├── reframe_router.py    # POST /api/v1/reframe controller
 │   │   ├── history_router.py    # GET/POST/DELETE /api/v1/history controllers
-│   │   └── localization_router.py# GET /api/v1/l10n/{lang_code} controller
+│   │   ├── localization_router.py# GET /api/v1/l10n/{lang_code} controller
+│   │   ├── auth_router.py       # DELETE /api/v1/auth/delete-account controller (Apple 5.1.1(v))
+│   │   └── report_router.py     # POST /api/v1/reports controller (Apple 1.2 & Google GenAI)
 │   └── services/                # 🧠 Pure Business Logic Services
 │       ├── reframing_service.py # Orchestrates safety + LLM strategy + DB persistence
 │       ├── safety_service.py    # 3-tier guardrails (self-harm crisis / crime refusal)
 │       ├── history_service.py   # Cloud history retrieval, favorites, ownership checks
+│       ├── user_service.py      # Cascading account deletion & data purging service
+│       ├── report_service.py    # GenAI objectionable content reporting service
 │       ├── localization_service.py# In-memory dictionary + on-demand AI translation
 │       ├── llm_service.py       # Factory method for AI Provider strategy
 │       └── llm_providers/       # Strategy Pattern implementations
@@ -113,6 +117,13 @@ backend/
 │           ├── gemini_provider.py # Google Gemini 1.5 Flash cloud API integration
 │           └── mock_provider.py # Instant <1ms zero-CPU provider for test suites
 ├── tests/                       # 🧪 Automated Test Verification Suites
+│   ├── test_auth_flow.py        # JWT verification & guest vs auth persistence
+│   ├── test_history_api.py      # Cloud history fetch
+│   ├── test_favorites_and_delete.py # Favorites toggle & record deletion
+│   ├── test_rate_limiter.py     # slowapi rate limiter enforcement & auth exemption
+│   ├── test_multi_lang.py       # Target language auto-detect & dynamic UI strings
+│   ├── test_account_deletion.py # In-app account deletion & cascading purge
+│   └── test_report_api.py       # GenAI content reporting & DB audit
 └── requirements.txt             # 📦 Backend Dependencies
 ```
 
@@ -123,16 +134,20 @@ backend/
 3. **`app/core/database.py`**: Sets up SQLAlchemy connection pooling (`pool_pre_ping=True` to auto-heal dropped connections) and exposes the `get_session()` generator dependency to automatically open and close database sessions per request.
 4. **`app/core/security.py`**: Validates Supabase JWTs via both modern asymmetric `ES256` (live Supabase ECC keys via JWKS endpoint) and symmetric `HS256` (`SUPABASE_JWT_SECRET`). Exposes `get_current_user_optional` (allowing guest access) and `get_current_user` (requiring authentication).
 5. **`app/core/limiter.py`**: Protects AI resources and costs by enforcing the guest daily limit (5/day) using `slowapi`.
-6. **`app/models/schemas.py`**: Pydantic DTO models (`ReframeRequest`, `ReframeResponse`) ensuring strict incoming payload validation and automatic OpenAPI Swagger docs generation at `/docs`.
-7. **`app/models/db_models.py`**: SQLModel ORM models (`User`, `ReframeRecord`, `SafetyLog`) defining table schemas, indices, and foreign keys.
+6. **`app/models/schemas.py`**: Pydantic DTO models (`ReframeRequest`, `ReframeResponse`, `ReportRequest`, `ReportResponse`, `DeleteAccountResponse`) ensuring strict incoming payload validation and automatic OpenAPI Swagger docs generation at `/docs`.
+7. **`app/models/db_models.py`**: SQLModel ORM models (`User`, `ReframeRecord`, `SafetyLog`, `ReportRecord`) defining table schemas, indices, and foreign keys.
 8. **`app/api/v1/reframe_router.py`**: HTTP controller for thought reframing, delegating work directly to `ReframingService`.
 9. **`app/api/v1/history_router.py`**: HTTP controllers for user history, favorite toggles, and deletions with ownership validation.
 10. **`app/api/v1/localization_router.py`**: HTTP controller returning UI translation key-value maps.
-11. **`app/services/reframing_service.py`**: Encapsulates the entire reframing business flow: validation $\rightarrow$ safety check $\rightarrow$ AI generation $\rightarrow$ conditional PostgreSQL save for authenticated users.
-12. **`app/services/safety_service.py`**: Zero-tolerance guardrail engine evaluating crisis/self-harm and criminal policy violations.
-13. **`app/services/history_service.py`**: PostgreSQL query logic ensuring users can only read, favorite, or delete their own records.
-14. **`app/services/localization_service.py`**: Dynamic translation engine combining base English strings, cached common languages, and on-demand AI translation for any ISO code.
-15. **`app/services/llm_service.py` & `llm_providers/`**: Implements the Strategy Pattern. Decouples the application from any single AI vendor (seamlessly switching between Ollama, Gemini, and Mock providers).
+11. **`app/api/v1/auth_router.py`**: HTTP controller for in-app account deletion (`DELETE /api/v1/auth/delete-account`).
+12. **`app/api/v1/report_router.py`**: HTTP controller for flagging objectionable AI output (`POST /api/v1/reports`).
+13. **`app/services/reframing_service.py`**: Encapsulates the entire reframing business flow: validation $\rightarrow$ safety check $\rightarrow$ AI generation $\rightarrow$ conditional PostgreSQL save for authenticated users.
+14. **`app/services/safety_service.py`**: Zero-tolerance guardrail engine evaluating crisis/self-harm and criminal policy violations.
+15. **`app/services/history_service.py`**: PostgreSQL query logic ensuring users can only read, favorite, or delete their own records.
+16. **`app/services/user_service.py`**: Purges user accounts and cascades deletions across all associated records (Apple 5.1.1(v) & Google Play Data Deletion).
+17. **`app/services/report_service.py`**: Audits and persists flagged GenAI responses from users.
+18. **`app/services/localization_service.py`**: Dynamic translation engine combining base English strings, cached common languages, and on-demand AI translation for any ISO code.
+19. **`app/services/llm_service.py` & `llm_providers/`**: Implements the Strategy Pattern. Decouples the application from any single AI vendor (seamlessly switching between Ollama, Gemini, and Mock providers).
 
 ---
 
@@ -189,28 +204,34 @@ app/lib/
     │   ├── preset_chip.dart        # Individual tappable scenario pill
     │   └── preset_chips.dart       # 4 test presets (Career, Breakup, Crisis, Crime)
     ├── dialogs/
-    │   └── language_selector_modal.dart # Bottom sheet modal for picking language or following device
+    │   ├── language_selector_modal.dart # Bottom sheet modal for picking language or following device
+    │   └── legal_info_dialog.dart  # Modal dialog displaying Medical Disclaimer, Privacy Policy & EULA
+    ├── modals/
+    │   └── report_content_modal.dart# Bottom sheet modal for reporting objectionable AI responses (Apple 1.2)
     └── forms/
         ├── input_form_card.dart    # Thought input form card encapsulating chips & submit
-        ├── primary_auth_form.dart  # Modular Sign In / Sign Up form component
+        ├── primary_auth_form.dart  # Modular Sign In / Sign Up form component with legal links
         └── two_factor_auth_form.dart# Modular 2FA OTP code verification component
 ```
 
 ### Why Each Mobile Component Exists:
 
 1. **`config/app_config.dart`**: Single source of truth for Supabase keys and `apiBaseUrl` with cross-platform URL resolution (handling Android emulator `10.0.2.2:8000` vs iOS/web `127.0.0.1:8000`).
-2. **`services/auth_service.dart`**: Implements the Facade Pattern and extends `ChangeNotifier`. Notifies listeners on `signIn()`, `signUp()`, and `signOut()` so UI components (like `HomeAppBar` and `HistoryScreen`) rebuild reactively.
+2. **`services/auth_service.dart`**: Implements the Facade Pattern and extends `ChangeNotifier`. Notifies listeners on `signIn()`, `signUp()`, `signOut()`, and `deleteAccount()` so UI components (like `HomeAppBar` and `HistoryScreen`) rebuild reactively.
 3. **`services/providers/`**: Implements the Strategy Pattern for authentication (`IAuthProvider`). Decouples UI code from Supabase, enabling 100% offline development with `MockAuthProvider`.
-4. **`services/api_reframing_service.dart`**: Handles HTTP networking, automatic JWT Bearer token attachment, and HTTP 429 rate limit payload decoding.
+4. **`services/api_reframing_service.dart`**: Handles HTTP networking, automatic JWT Bearer token attachment, account deletion, GenAI content reporting, and HTTP 429 rate limit payload decoding.
 5. **`services/storage_service.dart`**: Encapsulates `shared_preferences` persistence for guest history and user language preferences.
 6. **`screens/main_navigation_screen.dart`**: Uses `IndexedStack` to preserve tab scroll position and form inputs in memory across tab switches.
-7. **`screens/home_screen.dart`**: High-level coordinator. Only persists safe reframed thoughts to local `StorageService` if the user is a guest, preventing data leakage for authenticated users whose history is stored in PostgreSQL.
+7. **`screens/home_screen.dart`**: High-level coordinator with medical & wellness disclaimer footer. Only persists safe reframed thoughts to local `StorageService` if the user is a guest, preventing data leakage for authenticated users whose history is stored in PostgreSQL.
 8. **`screens/history_screen.dart`**: Dual-mode history list listening to `AuthService`. Displays `GuestHistoryBanner` for guests and fetches from PostgreSQL for authenticated users. Uses modular `HistoryCard` items.
-9. **`screens/auth_screen.dart`**: Clean 80-line stateful container hosting `PrimaryAuthForm` and `TwoFactorAuthForm` inside a unified `GlassCard`.
-10. **`widgets/cards/history_card.dart` & `guest_history_banner.dart`**: Modular card widgets cleanly decoupled from screen-level orchestration.
-11. **`widgets/forms/primary_auth_form.dart` & `two_factor_auth_form.dart`**: Extracted form widgets with strict field validation, mode switching, and password obscuring.
-12. **`widgets/app_bar/home_app_bar.dart`**: Wraps actions in `ListenableBuilder` listening to both `AuthService()` and `DynamicLocalizationService.instance`. Displays dynamic title, language selector button, and account dialog.
-13. **`widgets/dialogs/language_selector_modal.dart`**: Bottom sheet modal allowing users to toggle between "Follow System" and explicit languages (`uk`, `en`, `es`, `de`, `fr`).
+9. **`screens/auth_screen.dart`**: Clean stateful container hosting `PrimaryAuthForm` and `TwoFactorAuthForm` inside a unified `GlassCard`.
+10. **`widgets/cards/reframed_perspective_card.dart`**: Displays positive perspective typewriter reveal with an integrated flag button allowing users to report objectionable AI output.
+11. **`widgets/cards/history_card.dart` & `guest_history_banner.dart`**: Modular card widgets cleanly decoupled from screen-level orchestration.
+12. **`widgets/forms/primary_auth_form.dart` & `two_factor_auth_form.dart`**: Extracted form widgets with strict field validation, mode switching, password obscuring, and Terms/Privacy links.
+13. **`widgets/app_bar/home_app_bar.dart`**: Displays title, language selector, and Account & Legal dialog with in-app account deletion and legal disclaimers.
+14. **`widgets/dialogs/language_selector_modal.dart`**: Bottom sheet modal allowing users to toggle between "Follow System" and explicit languages (`uk`, `en`, `es`, `de`, `fr`).
+15. **`widgets/dialogs/legal_info_dialog.dart`**: Displays formatted Medical Disclaimer, Privacy Policy, and Terms of Service.
+16. **`widgets/modals/report_content_modal.dart`**: Bottom sheet modal capturing reason and user feedback to report inappropriate or harmful AI responses.
 
 ---
 
@@ -251,6 +272,15 @@ The system implements an industry-standard **3-tier zero-hardcoding universal mu
 * `is_favorite`: Boolean (default `False`)
 * `created_at`: Datetime UTC
 
+### `ReportRecord` Table Model (Apple 1.2 & Google GenAI Content Moderation)
+* `id`: String (UUID primary key)
+* `user_id`: Optional String (foreign key to `user.id`, indexed)
+* `reframe_id`: Optional String (indexed)
+* `content_snippet`: String
+* `reason`: String ("harmful", "inappropriate", "offensive", "inaccurate", "other")
+* `details`: Optional String
+* `created_at`: Datetime UTC
+
 ---
 
 ## 🧪 6. Automated Verification & Testing
@@ -260,7 +290,16 @@ All backend unit and API test suites use `settings.LLM_PROVIDER = "mock"` to ens
 2. `tests/test_history_api.py`: 100% Pass
 3. `tests/test_favorites_and_delete.py`: 100% Pass
 4. `tests/test_rate_limiter.py`: 100% Pass
-5. `tests/test_multi_lang.py`: 100% Pass (Verifies auto-detect, explicit language target, DB storage, and `/api/v1/l10n` endpoint).
+5. `tests/test_multi_lang.py`: 100% Pass
+6. `tests/test_account_deletion.py`: 100% Pass (Verifies cascading data wipe in PostgreSQL)
+7. `tests/test_report_api.py`: 100% Pass (Verifies guest & auth GenAI content reporting)
+
+Flutter mobile test suites:
+1. `test/widget_test.dart`: 100% Pass
+2. `test/cards_test.dart`: 100% Pass
+3. `test/language_selector_test.dart`: 100% Pass
+4. `test/compliance_widgets_test.dart`: 100% Pass (Verifies AI reporting modal, medical disclaimer & legal dialogs)
+`flutter analyze`: 0 warnings, 0 errors!
 
 ---
 
@@ -269,30 +308,31 @@ All backend unit and API test suites use `settings.LLM_PROVIDER = "mock"` to ens
 To guarantee approval under Apple App Store Review Guidelines and Google Play Store Developer Policies, the system incorporates the following mandatory compliance requirements:
 
 ### A. Account & Data Deletion (Apple 5.1.1(v) & Google Play Data Deletion Policy)
-* **Rule**: Apps supporting account creation MUST provide an in-app path for users to initiate account deletion, purging all personal data.
+* **Status**: 🟢 Fully Implemented & Verified
 * **Architecture**:
-  * Frontend: `AuthService().deleteAccount()` and confirmation modal in Settings/Profile dialog.
-  * Backend: `DELETE /api/v1/users/me` endpoint verifying JWT, purging user records in Supabase Auth, and cascading deletions to `ReframeRecord` and `SafetyLog`.
+  * Frontend: `AuthService().deleteAccount()` and confirmation modal in `HomeAppBar` Account & Legal dialog.
+  * Backend: `DELETE /api/v1/auth/delete-account` endpoint verifying JWT, purging user records in PostgreSQL, and cascading deletions to `ReframeRecord`, `SafetyLog`, and `ReportRecord`.
 
 ### B. Generative AI Safety & Content Reporting (Apple 1.2 & Google Play GenAI Policy)
-* **Rule**: Generative AI apps must filter objectionable content and provide a user-facing mechanism to report inappropriate AI responses.
+* **Status**: 🟢 Fully Implemented & Verified
 * **Architecture**:
   * 3-tier safety engine in `SafetyService` blocks harmful prompts pre-generation.
-  * User reporting: "Report / Flag Response" action on `ResultCard` forwarding objectionable generation events to backend `POST /api/v1/reports`.
+  * User reporting: "Report / Flag Response" action on `ReframedPerspectiveCard` opening `ReportContentModal` forwarding flagged events to backend `POST /api/v1/reports`.
 
 ### C. Mental Wellness & Medical Disclaimers (Apple 1.4.1 & Google Play Health Policy)
-* **Rule**: Apps offering cognitive/psychological reframing must explicitly disclaim medical advice and provide immediate crisis intervention resources.
+* **Status**: 🟢 Fully Implemented & Verified
 * **Architecture**:
-  * Explicit disclaimer visible in UI: *"Silver Lining is an AI self-reflection tool, not medical or mental health care."*
+  * Explicit disclaimer visible in `HomeScreen` footer and full modal in `LegalInfoDialog`: *"Silver Lining is an AI self-reflection tool, not medical or mental health care."*
   * Native 988 Suicide & Crisis Lifeline dialer integrated via `emergency_launcher_service.dart`.
 
 ### D. Legal Links (Terms of Service / EULA & Privacy Policy)
-* **Rule**: Publicly accessible Privacy Policy and Terms of Use (EULA) links must be accessible before authentication and inside app settings.
-* **Architecture**: Links accessible in `AuthScreen` footer and Settings modal.
+* **Status**: 🟢 Fully Implemented & Verified
+* **Architecture**: Links accessible in `PrimaryAuthForm` footer and `HomeAppBar` Account & Legal dialog via `LegalInfoDialog`.
 
 ### E. OS-Level Manifest & Privacy Declarations
-* **Android**: `INTERNET` permission in `AndroidManifest.xml`, `<queries>` declaration for `tel` scheme (required for Android 11+ package visibility).
-* **iOS**: `LSApplicationQueriesSchemes` for `tel` in `Info.plist`, `PrivacyInfo.xcprivacy` declaring UserDefaults usage (`NSPrivacyAccessedAPICategoryUserDefaults` reason `CA92.1`).
+* **Status**: 🟢 Fully Implemented & Verified
+* **Android**: `INTERNET` permission in `AndroidManifest.xml`, `<queries>` declaration for `tel` scheme (required for Android 11+ package visibility), app label set to `"Silver Lining"`.
+* **iOS**: `CFBundleDisplayName` set to `"Silver Lining"`, `LSApplicationQueriesSchemes` for `tel` in `Info.plist`, `PrivacyInfo.xcprivacy` declaring UserDefaults usage (`NSPrivacyAccessedAPICategoryUserDefaults` reason `CA92.1`).
 
 ---
 

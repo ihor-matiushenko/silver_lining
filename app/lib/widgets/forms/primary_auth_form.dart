@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_typography.dart';
+import '../dialogs/legal_info_dialog.dart';
 
 /// 📝 PrimaryAuthForm: Clean, single-responsibility form component for Sign In and Sign Up
 class PrimaryAuthForm extends StatelessWidget {
@@ -219,6 +220,37 @@ class PrimaryAuthForm extends StatelessWidget {
               'Continue as Guest (5 free daily reframings) ➔',
               style: AppTypography.bodyMuted.copyWith(color: AppColors.warning),
             ),
+          ),
+          const SizedBox(height: 12),
+
+          // Legal Terms & Privacy Policy Links (Store Compliance)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () => LegalInfoDialog.showTermsOfService(context),
+                child: const Text(
+                  'Terms of Service',
+                  style: TextStyle(
+                    color: Colors.white38,
+                    fontSize: 11,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+              const Text('  •  ', style: TextStyle(color: Colors.white24, fontSize: 11)),
+              GestureDetector(
+                onTap: () => LegalInfoDialog.showPrivacyPolicy(context),
+                child: const Text(
+                  'Privacy Policy',
+                  style: TextStyle(
+                    color: Colors.white38,
+                    fontSize: 11,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

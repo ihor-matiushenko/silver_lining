@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel, create_engine, Session
 from sqlalchemy import text
 from app.core.config import settings
-from app.models.db_models import User, ReframeRecord, SafetyLog
+from app.models.db_models import User, ReframeRecord, SafetyLog, ReportRecord
 
 # 🐘 Create SQLModel PostgreSQL Database Engine
 engine = create_engine(

@@ -63,5 +63,11 @@ class AuthService extends ChangeNotifier implements IAuthProvider {
     await _provider.signOut();
     notifyListeners();
   }
+
+  @override
+  Future<void> deleteAccount() async {
+    await _provider.deleteAccount();
+    notifyListeners();
+  }
 }
 

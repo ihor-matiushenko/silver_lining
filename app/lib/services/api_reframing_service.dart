@@ -139,4 +139,49 @@ class ApiReframingService implements ReframingServiceInterface {
       return false;
     }
   }
+
+  /// 🔒 Deletes authenticated user account and all personal data (Apple 5.1.1(v) & Google Play Data Deletion)
+  Future<bool> deleteAccount() async {
+    final uri = Uri.parse('$baseUrl/api/v1/auth/delete-account');
+    try {
+      final response = await http.delete(uri, headers: _buildHeaders());
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('⚠️ Error deleting user account: $e');
+      return false;
+    }
+  }
+
+  /// 🚩 Submits an objectionable AI content report (Apple Guideline 1.2 & Google GenAI Policy)
+  Future<bool> submitReport({
+    required String contentSnippet,
+    required String reason,
+    String? details,
+    String? reframeId,
+  }) async {
+    final uri = Uri.parse('$baseUrl/api/v1/reports');
+    try {
+      final Map<String, dynamic> payload = {
+        'content_snippet': contentSnippet,
+        'reason': reason,
+      };
+      if (details != null && details.isNotEmpty) {
+        payload['details'] = details;
+      }
+      if (reframeId != null) {
+        payload['reframe_id'] = reframeId;
+      }
+
+      final response = await http.post(
+        uri,
+        headers: _buildHeaders(),
+        body: jsonEncode(payload),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('⚠️ Error submitting content report: $e');
+      return false;
+    }
+  }
 }
+

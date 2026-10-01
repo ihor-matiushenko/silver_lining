@@ -58,4 +58,13 @@ class MockAuthProvider implements IAuthProvider {
     _mockToken = null;
     debugPrint('🔒 [MockAuthProvider] Mock Signed out.');
   }
+
+  @override
+  Future<void> deleteAccount() async {
+    _mockUserId = null;
+    _mockEmail = null;
+    _mockToken = null;
+    debugPrint('🗑️ [MockAuthProvider] Mock Account permanently deleted.');
+  }
 }
+

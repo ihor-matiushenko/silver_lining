@@ -8,6 +8,8 @@ from app.core.limiter import limiter, custom_rate_limit_exceeded_handler
 from app.api.v1.reframe_router import reframe_router
 from app.api.v1.history_router import history_router
 from app.api.v1.localization_router import localization_router
+from app.api.v1.auth_router import auth_router
+from app.api.v1.report_router import report_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -39,6 +41,8 @@ app.add_middleware(
 app.include_router(reframe_router, prefix="/api/v1")
 app.include_router(history_router, prefix="/api/v1")
 app.include_router(localization_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
+app.include_router(report_router, prefix="/api/v1")
 
 @app.get("/")
 async def root():

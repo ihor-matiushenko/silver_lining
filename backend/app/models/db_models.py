@@ -30,3 +30,14 @@ class SafetyLog(SQLModel, table=True):
     safety_category: str
     flagged_text: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# 🚩 GenAI Objectionable Content Report Entity (Apple Guideline 1.2 & Google GenAI Policy)
+class ReportRecord(SQLModel, table=True):
+    id: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
+    user_id: Optional[str] = Field(default=None, foreign_key="user.id", index=True)
+    reframe_id: Optional[str] = Field(default=None, index=True)
+    content_snippet: str
+    reason: str  # "harmful", "inappropriate", "offensive", "inaccurate", "other"
+    details: Optional[str] = Field(default=None)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+

@@ -30,11 +30,29 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 19** | **Universal Multi-Language Thought Reframing** (`target_language="auto"` & DB storage) | 🟢 Complete |
 | **Step 20** | **Live Supabase Project Integration & Dual ES256/HS256 JWT Verification** | 🟢 Complete |
 | **Step 21** | **Modern Language Selector Modal & 3-Tier Hierarchy (System, In-App, Fallback)** | 🟢 Complete |
-| **Step 22** | **App Store & Google Play Store Compliance (Account Deletion & Reporting)** | 🟡 Planned |
-| **Step 23** | **OS Manifests & Permissions (Android INTERNET/Queries, iOS PrivacyInfo.xcprivacy)** | 🟡 Planned |
-| **Step 24** | **Medical / Wellness Disclaimers & Legal EULA/Privacy Links** | 🟡 Planned |
-| **Step 25** | **Cloud Backend Deployment (FastAPI on HTTPS + Cloud Managed PostgreSQL)** | 🟡 Planned |
-| **Step 26** | **Production Store Assets (Icons, Native Splash Screen, App Bundles)** | 🟡 Planned |
+| **Step 22** | **App Store & Google Play Store Compliance (Account Deletion & Reporting)** | 🟢 Complete |
+| **Step 23** | **OS Manifests & Permissions (Android INTERNET/Queries, iOS PrivacyInfo.xcprivacy)** | 🟢 Complete |
+| **Step 24** | **Medical / Wellness Disclaimers & Legal EULA/Privacy Links** | 🟢 Complete |
+| **Step 25** | **Social Login: Sign in with Apple & Google** (`IAuthProvider`, `SupabaseAuthProvider`, UI buttons) | 🟡 Next Up |
+| **Step 26** | **Public Web Policies & Deletion Form** (Static web `/privacy` and `/delete-account` URLs for Store Console) | 🟡 Planned |
+| **Step 27** | **Production Store Assets & Native Splash Screen** (`flutter_launcher_icons`, `flutter_native_splash`) | 🟡 Planned |
+| **Step 28** | **Cloud Backend HTTPS Deployment & Reviewer Demo Account** (`demo@silverlining.app` provisioning) | 🟡 Planned |
+
+---
+
+## 🚀 Immediate Resume Instructions for Next Session
+When resuming work tomorrow:
+1. **Starting Point**: **Step 25: Sign in with Apple & Google Integration**.
+   - Contract interface: [app/lib/services/providers/i_auth_provider.dart](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/providers/i_auth_provider.dart) -> add `signInWithApple()` and `signInWithGoogle()`.
+   - Live Supabase provider: [app/lib/services/providers/supabase_auth_provider.dart](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/providers/supabase_auth_provider.dart) -> implement OAuth triggers via `supabase.auth.signInWithIdToken(...)` / `signInWithOAuth(...)`.
+   - Mock provider: [app/lib/services/providers/mock_auth_provider.dart](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/providers/mock_auth_provider.dart) -> add instant mock sign-in for testing.
+   - UI: Add branded "Continue with Apple" (on iOS) and "Continue with Google" buttons to [primary_auth_form.dart](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/forms/primary_auth_form.dart).
+2. **Alternative Starting Points** (if prioritized by user):
+   - **Step 26**: Public web pages for Privacy Policy and Data Deletion Form (Google Play & Apple Console links).
+   - **Step 27**: Custom app branding (1024x1024 icon + native splash screen).
+3. **Verification Command**:
+   - `cd backend && PYTHONPATH=. .venv/bin/python tests/test_account_deletion.py && PYTHONPATH=. .venv/bin/python tests/test_report_api.py`
+   - `cd app && flutter analyze && flutter test`
 
 ---
 
@@ -51,11 +69,15 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] End-to-End Cloud History Sync (`ApiReframingService` + `HistoryScreen`)
 - [x] Zero-Hardcoding Universal Multi-Language Engine (Dynamic UI localization + AI prompt auto-detection)
 - [x] Modern Language Selector Modal with "Follow System" & Persistence (`LanguageSelectorModal`)
-- [x] Instant Zero-CPU Test Suite (All 5 backend test suites passing 100% in <3s)
+- [x] Instant Zero-CPU Test Suite (All 7 backend test suites passing 100% in <3s)
+- [x] In-App Account Deletion Flow (`DELETE /api/v1/auth/delete-account` + Flutter confirmation dialog)
+- [x] User-Facing GenAI Objectionable Content Reporting (`POST /api/v1/reports` + `ReportContentModal`)
+- [x] Medical & Wellness Disclaimer & Legal Dialogs (`LegalInfoDialog` + `HomeScreen` footer)
+- [x] Apple Privacy Manifest (`PrivacyInfo.xcprivacy` declaring `CA92.1`) & Android Manifest permissions
 - [x] Multi-Agent Protocol Guide (`AGENTS.md`) & Technical Specification (`ARCHITECTURE.md`)
-- [x] Apple App Store & Google Play Store Compliance Architecture Audit (`ARCHITECTURE.md`)
 - [x] Git & GitHub Remote Synced (`silver_lining.git`)
 
 ---
 *Updated: 2026-10-01*
+
 

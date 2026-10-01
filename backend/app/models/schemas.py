@@ -37,3 +37,41 @@ class ReframeResponse(BaseModel):
         default=None,
         description="Hotline number (e.g., '988') if crisis was triggered"
     )
+
+# 🚩 GenAI Objectionable Content Report Schemas (Apple 1.2 & Google Play GenAI Policy)
+class ReportRequest(BaseModel):
+    content_snippet: str = Field(
+        min_length=1,
+        description="Reframed AI text or problem snippet being reported"
+    )
+    reason: str = Field(
+        description="Reason for report: inappropriate, harmful, offensive, inaccurate, other"
+    )
+    details: Optional[str] = Field(
+        default=None,
+        description="Optional additional context or comments provided by user"
+    )
+    reframe_id: Optional[str] = Field(
+        default=None,
+        description="Optional ID of the associated ReframeRecord"
+    )
+
+class ReportResponse(BaseModel):
+    id: str = Field(description="Unique UUID of the generated report record")
+    status: str = Field(default="received", description="Status of the report")
+    message: str = Field(
+        default="Report submitted successfully for safety review.",
+        description="Confirmation message returned to user"
+    )
+
+# 🗑️ In-App Account Deletion Response Schema (Apple 5.1.1(v) & Google Play Data Deletion)
+class DeleteAccountResponse(BaseModel):
+    detail: str = Field(
+        default="Account and all associated personal data permanently deleted.",
+        description="Confirmation details of cascading data deletion"
+    )
+    user_id: str = Field(description="ID of the deleted user")
+    deleted_records_count: int = Field(
+        description="Total number of reframing history records purged"
+    )
+
