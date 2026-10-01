@@ -3,6 +3,7 @@ import '../models/history_item.dart';
 import '../models/reframe_response.dart';
 import '../services/api_reframing_service.dart';
 import '../services/auth_service.dart';
+import '../services/dynamic_localization_service.dart';
 import '../services/reframing_service_interface.dart';
 import '../services/storage_service.dart';
 import '../widgets/app_bar/home_app_bar.dart';
@@ -42,7 +43,10 @@ class _HomeScreenState extends State<HomeScreen> {
       _response = null;
     });
 
-    final result = await _service.reframeThought(text);
+    final result = await _service.reframeThought(
+      text,
+      targetLanguage: DynamicLocalizationService.instance.currentLangCode,
+    );
 
     if (!mounted) return;
 

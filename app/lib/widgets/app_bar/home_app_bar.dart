@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../screens/auth_screen.dart';
 import '../../services/auth_service.dart';
+import '../../services/dynamic_localization_service.dart';
 import '../../theme/app_colors.dart';
+import '../dialogs/language_selector_modal.dart';
 
 /// 🔝 Reusable Home Screen AppBar Component
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -57,9 +59,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: AuthService(),
+      listenable: Listenable.merge([
+        AuthService(),
+        DynamicLocalizationService.instance,
+      ]),
       builder: (context, _) {
         final isAuth = AuthService().isAuthenticated;
+        final l10n = DynamicLocalizationService.instance;
+
         return AppBar(
           title: Row(
             mainAxisSize: MainAxisSize.min,
@@ -73,13 +80,24 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: const Text('✨', style: TextStyle(fontSize: 16)),
               ),
               const SizedBox(width: 12),
-              const Text('Silver Lining AI', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                l10n.translate('appTitle'),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
           actions: [
+            // 🌐 Language Selector Button
+            IconButton(
+              tooltip: l10n.translate('languageTitle'),
+              icon: const Icon(Icons.language, color: Colors.white70),
+              onPressed: () => LanguageSelectorModal.show(context),
+            ),
+
+            // 👤 Account / Login Button
             IconButton(
               tooltip: isAuth ? 'Account: ${AuthService().currentUserEmail ?? 'User'}' : 'Sign In / Register',
               icon: Icon(

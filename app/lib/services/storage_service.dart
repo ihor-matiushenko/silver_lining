@@ -78,4 +78,26 @@ class StorageService {
       return false;
     }
   }
+
+  static const String _languageKey = 'silver_lining_user_language_pref';
+
+  /// Retrieves user-selected language preference ('system' or ISO code like 'uk', 'en', etc.).
+  static Future<String?> getSavedLanguage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_languageKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Persists user-selected language preference.
+  static Future<bool> saveLanguage(String langCode) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return await prefs.setString(_languageKey, langCode);
+    } catch (e) {
+      return false;
+    }
+  }
 }

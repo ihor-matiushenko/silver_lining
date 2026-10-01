@@ -30,6 +30,8 @@ This checkpoint records the successful configuration and integration of live **S
 - **URL Normalizer & Sanitizer**: Automatically cleans and normalizes trailing `/rest/v1` or trailing slashes to ensure Auth SDK routes to valid endpoints.
 - **Initialization Guard**: Safeguarded `currentUserId`, `currentUserEmail`, and `accessToken` in `SupabaseAuthProvider` to prevent premature assertion crashes during cold boot or widget testing.
 - **Auth Strategy Pattern**: Zero-downtime switching between `MockAuthProvider` and `SupabaseAuthProvider`.
+- **Modern Language Selector (`LanguageSelectorModal`)**: Clean bottom sheet allowing users to toggle between "Follow System" and explicit languages (`uk`, `en`, `es`, `de`, `fr`), with instant reactive UI translation via `DynamicLocalizationService` (extending `ChangeNotifier`).
+- **Offline Language Persistence**: Saves user preference to `StorageService` (`shared_preferences`).
 
 ---
 
@@ -50,7 +52,7 @@ PYTHONPATH=. .venv/bin/python tests/test_multi_lang.py         # ✅ 100% PASS
 ```bash
 cd app
 flutter analyze   # ✅ 0 linter issues!
-flutter test      # ✅ 100% Widget & Unit tests pass!
+flutter test      # ✅ 100% Widget & Unit tests pass (All 7 tests green)!
 ```
 
 ---
@@ -59,4 +61,4 @@ flutter test      # ✅ 100% Widget & Unit tests pass!
 
 1. **Google Gemini API Key Generation** (for cloud LLM provider option).
 2. **Session 4 Deep Dive**: Mobile State, Networking, Auth & End-to-End Sync.
-3. **UI Language Selector Widget**: Add language picker dropdown to app header.
+3. **Live Simulator Run**: Launch in iOS Simulator or Android Emulator to test live sign-up and AI reframing.

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/dynamic_localization_service.dart';
 import '../../theme/app_typography.dart';
 import '../app_text_field.dart';
 import '../chips/preset_chips.dart';
@@ -24,29 +25,39 @@ class InputFormCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("What's weighing on your mind?", style: AppTypography.subtitle),
-          const SizedBox(height: 12),
-          AppTextField(
-            controller: controller,
-            hintText: "Share what happened today, your concerns, or what feels tough...",
-          ),
-          const SizedBox(height: 14),
+    return ListenableBuilder(
+      listenable: DynamicLocalizationService.instance,
+      builder: (context, _) {
+        final l10n = DynamicLocalizationService.instance;
 
-          // Preset Scenario Chips (1-tap selection)
-          PresetChips(onSelectPreset: _onSelectPreset),
-          const SizedBox(height: 16),
+        return GlassCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.translate('reframePrompt'),
+                style: AppTypography.subtitle,
+              ),
+              const SizedBox(height: 12),
+              AppTextField(
+                controller: controller,
+                hintText: l10n.translate('reframeInputHint'),
+              ),
+              const SizedBox(height: 14),
 
-          PrimaryButton(
-            label: 'Reframe Thought ✨',
-            isLoading: isLoading,
-            onPressed: onSubmit,
+              // Preset Scenario Chips (1-tap selection)
+              PresetChips(onSelectPreset: _onSelectPreset),
+              const SizedBox(height: 16),
+
+              PrimaryButton(
+                label: l10n.translate('reframeButtonAction'),
+                isLoading: isLoading,
+                onPressed: onSubmit,
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

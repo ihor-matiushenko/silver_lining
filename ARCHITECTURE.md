@@ -188,6 +188,8 @@ app/lib/
     ├── chips/
     │   ├── preset_chip.dart        # Individual tappable scenario pill
     │   └── preset_chips.dart       # 4 test presets (Career, Breakup, Crisis, Crime)
+    ├── dialogs/
+    │   └── language_selector_modal.dart # Bottom sheet modal for picking language or following device
     └── forms/
         ├── input_form_card.dart    # Thought input form card encapsulating chips & submit
         ├── primary_auth_form.dart  # Modular Sign In / Sign Up form component
@@ -200,28 +202,32 @@ app/lib/
 2. **`services/auth_service.dart`**: Implements the Facade Pattern and extends `ChangeNotifier`. Notifies listeners on `signIn()`, `signUp()`, and `signOut()` so UI components (like `HomeAppBar` and `HistoryScreen`) rebuild reactively.
 3. **`services/providers/`**: Implements the Strategy Pattern for authentication (`IAuthProvider`). Decouples UI code from Supabase, enabling 100% offline development with `MockAuthProvider`.
 4. **`services/api_reframing_service.dart`**: Handles HTTP networking, automatic JWT Bearer token attachment, and HTTP 429 rate limit payload decoding.
-5. **`services/storage_service.dart`**: Encapsulates `shared_preferences` persistence for guest users.
+5. **`services/storage_service.dart`**: Encapsulates `shared_preferences` persistence for guest history and user language preferences.
 6. **`screens/main_navigation_screen.dart`**: Uses `IndexedStack` to preserve tab scroll position and form inputs in memory across tab switches.
 7. **`screens/home_screen.dart`**: High-level coordinator. Only persists safe reframed thoughts to local `StorageService` if the user is a guest, preventing data leakage for authenticated users whose history is stored in PostgreSQL.
 8. **`screens/history_screen.dart`**: Dual-mode history list listening to `AuthService`. Displays `GuestHistoryBanner` for guests and fetches from PostgreSQL for authenticated users. Uses modular `HistoryCard` items.
 9. **`screens/auth_screen.dart`**: Clean 80-line stateful container hosting `PrimaryAuthForm` and `TwoFactorAuthForm` inside a unified `GlassCard`.
 10. **`widgets/cards/history_card.dart` & `guest_history_banner.dart`**: Modular card widgets cleanly decoupled from screen-level orchestration.
 11. **`widgets/forms/primary_auth_form.dart` & `two_factor_auth_form.dart`**: Extracted form widgets with strict field validation, mode switching, and password obscuring.
-12. **`widgets/app_bar/home_app_bar.dart`**: Wraps actions in `ListenableBuilder` against `AuthService()`. Displays an Account Dialog with user email and "Sign Out" when authenticated, or opens `AuthScreen` when guest.
+12. **`widgets/app_bar/home_app_bar.dart`**: Wraps actions in `ListenableBuilder` listening to both `AuthService()` and `DynamicLocalizationService.instance`. Displays dynamic title, language selector button, and account dialog.
+13. **`widgets/dialogs/language_selector_modal.dart`**: Bottom sheet modal allowing users to toggle between "Follow System" and explicit languages (`uk`, `en`, `es`, `de`, `fr`).
 
 ---
 
 ## 🌐 4. Dynamic Universal Multi-Language Architecture
 
-The system implements a **zero-hardcoding universal multi-language architecture**:
+The system implements an industry-standard **3-tier zero-hardcoding universal multi-language architecture**:
 
-1. **AI Reframing Engine**: The LLM system prompt instructs AI providers (`OllamaProvider`, `GeminiProvider`, `MockLLMProvider`) to auto-detect input prompt language and reframe natively in that exact language (or honor explicit `target_language` parameters), falling back to English (`en`) if ambiguous.
-2. **PostgreSQL Storage**: `ReframeRecord` stores `language` (`"auto"`, `"uk"`, `"es"`, `"en"`, etc.) with index for clean filtering and analytics.
-3. **Dynamic UI String Localization Endpoint (`GET /api/v1/l10n/{lang_code}`)**:
+1. **3-Tier Hierarchy for Client Language Resolution**:
+   * **Tier 1 (Explicit In-App User Selection)**: If the user selects a language in `LanguageSelectorModal`, it is stored in `StorageService` and overrides the device locale.
+   * **Tier 2 (System Default / OS Locale)**: If set to "Follow System" (or on first launch), the app detects the device language via `PlatformDispatcher.instance.locale.languageCode`.
+   * **Tier 3 (Guaranteed Fallback)**: If the requested or system language is unsupported or network fails, automatically falls back to English (`en`).
+2. **AI Reframing Engine**: The LLM system prompt instructs AI providers (`OllamaProvider`, `GeminiProvider`, `MockLLMProvider`) to auto-detect input prompt language and reframe natively in that exact language (or honor explicit `target_language` parameters), falling back to English (`en`) if ambiguous.
+3. **PostgreSQL Storage**: `ReframeRecord` stores `language` (`"auto"`, `"uk"`, `"es"`, `"en"`, etc.) with index for clean filtering and analytics.
+4. **Dynamic UI String Localization Endpoint (`GET /api/v1/l10n/{lang_code}`)**:
    * Returns UI string dictionaries for ANY requested ISO language code.
-   * If the requested language is missing from memory, uses AI Strategy to auto-translate the 10 UI dictionary keys on demand and caches the result.
-   * Guarantees fallback to English (`en`) if network or translation fails.
-4. **Flutter Mobile Integration**: `DynamicLocalizationService` fetches string maps dynamically and translates keys with zero `.arb` files or hardcoded static language arrays in mobile code.
+   * If the requested language is missing from memory, uses AI Strategy to auto-translate the UI dictionary keys on demand and caches the result.
+5. **Flutter Mobile Integration**: `DynamicLocalizationService` extends `ChangeNotifier`, fetches string maps dynamically, and triggers instant reactive re-renders across the entire app upon language change.
 
 ---
 

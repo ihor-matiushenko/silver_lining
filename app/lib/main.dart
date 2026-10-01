@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'screens/main_navigation_screen.dart';
+import 'services/dynamic_localization_service.dart';
 import 'theme/app_colors.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DynamicLocalizationService.instance.init();
   runApp(const SilverLiningApp());
 }
 
@@ -12,18 +15,23 @@ class SilverLiningApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Silver Lining AI',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: AppColors.background,
-        colorScheme: const ColorScheme.dark(
-          primary: AppColors.primary,
-          secondary: AppColors.secondary,
-          surface: AppColors.surface,
-        ),
-      ),
-      home: const MainNavigationScreen(),
+    return ListenableBuilder(
+      listenable: DynamicLocalizationService.instance,
+      builder: (context, _) {
+        return MaterialApp(
+          title: DynamicLocalizationService.instance.translate('appTitle'),
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData.dark().copyWith(
+            scaffoldBackgroundColor: AppColors.background,
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.primary,
+              secondary: AppColors.secondary,
+              surface: AppColors.surface,
+            ),
+          ),
+          home: const MainNavigationScreen(),
+        );
+      },
     );
   }
 }

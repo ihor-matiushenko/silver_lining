@@ -29,6 +29,7 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 18** | **Dynamic AI UI Localization Engine** (`GET /api/v1/l10n/{lang}` & `DynamicLocalizationService`) | 🟢 Complete |
 | **Step 19** | **Universal Multi-Language Thought Reframing** (`target_language="auto"` & DB storage) | 🟢 Complete |
 | **Step 20** | **Live Supabase Project Integration & Dual ES256/HS256 JWT Verification** | 🟢 Complete |
+| **Step 21** | **Modern Language Selector Modal & 3-Tier Hierarchy (System, In-App, Fallback)** | 🟢 Complete |
 
 ---
 
@@ -44,6 +45,7 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] Dual-Engine JWT Verification (`ES256` via Supabase JWKS + `HS256` symmetric fallback)
 - [x] End-to-End Cloud History Sync (`ApiReframingService` + `HistoryScreen`)
 - [x] Zero-Hardcoding Universal Multi-Language Engine (Dynamic UI localization + AI prompt auto-detection)
+- [x] Modern Language Selector Modal with "Follow System" & Persistence (`LanguageSelectorModal`)
 - [x] Instant Zero-CPU Test Suite (All 5 backend test suites passing 100% in <3s)
 - [x] Multi-Agent Protocol Guide (`AGENTS.md`) & Technical Specification (`ARCHITECTURE.md`)
 - [x] Git & GitHub Remote Synced (`silver_lining.git`)
