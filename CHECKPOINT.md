@@ -57,8 +57,42 @@ flutter test      # ✅ 100% Widget & Unit tests pass (All 7 tests green)!
 
 ---
 
-## 🚀 4. Recommended Next Steps for Fresh Session
+## 🚀 4. Store Compliance Audit & Full Implementation Roadmap (Session Plan for Tomorrow)
 
-1. **Google Gemini API Key Generation** (for cloud LLM provider option).
-2. **Session 4 Deep Dive**: Mobile State, Networking, Auth & End-to-End Sync.
-3. **Live Simulator Run**: Launch in iOS Simulator or Android Emulator to test live sign-up and AI reframing.
+A comprehensive audit against **Apple App Store Review Guidelines** and **Google Play Developer Policies** was conducted, establishing the exact checklist required for full production release:
+
+### ⚠️ Identified Store Policy Gaps & Remediation Plan:
+1. **In-App Account Deletion (Apple Guideline 5.1.1(v) & Google Play Data Deletion Policy)**:
+   - *Requirement*: Apps allowing account creation must allow users to delete their account and associated data directly in the app.
+   - *Plan*: Implement `AuthService().deleteAccount()`, backend `DELETE /api/v1/users/me` (cascading user deletion), and a confirmation modal.
+2. **Generative AI Content Reporting (Apple Guideline 1.2 & Google Play GenAI Policy)**:
+   - *Requirement*: Users must be able to report/flag inappropriate or harmful AI responses.
+   - *Plan*: Add a "Flag / Report Response" button on `ResultCard` logging to backend `POST /api/v1/reports`.
+3. **Medical & Mental Wellness Disclaimers (Apple 1.4.1 & Google Play Health Policy)**:
+   - *Requirement*: Must explicitly declare that the app is an AI self-reflection tool and not clinical medical/mental health care or therapy.
+   - *Plan*: Add disclaimer dialog / persistent notice in settings and onboarding.
+4. **Legal Links (Terms of Service / EULA & Privacy Policy)**:
+   - *Requirement*: Accessible links in `AuthScreen` and Settings modal.
+5. **OS-Level Manifest & Privacy Declarations**:
+   - *Android*: Add `android.permission.INTERNET` and `<queries>` intent for `tel` scheme (for 988 emergency dialer on Android 11+) to `AndroidManifest.xml`.
+   - *iOS*: Add `LSApplicationQueriesSchemes` for `tel` to `Info.plist` and create `PrivacyInfo.xcprivacy` declaring UserDefaults API (`CA92.1`).
+   - *Branding*: Set `CFBundleDisplayName` and `android:label` to `"Silver Lining"`.
+6. **Cloud Backend Deployment & HTTPS**:
+   - Transition backend from local host to production HTTPS hosting (Render / Fly.io / GCP Cloud Run) with Google Gemini cloud LLM (`GEMINI_API_KEY`).
+
+---
+
+## 🎯 5. Immediate Priority Actions for Tomorrow
+
+1. **Task 1: OS Manifests & Privacy Configuration**:
+   - Update `app/android/app/src/main/AndroidManifest.xml` (`INTERNET` permission, `tel` queries, app label).
+   - Update `app/ios/Runner/Info.plist` (app label, `tel` scheme).
+   - Add `app/ios/Runner/PrivacyInfo.xcprivacy` for Apple privacy intake.
+2. **Task 2: In-App Account Deletion**:
+   - Add backend `DELETE /api/v1/auth/delete-account` in FastAPI.
+   - Add `deleteAccount()` in `IAuthProvider`, `SupabaseAuthProvider`, `AuthService`.
+   - Add "Delete Account" button and confirmation dialog in mobile UI.
+3. **Task 3: AI Reporting & Medical Disclaimer**:
+   - Add "Report Response" on `ResultCard`.
+   - Add mental health disclaimer footer/dialog.
+

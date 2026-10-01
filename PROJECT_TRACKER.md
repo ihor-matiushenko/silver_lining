@@ -30,6 +30,11 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 19** | **Universal Multi-Language Thought Reframing** (`target_language="auto"` & DB storage) | 🟢 Complete |
 | **Step 20** | **Live Supabase Project Integration & Dual ES256/HS256 JWT Verification** | 🟢 Complete |
 | **Step 21** | **Modern Language Selector Modal & 3-Tier Hierarchy (System, In-App, Fallback)** | 🟢 Complete |
+| **Step 22** | **App Store & Google Play Store Compliance (Account Deletion & Reporting)** | 🟡 Planned |
+| **Step 23** | **OS Manifests & Permissions (Android INTERNET/Queries, iOS PrivacyInfo.xcprivacy)** | 🟡 Planned |
+| **Step 24** | **Medical / Wellness Disclaimers & Legal EULA/Privacy Links** | 🟡 Planned |
+| **Step 25** | **Cloud Backend Deployment (FastAPI on HTTPS + Cloud Managed PostgreSQL)** | 🟡 Planned |
+| **Step 26** | **Production Store Assets (Icons, Native Splash Screen, App Bundles)** | 🟡 Planned |
 
 ---
 
@@ -48,7 +53,9 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] Modern Language Selector Modal with "Follow System" & Persistence (`LanguageSelectorModal`)
 - [x] Instant Zero-CPU Test Suite (All 5 backend test suites passing 100% in <3s)
 - [x] Multi-Agent Protocol Guide (`AGENTS.md`) & Technical Specification (`ARCHITECTURE.md`)
+- [x] Apple App Store & Google Play Store Compliance Architecture Audit (`ARCHITECTURE.md`)
 - [x] Git & GitHub Remote Synced (`silver_lining.git`)
 
 ---
 *Updated: 2026-10-01*
+

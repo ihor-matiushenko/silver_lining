@@ -261,3 +261,66 @@ All backend unit and API test suites use `settings.LLM_PROVIDER = "mock"` to ens
 3. `tests/test_favorites_and_delete.py`: 100% Pass
 4. `tests/test_rate_limiter.py`: 100% Pass
 5. `tests/test_multi_lang.py`: 100% Pass (Verifies auto-detect, explicit language target, DB storage, and `/api/v1/l10n` endpoint).
+
+---
+
+## 🏬 7. Apple App Store & Google Play Store Compliance Architecture
+
+To guarantee approval under Apple App Store Review Guidelines and Google Play Store Developer Policies, the system incorporates the following mandatory compliance requirements:
+
+### A. Account & Data Deletion (Apple 5.1.1(v) & Google Play Data Deletion Policy)
+* **Rule**: Apps supporting account creation MUST provide an in-app path for users to initiate account deletion, purging all personal data.
+* **Architecture**:
+  * Frontend: `AuthService().deleteAccount()` and confirmation modal in Settings/Profile dialog.
+  * Backend: `DELETE /api/v1/users/me` endpoint verifying JWT, purging user records in Supabase Auth, and cascading deletions to `ReframeRecord` and `SafetyLog`.
+
+### B. Generative AI Safety & Content Reporting (Apple 1.2 & Google Play GenAI Policy)
+* **Rule**: Generative AI apps must filter objectionable content and provide a user-facing mechanism to report inappropriate AI responses.
+* **Architecture**:
+  * 3-tier safety engine in `SafetyService` blocks harmful prompts pre-generation.
+  * User reporting: "Report / Flag Response" action on `ResultCard` forwarding objectionable generation events to backend `POST /api/v1/reports`.
+
+### C. Mental Wellness & Medical Disclaimers (Apple 1.4.1 & Google Play Health Policy)
+* **Rule**: Apps offering cognitive/psychological reframing must explicitly disclaim medical advice and provide immediate crisis intervention resources.
+* **Architecture**:
+  * Explicit disclaimer visible in UI: *"Silver Lining is an AI self-reflection tool, not medical or mental health care."*
+  * Native 988 Suicide & Crisis Lifeline dialer integrated via `emergency_launcher_service.dart`.
+
+### D. Legal Links (Terms of Service / EULA & Privacy Policy)
+* **Rule**: Publicly accessible Privacy Policy and Terms of Use (EULA) links must be accessible before authentication and inside app settings.
+* **Architecture**: Links accessible in `AuthScreen` footer and Settings modal.
+
+### E. OS-Level Manifest & Privacy Declarations
+* **Android**: `INTERNET` permission in `AndroidManifest.xml`, `<queries>` declaration for `tel` scheme (required for Android 11+ package visibility).
+* **iOS**: `LSApplicationQueriesSchemes` for `tel` in `Info.plist`, `PrivacyInfo.xcprivacy` declaring UserDefaults usage (`NSPrivacyAccessedAPICategoryUserDefaults` reason `CA92.1`).
+
+---
+
+## 🚀 8. Production Readiness & Full Implementation Roadmap
+
+```mermaid
+graph LR
+    subgraph Phase 1: Store Compliance
+        P1A[Account Deletion Flow] --> P1B[AI Flag/Report Response]
+        P1B --> P1C[Disclaimers & Legal Links]
+        P1C --> P1D[OS Manifests & Privacy Manifest]
+    end
+
+    subgraph Phase 2: UX & Settings
+        P2A[Cold-Boot Session Init] --> P2B[Settings / Profile Screen]
+        P2B --> P2C[Production Icons & Splash]
+    end
+
+    subgraph Phase 3: Cloud Infrastructure
+        P3A[Cloud LLM: Gemini 1.5] --> P3B[Cloud FastAPI Hosting]
+        P3B --> P3C[Managed PostgreSQL]
+    end
+
+    subgraph Phase 4: Release Builds
+        P4A[Android AppBundle: .aab] --> P4B[iOS IPA: Archive]
+        P4B --> P4C[Store Submission]
+    end
+
+    Phase 1 --> Phase 2 --> Phase 3 --> Phase 4
+```
+
