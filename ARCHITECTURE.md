@@ -121,7 +121,7 @@ backend/
 1. **`app/main.py`**: Minimal 50-line bootstrap using FastAPI's `@asynccontextmanager` `lifespan` handler to auto-create tables on startup, register CORS for Flutter, bind `slowapi` exception handlers, and mount modular routers.
 2. **`app/core/config.py`**: Pydantic `BaseSettings` singleton validating all environment variables at startup (fail-fast principle). Auto-parses `.env`.
 3. **`app/core/database.py`**: Sets up SQLAlchemy connection pooling (`pool_pre_ping=True` to auto-heal dropped connections) and exposes the `get_session()` generator dependency to automatically open and close database sessions per request.
-4. **`app/core/security.py`**: Validates Supabase JWTs via `HS256`. Exposes `get_current_user_optional` (allowing guest access) and `get_current_user` (requiring authentication).
+4. **`app/core/security.py`**: Validates Supabase JWTs via both modern asymmetric `ES256` (live Supabase ECC keys via JWKS endpoint) and symmetric `HS256` (`SUPABASE_JWT_SECRET`). Exposes `get_current_user_optional` (allowing guest access) and `get_current_user` (requiring authentication).
 5. **`app/core/limiter.py`**: Protects AI resources and costs by enforcing the guest daily limit (5/day) using `slowapi`.
 6. **`app/models/schemas.py`**: Pydantic DTO models (`ReframeRequest`, `ReframeResponse`) ensuring strict incoming payload validation and automatic OpenAPI Swagger docs generation at `/docs`.
 7. **`app/models/db_models.py`**: SQLModel ORM models (`User`, `ReframeRecord`, `SafetyLog`) defining table schemas, indices, and foreign keys.

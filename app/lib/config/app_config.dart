@@ -2,14 +2,28 @@ import 'package:flutter/foundation.dart';
 
 /// ⚙️ AppConfig: Centralized Configuration & Environment Feature Flags
 class AppConfig {
-  static const String supabaseUrl = String.fromEnvironment(
+  static const String _rawSupabaseUrl = String.fromEnvironment(
     'SUPABASE_URL',
-    defaultValue: 'https://YOUR_SUPABASE_URL.supabase.co',
+    defaultValue: 'https://qkwwcffgihsdpvruzpbw.supabase.co',
   );
+
+  /// Normalized Supabase base URL (strips any trailing /rest/v1 or slashes)
+  static String get supabaseUrl {
+    var url = _rawSupabaseUrl.trim();
+    if (url.endsWith('/rest/v1/')) {
+      url = url.substring(0, url.length - 9);
+    } else if (url.endsWith('/rest/v1')) {
+      url = url.substring(0, url.length - 8);
+    }
+    while (url.endsWith('/')) {
+      url = url.substring(0, url.length - 1);
+    }
+    return url;
+  }
 
   static const String supabaseAnonKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
-    defaultValue: 'YOUR_SUPABASE_ANON_KEY',
+    defaultValue: 'sb_publishable_udjIFNb93T-7TPYNPUon1g_S84zvI_t',
   );
 
   static const bool forceMockAuth = bool.fromEnvironment(
@@ -41,4 +55,3 @@ class AppConfig {
     return 'http://127.0.0.1:8000';
   }
 }
-

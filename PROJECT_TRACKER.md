@@ -28,6 +28,7 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 17** | **Instant Zero-CPU Test Suite Optimization** (`MockLLMProvider` in `backend/tests/`) | 🟢 Complete |
 | **Step 18** | **Dynamic AI UI Localization Engine** (`GET /api/v1/l10n/{lang}` & `DynamicLocalizationService`) | 🟢 Complete |
 | **Step 19** | **Universal Multi-Language Thought Reframing** (`target_language="auto"` & DB storage) | 🟢 Complete |
+| **Step 20** | **Live Supabase Project Integration & Dual ES256/HS256 JWT Verification** | 🟢 Complete |
 
 ---
 
@@ -39,6 +40,8 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] Python 3.11 FastAPI Modular Backend (`backend/app/main.py`)
 - [x] Pure PostgreSQL Database Architecture (Running on local port 5432)
 - [x] Flutter Auth Strategy Pattern (`IAuthProvider`, `SupabaseAuthProvider`, `MockAuthProvider`)
+- [x] Live Supabase Project Integration (Publishable Key, URL Normalizer & Initialization Guards)
+- [x] Dual-Engine JWT Verification (`ES256` via Supabase JWKS + `HS256` symmetric fallback)
 - [x] End-to-End Cloud History Sync (`ApiReframingService` + `HistoryScreen`)
 - [x] Zero-Hardcoding Universal Multi-Language Engine (Dynamic UI localization + AI prompt auto-detection)
 - [x] Instant Zero-CPU Test Suite (All 5 backend test suites passing 100% in <3s)
@@ -46,4 +49,4 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 - [x] Git & GitHub Remote Synced (`silver_lining.git`)
 
 ---
-*Updated: 2026-09-24*
+*Updated: 2026-10-01*

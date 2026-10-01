@@ -11,16 +11,19 @@ class SupabaseAuthProvider implements IAuthProvider {
   bool get isInitialized => _isInitialized;
 
   @override
-  String? get currentUserId => Supabase.instance.client.auth.currentUser?.id;
+  String? get currentUserId =>
+      _isInitialized ? Supabase.instance.client.auth.currentUser?.id : null;
 
   @override
-  String? get currentUserEmail => Supabase.instance.client.auth.currentUser?.email;
+  String? get currentUserEmail =>
+      _isInitialized ? Supabase.instance.client.auth.currentUser?.email : null;
 
   @override
-  String? get accessToken => Supabase.instance.client.auth.currentSession?.accessToken;
+  String? get accessToken =>
+      _isInitialized ? Supabase.instance.client.auth.currentSession?.accessToken : null;
 
   @override
-  bool get isAuthenticated => currentUserId != null;
+  bool get isAuthenticated => _isInitialized && currentUserId != null;
 
   @override
   Future<void> initialize() async {

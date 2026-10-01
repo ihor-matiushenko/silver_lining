@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     
     # 🔐 Supabase / Auth JWT Secret Key (Minimum 32 bytes for HS256 security)
     SUPABASE_JWT_SECRET: str = "dev-secret-key-must-be-at-least-32-bytes-long-for-jwt-security"
+    SUPABASE_URL: str = "https://qkwwcffgihsdpvruzpbw.supabase.co"
     
     # 🛡️ Guest Rate Limit Settings (Configurable via .env, default 5 reframings / day)
     GUEST_DAILY_LIMIT: int = 5
