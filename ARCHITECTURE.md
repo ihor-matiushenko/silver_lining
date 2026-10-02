@@ -193,7 +193,9 @@ app/lib/
     ├── animations/
     │   └── typewriter_text.dart    # 120 FPS character-by-character typewriter reveal
     ├── app_bar/
-    │   └── home_app_bar.dart       # Reactive header with account dialog & sign-out
+    │   └── home_app_bar.dart       # Ultra-lean reactive header with language modal & account triggers
+    ├── buttons/
+    │   └── social_auth_buttons.dart# Modular "or continue with" divider + Apple & Google OAuth buttons
     ├── cards/
     │   ├── crisis_shield_card.dart # Tier 1: Red card with 1-tap 988 emergency dialer
     │   ├── policy_refusal_card.dart# Tier 2: Amber card explaining prohibited prompts
@@ -204,34 +206,42 @@ app/lib/
     │   ├── preset_chip.dart        # Individual tappable scenario pill
     │   └── preset_chips.dart       # 4 test presets (Career, Breakup, Crisis, Crime)
     ├── dialogs/
+    │   ├── account_legal_dialog.dart# Dedicated profile dialog with legal links, sign out & deletion
     │   ├── language_selector_modal.dart # Bottom sheet modal for picking language or following device
     │   └── legal_info_dialog.dart  # Modal dialog displaying Medical Disclaimer, Privacy Policy & EULA
+    ├── footers/
+    │   ├── legal_links_row.dart    # Centered "Terms of Service • Privacy Policy" links row
+    │   └── medical_disclaimer_footer.dart# Reusable medical & wellness disclaimer banner
     ├── modals/
     │   └── report_content_modal.dart# Bottom sheet modal for reporting objectionable AI responses (Apple 1.2)
     └── forms/
+        ├── auth_mode_switch.dart   # Segmented tab control toggling Sign In vs Create Account
         ├── input_form_card.dart    # Thought input form card encapsulating chips & submit
-        ├── primary_auth_form.dart  # Modular Sign In / Sign Up form component with legal links
+        ├── primary_auth_form.dart  # Modular Sign In / Sign Up form composed of extracted subcomponents
         └── two_factor_auth_form.dart# Modular 2FA OTP code verification component
 ```
 
 ### Why Each Mobile Component Exists:
 
 1. **`config/app_config.dart`**: Single source of truth for Supabase keys and `apiBaseUrl` with cross-platform URL resolution (handling Android emulator `10.0.2.2:8000` vs iOS/web `127.0.0.1:8000`).
-2. **`services/auth_service.dart`**: Implements the Facade Pattern and extends `ChangeNotifier`. Notifies listeners on `signIn()`, `signUp()`, `signOut()`, and `deleteAccount()` so UI components (like `HomeAppBar` and `HistoryScreen`) rebuild reactively.
-3. **`services/providers/`**: Implements the Strategy Pattern for authentication (`IAuthProvider`). Decouples UI code from Supabase, enabling 100% offline development with `MockAuthProvider`.
+2. **`services/auth_service.dart`**: Implements the Facade Pattern and extends `ChangeNotifier`. Notifies listeners on `signIn()`, `signUp()`, `signInWithGoogle()`, `signInWithApple()`, `signOut()`, and `deleteAccount()` so UI components (like `HomeAppBar` and `HistoryScreen`) rebuild reactively. Includes `@visibleForTesting setProvider()` for clean test mock injection.
+3. **`services/providers/`**: Implements the Strategy Pattern for authentication (`IAuthProvider`). Decouples UI code from Supabase, enabling 100% offline development with `MockAuthProvider`, and production OAuth redirection via `SupabaseAuthProvider` (`signInWithOAuth`).
 4. **`services/api_reframing_service.dart`**: Handles HTTP networking, automatic JWT Bearer token attachment, account deletion, GenAI content reporting, and HTTP 429 rate limit payload decoding.
 5. **`services/storage_service.dart`**: Encapsulates `shared_preferences` persistence for guest history and user language preferences.
 6. **`screens/main_navigation_screen.dart`**: Uses `IndexedStack` to preserve tab scroll position and form inputs in memory across tab switches.
-7. **`screens/home_screen.dart`**: High-level coordinator with medical & wellness disclaimer footer. Only persists safe reframed thoughts to local `StorageService` if the user is a guest, preventing data leakage for authenticated users whose history is stored in PostgreSQL.
+7. **`screens/home_screen.dart`**: High-level coordinator with `MedicalDisclaimerFooter`. Only persists safe reframed thoughts to local `StorageService` if the user is a guest, preventing data leakage for authenticated users whose history is stored in PostgreSQL.
 8. **`screens/history_screen.dart`**: Dual-mode history list listening to `AuthService`. Displays `GuestHistoryBanner` for guests and fetches from PostgreSQL for authenticated users. Uses modular `HistoryCard` items.
 9. **`screens/auth_screen.dart`**: Clean stateful container hosting `PrimaryAuthForm` and `TwoFactorAuthForm` inside a unified `GlassCard`.
 10. **`widgets/cards/reframed_perspective_card.dart`**: Displays positive perspective typewriter reveal with an integrated flag button allowing users to report objectionable AI output.
 11. **`widgets/cards/history_card.dart` & `guest_history_banner.dart`**: Modular card widgets cleanly decoupled from screen-level orchestration.
-12. **`widgets/forms/primary_auth_form.dart` & `two_factor_auth_form.dart`**: Extracted form widgets with strict field validation, mode switching, password obscuring, and Terms/Privacy links.
-13. **`widgets/app_bar/home_app_bar.dart`**: Displays title, language selector, and Account & Legal dialog with in-app account deletion and legal disclaimers.
-14. **`widgets/dialogs/language_selector_modal.dart`**: Bottom sheet modal allowing users to toggle between "Follow System" and explicit languages (`uk`, `en`, `es`, `de`, `fr`).
-15. **`widgets/dialogs/legal_info_dialog.dart`**: Displays formatted Medical Disclaimer, Privacy Policy, and Terms of Service.
-16. **`widgets/modals/report_content_modal.dart`**: Bottom sheet modal capturing reason and user feedback to report inappropriate or harmful AI responses.
+12. **`widgets/forms/primary_auth_form.dart`**: Composed of focused subcomponents (`AuthModeSwitch`, `SocialAuthButtons`, `LegalLinksRow`) maintaining strict field validation and password obscuring.
+13. **`widgets/buttons/social_auth_buttons.dart`**: Encapsulates "or continue with" divider, Apple HIG-compliant "Sign in with Apple", and "Continue with Google" buttons.
+14. **`widgets/dialogs/account_legal_dialog.dart`**: Manages user profile details, cloud sync status, legal chips, sign-out, and account deletion confirmation flow.
+15. **`widgets/footers/medical_disclaimer_footer.dart`**: Self-contained store-compliance medical disclaimer card.
+16. **`widgets/app_bar/home_app_bar.dart`**: Ultra-lean top navigation bar triggering language selector and `AccountLegalDialog`.
+17. **`widgets/dialogs/language_selector_modal.dart`**: Bottom sheet modal allowing users to toggle between "Follow System" and explicit languages (`uk`, `en`, `es`, `de`, `fr`).
+18. **`widgets/dialogs/legal_info_dialog.dart`**: Displays formatted Medical Disclaimer, Privacy Policy, and Terms of Service.
+19. **`widgets/modals/report_content_modal.dart`**: Bottom sheet modal capturing reason and user feedback to report inappropriate or harmful AI responses.
 
 ---
 

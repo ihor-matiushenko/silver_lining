@@ -7,7 +7,7 @@ import '../services/dynamic_localization_service.dart';
 import '../services/reframing_service_interface.dart';
 import '../services/storage_service.dart';
 import '../widgets/app_bar/home_app_bar.dart';
-import '../widgets/dialogs/legal_info_dialog.dart';
+import '../widgets/footers/medical_disclaimer_footer.dart';
 import '../widgets/forms/input_form_card.dart';
 import '../widgets/result_card.dart';
 
@@ -99,29 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 32),
 
             // 🩺 Store Compliance Medical & Wellness Disclaimer Footer (Apple 1.4.1 & Google Play Health)
-            GestureDetector(
-              onTap: () => LegalInfoDialog.showMedicalDisclaimer(context),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.03),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white10),
-                ),
-                child: Row(
-                  children: const [
-                    Icon(Icons.info_outline, size: 16, color: Colors.white38),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Silver Lining is an AI self-reflection tool, not medical or mental health care. Tap to read full disclaimer.',
-                        style: TextStyle(color: Colors.white38, fontSize: 11, height: 1.3),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            const MedicalDisclaimerFooter(),
             const SizedBox(height: 16),
           ],
         ),

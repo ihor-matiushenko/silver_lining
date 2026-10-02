@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_typography.dart';
-import '../dialogs/legal_info_dialog.dart';
+import '../buttons/social_auth_buttons.dart';
+import '../footers/legal_links_row.dart';
+import 'auth_mode_switch.dart';
 
 /// 📝 PrimaryAuthForm: Clean, single-responsibility form component for Sign In and Sign Up
 class PrimaryAuthForm extends StatelessWidget {
@@ -15,6 +17,8 @@ class PrimaryAuthForm extends StatelessWidget {
   final ValueChanged<bool> onModeChanged;
   final VoidCallback onToggleObscurePassword;
   final VoidCallback onSubmit;
+  final VoidCallback? onGoogleSignIn;
+  final VoidCallback? onAppleSignIn;
   final VoidCallback onContinueAsGuest;
 
   const PrimaryAuthForm({
@@ -29,6 +33,8 @@ class PrimaryAuthForm extends StatelessWidget {
     required this.onModeChanged,
     required this.onToggleObscurePassword,
     required this.onSubmit,
+    this.onGoogleSignIn,
+    this.onAppleSignIn,
     required this.onContinueAsGuest,
   });
 
@@ -62,55 +68,10 @@ class PrimaryAuthForm extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // Sign In vs Sign Up Segment Switch
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => onModeChanged(false),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                        color: !isSignUpMode ? AppColors.primary : Colors.transparent,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        'Sign In',
-                        style: AppTypography.buttonText.copyWith(
-                          color: !isSignUpMode ? Colors.white : Colors.white60,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => onModeChanged(true),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                        color: isSignUpMode ? AppColors.primary : Colors.transparent,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        'Create Account',
-                        style: AppTypography.buttonText.copyWith(
-                          color: isSignUpMode ? Colors.white : Colors.white60,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          // Extracted Segmented Switcher Component
+          AuthModeSwitch(
+            isSignUpMode: isSignUpMode,
+            onModeChanged: onModeChanged,
           ),
           const SizedBox(height: 24),
 
@@ -211,6 +172,14 @@ class PrimaryAuthForm extends StatelessWidget {
                     style: AppTypography.buttonText,
                   ),
           ),
+          const SizedBox(height: 20),
+
+          // Extracted Reusable Social Login Buttons Component
+          SocialAuthButtons(
+            isLoading: isLoading,
+            onGoogleSignIn: onGoogleSignIn,
+            onAppleSignIn: onAppleSignIn,
+          ),
           const SizedBox(height: 16),
 
           // Guest Mode Link Button
@@ -223,35 +192,8 @@ class PrimaryAuthForm extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          // Legal Terms & Privacy Policy Links (Store Compliance)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () => LegalInfoDialog.showTermsOfService(context),
-                child: const Text(
-                  'Terms of Service',
-                  style: TextStyle(
-                    color: Colors.white38,
-                    fontSize: 11,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-              const Text('  •  ', style: TextStyle(color: Colors.white24, fontSize: 11)),
-              GestureDetector(
-                onTap: () => LegalInfoDialog.showPrivacyPolicy(context),
-                child: const Text(
-                  'Privacy Policy',
-                  style: TextStyle(
-                    color: Colors.white38,
-                    fontSize: 11,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          // Extracted Reusable Legal Links Row
+          const LegalLinksRow(),
         ],
       ),
     );

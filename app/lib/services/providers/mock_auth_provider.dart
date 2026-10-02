@@ -52,6 +52,22 @@ class MockAuthProvider implements IAuthProvider {
   }
 
   @override
+  Future<void> signInWithGoogle() async {
+    _mockUserId = 'usr_mock_google_oauth_123';
+    _mockEmail = 'user.mock@gmail.com';
+    _mockToken = 'dev_mock_jwt_token';
+    debugPrint('🔓 [MockAuthProvider] Mock Google OAuth Sign In successful!');
+  }
+
+  @override
+  Future<void> signInWithApple() async {
+    _mockUserId = 'usr_mock_apple_oauth_456';
+    _mockEmail = 'user.mock@privaterelay.appleid.com';
+    _mockToken = 'dev_mock_jwt_token';
+    debugPrint('🔓 [MockAuthProvider] Mock Apple OAuth Sign In successful!');
+  }
+
+  @override
   Future<void> signOut() async {
     _mockUserId = null;
     _mockEmail = null;

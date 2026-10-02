@@ -10,7 +10,7 @@ class AuthService extends ChangeNotifier implements IAuthProvider {
   static final AuthService _instance = AuthService._internal();
   factory AuthService() => _instance;
 
-  late final IAuthProvider _provider;
+  late IAuthProvider _provider;
 
   AuthService._internal({IAuthProvider? customProvider}) {
     if (customProvider != null) {
@@ -20,6 +20,13 @@ class AuthService extends ChangeNotifier implements IAuthProvider {
     } else {
       _provider = MockAuthProvider();
     }
+  }
+
+  /// Allows unit and widget tests to inject an isolated mock auth provider
+  @visibleForTesting
+  void setProvider(IAuthProvider provider) {
+    _provider = provider;
+    notifyListeners();
   }
 
   @override
@@ -55,6 +62,18 @@ class AuthService extends ChangeNotifier implements IAuthProvider {
     required String password,
   }) async {
     await _provider.signIn(email: email, password: password);
+    notifyListeners();
+  }
+
+  @override
+  Future<void> signInWithGoogle() async {
+    await _provider.signInWithGoogle();
+    notifyListeners();
+  }
+
+  @override
+  Future<void> signInWithApple() async {
+    await _provider.signInWithApple();
     notifyListeners();
   }
 

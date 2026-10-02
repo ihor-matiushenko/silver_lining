@@ -18,6 +18,12 @@ abstract class IAuthProvider {
     required String password,
   });
 
+  /// Initiates OAuth Sign-In flow with Google
+  Future<void> signInWithGoogle();
+
+  /// Initiates OAuth Sign-In flow with Apple (required by Apple App Store Guideline 4.8)
+  Future<void> signInWithApple();
+
   Future<void> signOut();
 
   /// Permanently deletes user account and purges all cloud data

@@ -67,6 +67,24 @@ class SupabaseAuthProvider implements IAuthProvider {
   }
 
   @override
+  Future<void> signInWithGoogle() async {
+    debugPrint('🌐 [SupabaseAuthProvider] Initiating Google OAuth flow...');
+    await Supabase.instance.client.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: kIsWeb ? null : 'io.supabase.silverlining://login-callback/',
+    );
+  }
+
+  @override
+  Future<void> signInWithApple() async {
+    debugPrint('🍎 [SupabaseAuthProvider] Initiating Apple OAuth flow...');
+    await Supabase.instance.client.auth.signInWithOAuth(
+      OAuthProvider.apple,
+      redirectTo: kIsWeb ? null : 'io.supabase.silverlining://login-callback/',
+    );
+  }
+
+  @override
   Future<void> signOut() async {
     await Supabase.instance.client.auth.signOut();
     debugPrint('🔒 [SupabaseAuthProvider] Signed out.');

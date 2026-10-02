@@ -33,23 +33,21 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 22** | **App Store & Google Play Store Compliance (Account Deletion & Reporting)** | 🟢 Complete |
 | **Step 23** | **OS Manifests & Permissions (Android INTERNET/Queries, iOS PrivacyInfo.xcprivacy)** | 🟢 Complete |
 | **Step 24** | **Medical / Wellness Disclaimers & Legal EULA/Privacy Links** | 🟢 Complete |
-| **Step 25** | **Social Login: Sign in with Apple & Google** (`IAuthProvider`, `SupabaseAuthProvider`, UI buttons) | 🟡 Next Up |
-| **Step 26** | **Public Web Policies & Deletion Form** (Static web `/privacy` and `/delete-account` URLs for Store Console) | 🟡 Planned |
+| **Step 25** | **Social Login: Sign in with Apple & Google** (`IAuthProvider`, `SupabaseAuthProvider`, UI buttons) | 🟢 Complete |
+| **Step 26** | **Public Web Policies & Deletion Form** (Static web `/privacy` and `/delete-account` URLs for Store Console) | 🟡 Next Up |
 | **Step 27** | **Production Store Assets & Native Splash Screen** (`flutter_launcher_icons`, `flutter_native_splash`) | 🟡 Planned |
 | **Step 28** | **Cloud Backend HTTPS Deployment & Reviewer Demo Account** (`demo@silverlining.app` provisioning) | 🟡 Planned |
 
 ---
 
 ## 🚀 Immediate Resume Instructions for Next Session
-When resuming work tomorrow:
-1. **Starting Point**: **Step 25: Sign in with Apple & Google Integration**.
-   - Contract interface: [app/lib/services/providers/i_auth_provider.dart](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/providers/i_auth_provider.dart) -> add `signInWithApple()` and `signInWithGoogle()`.
-   - Live Supabase provider: [app/lib/services/providers/supabase_auth_provider.dart](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/providers/supabase_auth_provider.dart) -> implement OAuth triggers via `supabase.auth.signInWithIdToken(...)` / `signInWithOAuth(...)`.
-   - Mock provider: [app/lib/services/providers/mock_auth_provider.dart](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/providers/mock_auth_provider.dart) -> add instant mock sign-in for testing.
-   - UI: Add branded "Continue with Apple" (on iOS) and "Continue with Google" buttons to [primary_auth_form.dart](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/forms/primary_auth_form.dart).
+When resuming work:
+1. **Starting Point**: **Step 26: Public Web Policies & Deletion Form**.
+   - Create public-facing static web pages or backend FastAPI endpoints (`/privacy`, `/terms`, `/delete-account`) required by Apple App Store Connect and Google Play Console submission checklists.
+   - Self-service web deletion request form for users who delete the app without deleting their account.
 2. **Alternative Starting Points** (if prioritized by user):
-   - **Step 26**: Public web pages for Privacy Policy and Data Deletion Form (Google Play & Apple Console links).
    - **Step 27**: Custom app branding (1024x1024 icon + native splash screen).
+   - **Step 28**: Cloud Backend HTTPS Deployment (Fly.io / Render / GCP Cloud Run) with demo account provisioning.
 3. **Verification Command**:
    - `cd backend && PYTHONPATH=. .venv/bin/python tests/test_account_deletion.py && PYTHONPATH=. .venv/bin/python tests/test_report_api.py`
    - `cd app && flutter analyze && flutter test`

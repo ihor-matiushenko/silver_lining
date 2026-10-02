@@ -1,98 +1,78 @@
 # 📌 Silver Lining Project Checkpoint (`CHECKPOINT.md`)
 
-**Date**: October 1, 2026  
-**Status**: Live Supabase Integration Active & Verified (Dual ES256/HS256 Verification Engine)  
+**Date**: October 2, 2026  
+**Status**: Step 25 (Social Login: Apple & Google) & UI Component Decomposition Complete  
 **Branch**: `main`
 
 ---
 
 ## 🎯 1. Executive Summary
 
-This checkpoint records the successful configuration and integration of live **Supabase Auth** across both the mobile Flutter frontend and FastAPI backend. The backend has been architected to handle both modern asymmetric **ECC (P-256 / ES256)** signatures via Supabase's live JWKS endpoint as well as legacy symmetric **HS256** shared secrets.
+This checkpoint records the successful implementation of **Step 25: Social Login (Sign in with Apple & Google)** and a major **UI Component Modularization** across the Flutter application:
+1. **Apple & Google OAuth Integration**:
+   - Implemented `signInWithGoogle()` and `signInWithApple()` on `IAuthProvider`, `SupabaseAuthProvider`, and `MockAuthProvider`.
+   - Adhered strictly to **Apple App Store Review Guideline 4.8** by providing prominent, Apple Human Interface Guidelines-compliant Sign in with Apple alongside Google login.
+   - Built a comprehensive automated test suite (`social_auth_test.dart`) covering UI button rendering, tap interactions, and end-to-end OAuth flow simulation.
+2. **UI Component Decomposition**:
+   - Decomposed monolithic widgets into 5 reusable, single-responsibility components: `SocialAuthButtons`, `AuthModeSwitch`, `LegalLinksRow`, `MedicalDisclaimerFooter`, and `AccountLegalDialog`.
+   - Reduced `home_app_bar.dart` from 216 lines to 85 lines, and streamlined `PrimaryAuthForm` and `HomeScreen`.
 
 ---
 
 ## 🏛️ 2. Core Architecture Highlights
 
-### A. Backend Architecture (`backend/`)
-- **Dual-Engine JWT Verification (`security.py`)**:
-  - Automatically parses unverified JWT headers to detect signing algorithm (`alg`).
-  - **ES256 Asymmetric Mode**: Dynamically fetches and verifies signatures against live Supabase JWKS keys (`/auth/v1/.well-known/jwks.json`) via `PyJWKClient`.
-  - **HS256 Symmetric Mode**: Falls back to `SUPABASE_JWT_SECRET` (supporting both raw UTF-8 and base64-decoded byte keys).
-  - **Mock Development Bypass**: Zero-latency offline dev bypass for `dev_mock_jwt_token`.
-- **FastAPI 3-Tier Layered Services**:
-  - `ReframingService`, `HistoryService`, `LocalizationService`, `LLMService`.
-- **PostgreSQL Database (`SQLModel`)**:
-  - Pure ORM entities (`User`, `ReframeRecord`, `SafetyLog`) with dynamic user auto-provisioning.
+### A. Mobile Frontend (`app/`)
+- **Strategy Pattern for Authentication (`lib/services/providers/`)**:
+  - `IAuthProvider`: Contract defining `signUp`, `signIn`, `signInWithGoogle`, `signInWithApple`, `signOut`, `deleteAccount`.
+  - `SupabaseAuthProvider`: Live OAuth flow using `Supabase.instance.client.auth.signInWithOAuth(...)` with deep link redirect `io.supabase.silverlining://login-callback/`.
+  - `MockAuthProvider`: Offline test mock simulating instant authentication with test doubles (`@privaterelay.appleid.com` and `@gmail.com`).
+  - `AuthService`: Singleton facade extending `ChangeNotifier` with `@visibleForTesting setProvider()` for clean test mock injection.
+- **Decomposed UI Component Architecture (`lib/widgets/`)**:
+  - `buttons/social_auth_buttons.dart`: "or continue with" divider + Apple HIG button + Google button.
+  - `forms/auth_mode_switch.dart`: Segmented tab toggle for Sign In vs Create Account using `ValueChanged<bool>`.
+  - `footers/legal_links_row.dart`: Centered Terms of Service & Privacy Policy dialog triggers.
+  - `footers/medical_disclaimer_footer.dart`: Translucent self-contained medical disclaimer banner.
+  - `dialogs/account_legal_dialog.dart`: User profile dialog with cloud sync status, legal chips, sign-out, and account deletion confirmation flow.
 
-### B. Mobile App Architecture (`app/`)
-- **Live Supabase Credentials**: Configured with project URL and publishable anon key in `AppConfig`.
-- **URL Normalizer & Sanitizer**: Automatically cleans and normalizes trailing `/rest/v1` or trailing slashes to ensure Auth SDK routes to valid endpoints.
-- **Initialization Guard**: Safeguarded `currentUserId`, `currentUserEmail`, and `accessToken` in `SupabaseAuthProvider` to prevent premature assertion crashes during cold boot or widget testing.
-- **Auth Strategy Pattern**: Zero-downtime switching between `MockAuthProvider` and `SupabaseAuthProvider`.
-- **Modern Language Selector (`LanguageSelectorModal`)**: Clean bottom sheet allowing users to toggle between "Follow System" and explicit languages (`uk`, `en`, `es`, `de`, `fr`), with instant reactive UI translation via `DynamicLocalizationService` (extending `ChangeNotifier`).
-- **Offline Language Persistence**: Saves user preference to `StorageService` (`shared_preferences`).
+### B. Backend Architecture (`backend/`)
+- Dual-Engine JWT Verification (`ES256` via Supabase JWKS + `HS256` fallback + offline dev bypass).
+- In-App Account Deletion cascade: `DELETE /api/v1/auth/delete-account` wiping records and user rows.
+- Objectionable AI Content Reporting: `POST /api/v1/reports` persisting reports to PostgreSQL.
 
 ---
 
 ## 🧪 3. Verification & Test Suite Status
 
-### Backend Test Suite (`backend/tests/`)
-All backend test suites execute in <3s with 100% pass rate:
-```bash
-cd backend
-PYTHONPATH=. .venv/bin/python tests/test_auth_flow.py          # ✅ 100% PASS
-PYTHONPATH=. .venv/bin/python tests/test_history_api.py        # ✅ 100% PASS
-PYTHONPATH=. .venv/bin/python tests/test_favorites_and_delete.py# ✅ 100% PASS
-PYTHONPATH=. .venv/bin/python tests/test_rate_limiter.py       # ✅ 100% PASS
-PYTHONPATH=. .venv/bin/python tests/test_multi_lang.py         # ✅ 100% PASS
-```
-
 ### Mobile App Analysis & Unit Tests (`app/`)
 ```bash
 cd app
-flutter analyze   # ✅ 0 linter issues!
-flutter test      # ✅ 100% Widget & Unit tests pass (All 7 tests green)!
+flutter analyze   # ✅ 0 linter issues! (ran in 0.9s)
+flutter test      # ✅ 100% PASS (All 13 widget and unit tests green!)
+```
+
+### Backend Test Suite (`backend/tests/`)
+All backend test suites execute with 100% pass rate:
+```bash
+cd backend
+PYTHONPATH=. .venv/bin/python tests/test_auth_flow.py          # ✅ 100% PASS
+PYTHONPATH=. .venv/bin/python tests/test_account_deletion.py   # ✅ 100% PASS
+PYTHONPATH=. .venv/bin/python tests/test_report_api.py          # ✅ 100% PASS
 ```
 
 ---
 
-## 🚀 4. Store Compliance Audit & Full Implementation Roadmap (Session Plan for Tomorrow)
+## 🚀 4. Immediate Resume Instructions for Next Session (Step 26)
 
-A comprehensive audit against **Apple App Store Review Guidelines** and **Google Play Developer Policies** was conducted, establishing the exact checklist required for full production release:
+When resuming in the next session:
 
-### ⚠️ Identified Store Policy Gaps & Remediation Plan:
-1. **In-App Account Deletion (Apple Guideline 5.1.1(v) & Google Play Data Deletion Policy)**:
-   - *Requirement*: Apps allowing account creation must allow users to delete their account and associated data directly in the app.
-   - *Plan*: Implement `AuthService().deleteAccount()`, backend `DELETE /api/v1/users/me` (cascading user deletion), and a confirmation modal.
-2. **Generative AI Content Reporting (Apple Guideline 1.2 & Google Play GenAI Policy)**:
-   - *Requirement*: Users must be able to report/flag inappropriate or harmful AI responses.
-   - *Plan*: Add a "Flag / Report Response" button on `ResultCard` logging to backend `POST /api/v1/reports`.
-3. **Medical & Mental Wellness Disclaimers (Apple 1.4.1 & Google Play Health Policy)**:
-   - *Requirement*: Must explicitly declare that the app is an AI self-reflection tool and not clinical medical/mental health care or therapy.
-   - *Plan*: Add disclaimer dialog / persistent notice in settings and onboarding.
-4. **Legal Links (Terms of Service / EULA & Privacy Policy)**:
-   - *Requirement*: Accessible links in `AuthScreen` and Settings modal.
-5. **OS-Level Manifest & Privacy Declarations**:
-   - *Android*: Add `android.permission.INTERNET` and `<queries>` intent for `tel` scheme (for 988 emergency dialer on Android 11+) to `AndroidManifest.xml`.
-   - *iOS*: Add `LSApplicationQueriesSchemes` for `tel` to `Info.plist` and create `PrivacyInfo.xcprivacy` declaring UserDefaults API (`CA92.1`).
-   - *Branding*: Set `CFBundleDisplayName` and `android:label` to `"Silver Lining"`.
-6. **Cloud Backend Deployment & HTTPS**:
-   - Transition backend from local host to production HTTPS hosting (Render / Fly.io / GCP Cloud Run) with Google Gemini cloud LLM (`GEMINI_API_KEY`).
-
----
-
-## 🎯 5. Immediate Priority Actions for Tomorrow
-
-1. **Task 1: OS Manifests & Privacy Configuration**:
-   - Update `app/android/app/src/main/AndroidManifest.xml` (`INTERNET` permission, `tel` queries, app label).
-   - Update `app/ios/Runner/Info.plist` (app label, `tel` scheme).
-   - Add `app/ios/Runner/PrivacyInfo.xcprivacy` for Apple privacy intake.
-2. **Task 2: In-App Account Deletion**:
-   - Add backend `DELETE /api/v1/auth/delete-account` in FastAPI.
-   - Add `deleteAccount()` in `IAuthProvider`, `SupabaseAuthProvider`, `AuthService`.
-   - Add "Delete Account" button and confirmation dialog in mobile UI.
-3. **Task 3: AI Reporting & Medical Disclaimer**:
-   - Add "Report Response" on `ResultCard`.
-   - Add mental health disclaimer footer/dialog.
-
+### 📍 Starting Point: **Step 26: Public Web Policies & Deletion Form**
+* **Context**: Both Apple App Store Connect and Google Play Console require publicly accessible web URLs for:
+  1. **Privacy Policy URL** (must detail data collection, AI processing, and third-party services like Supabase).
+  2. **Terms of Service / EULA URL** (including standard Apple EULA disclaimers for user-generated and AI content).
+  3. **Web-Based Account & Data Deletion URL** (Google Play Data Safety mandate: users must be able to request account deletion outside the app if they have uninstalled it).
+* **Implementation Plan**:
+  - Implement public static web pages or lightweight FastAPI routes serving clean, responsive HTML for `/privacy`, `/terms`, and `/delete-account`.
+  - Add a self-service web form on `/delete-account` allowing users to submit an email deletion request verified via OTP or confirmation link.
+* **Verification Command**:
+  - `cd backend && PYTHONPATH=. .venv/bin/python tests/test_account_deletion.py`
+  - `cd app && flutter test`

@@ -74,6 +74,54 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await AuthService().signInWithGoogle();
+      if (mounted) {
+        widget.onAuthSuccess();
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString().replaceAll('Exception: ', '');
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _handleAppleSignIn() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await AuthService().signInWithApple();
+      if (mounted) {
+        widget.onAuthSuccess();
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString().replaceAll('Exception: ', '');
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   Future<void> _handle2FAVerify() async {
     final otp = _otpController.text.trim();
     if (otp.length < 6) {
@@ -140,6 +188,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         onModeChanged: (val) => setState(() => _isSignUpMode = val),
                         onToggleObscurePassword: () => setState(() => _obscurePassword = !_obscurePassword),
                         onSubmit: _handleSubmit,
+                        onGoogleSignIn: _handleGoogleSignIn,
+                        onAppleSignIn: _handleAppleSignIn,
                         onContinueAsGuest: widget.onContinueAsGuest,
                       ),
               ),
