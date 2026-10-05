@@ -46,3 +46,19 @@ class UserService:
             user_id=user_id,
             deleted_records_count=records_count
         )
+
+    @staticmethod
+    def delete_user_by_email(db: Session, email: str) -> tuple[bool, int]:
+        """
+        Web-initiated account deletion request (Google Play Data Safety Mandate).
+        Searches for registered user by email and cascades deletion to all personal data.
+        Returns a tuple of (account_found: bool, deleted_records_count: int).
+        """
+        clean_email = email.strip().lower()
+        user = db.exec(select(User).where(User.email == clean_email)).first()
+        if not user or not user.id:
+            return False, 0
+
+        res = UserService.delete_user_account(db=db, user_id=user.id)
+        return True, res.deleted_records_count
+

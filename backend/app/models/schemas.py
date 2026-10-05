@@ -75,3 +75,27 @@ class DeleteAccountResponse(BaseModel):
         description="Total number of reframing history records purged"
     )
 
+# 🌐 Public Web Account Deletion Request Schema (Google Play Data Safety Mandate)
+class WebDeleteAccountRequest(BaseModel):
+    email: str = Field(
+        min_length=3,
+        description="Registered user email address for deletion request"
+    )
+    reason: Optional[str] = Field(
+        default=None,
+        description="Optional reason for account deletion"
+    )
+
+class WebDeleteAccountResponse(BaseModel):
+    status: str = Field(
+        default="completed",
+        description="Status of the deletion request (completed or unverified)"
+    )
+    message: str = Field(
+        description="User-facing confirmation message explaining data purge"
+    )
+    account_found: bool = Field(
+        description="Whether a registered account was located and purged"
+    )
+
+

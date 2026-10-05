@@ -10,6 +10,7 @@ from app.api.v1.history_router import history_router
 from app.api.v1.localization_router import localization_router
 from app.api.v1.auth_router import auth_router
 from app.api.v1.report_router import report_router
+from app.api.v1.web_router import web_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -43,11 +44,16 @@ app.include_router(history_router, prefix="/api/v1")
 app.include_router(localization_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(report_router, prefix="/api/v1")
+app.include_router(web_router)
 
 @app.get("/")
 async def root():
     return {
         "status": "online",
         "service": "Silver Lining AI Backend",
-        "docs": "http://localhost:8000/docs"
+        "docs": "http://localhost:8000/docs",
+        "privacy_policy": "/privacy",
+        "terms_of_service": "/terms",
+        "delete_account": "/delete-account",
     }
+

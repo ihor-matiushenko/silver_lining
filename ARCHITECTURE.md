@@ -102,7 +102,10 @@ backend/
 │   │   ├── history_router.py    # GET/POST/DELETE /api/v1/history controllers
 │   │   ├── localization_router.py# GET /api/v1/l10n/{lang_code} controller
 │   │   ├── auth_router.py       # DELETE /api/v1/auth/delete-account controller (Apple 5.1.1(v))
-│   │   └── report_router.py     # POST /api/v1/reports controller (Apple 1.2 & Google GenAI)
+│   │   ├── report_router.py     # POST /api/v1/reports controller (Apple 1.2 & Google GenAI)
+│   │   └── web_router.py        # GET /privacy, /terms, /delete-account & POST /api/v1/auth/request-web-deletion
+│   ├── web/                     # 🌐 Public Web Page Renderers & Templates
+│   │   └── pages.py             # Dark-mode glassmorphic HTML/CSS pages for Privacy, Terms & Deletion Portal
 │   └── services/                # 🧠 Pure Business Logic Services
 │       ├── reframing_service.py # Orchestrates safety + LLM strategy + DB persistence
 │       ├── safety_service.py    # 3-tier guardrails (self-harm crisis / crime refusal)
@@ -123,7 +126,8 @@ backend/
 │   ├── test_rate_limiter.py     # slowapi rate limiter enforcement & auth exemption
 │   ├── test_multi_lang.py       # Target language auto-detect & dynamic UI strings
 │   ├── test_account_deletion.py # In-app account deletion & cascading purge
-│   └── test_report_api.py       # GenAI content reporting & DB audit
+│   ├── test_report_api.py       # GenAI content reporting & DB audit
+│   └── test_web_policies_and_deletion.py # Public web endpoints & web-initiated deletion
 └── requirements.txt             # 📦 Backend Dependencies
 ```
 
@@ -134,20 +138,22 @@ backend/
 3. **`app/core/database.py`**: Sets up SQLAlchemy connection pooling (`pool_pre_ping=True` to auto-heal dropped connections) and exposes the `get_session()` generator dependency to automatically open and close database sessions per request.
 4. **`app/core/security.py`**: Validates Supabase JWTs via both modern asymmetric `ES256` (live Supabase ECC keys via JWKS endpoint) and symmetric `HS256` (`SUPABASE_JWT_SECRET`). Exposes `get_current_user_optional` (allowing guest access) and `get_current_user` (requiring authentication).
 5. **`app/core/limiter.py`**: Protects AI resources and costs by enforcing the guest daily limit (5/day) using `slowapi`.
-6. **`app/models/schemas.py`**: Pydantic DTO models (`ReframeRequest`, `ReframeResponse`, `ReportRequest`, `ReportResponse`, `DeleteAccountResponse`) ensuring strict incoming payload validation and automatic OpenAPI Swagger docs generation at `/docs`.
+6. **`app/models/schemas.py`**: Pydantic DTO models (`ReframeRequest`, `ReframeResponse`, `ReportRequest`, `ReportResponse`, `DeleteAccountResponse`, `WebDeleteAccountRequest`, `WebDeleteAccountResponse`) ensuring strict incoming payload validation and automatic OpenAPI Swagger docs generation at `/docs`.
 7. **`app/models/db_models.py`**: SQLModel ORM models (`User`, `ReframeRecord`, `SafetyLog`, `ReportRecord`) defining table schemas, indices, and foreign keys.
 8. **`app/api/v1/reframe_router.py`**: HTTP controller for thought reframing, delegating work directly to `ReframingService`.
 9. **`app/api/v1/history_router.py`**: HTTP controllers for user history, favorite toggles, and deletions with ownership validation.
 10. **`app/api/v1/localization_router.py`**: HTTP controller returning UI translation key-value maps.
 11. **`app/api/v1/auth_router.py`**: HTTP controller for in-app account deletion (`DELETE /api/v1/auth/delete-account`).
 12. **`app/api/v1/report_router.py`**: HTTP controller for flagging objectionable AI output (`POST /api/v1/reports`).
-13. **`app/services/reframing_service.py`**: Encapsulates the entire reframing business flow: validation $\rightarrow$ safety check $\rightarrow$ AI generation $\rightarrow$ conditional PostgreSQL save for authenticated users.
-14. **`app/services/safety_service.py`**: Zero-tolerance guardrail engine evaluating crisis/self-harm and criminal policy violations.
-15. **`app/services/history_service.py`**: PostgreSQL query logic ensuring users can only read, favorite, or delete their own records.
-16. **`app/services/user_service.py`**: Purges user accounts and cascades deletions across all associated records (Apple 5.1.1(v) & Google Play Data Deletion).
-17. **`app/services/report_service.py`**: Audits and persists flagged GenAI responses from users.
-18. **`app/services/localization_service.py`**: Dynamic translation engine combining base English strings, cached common languages, and on-demand AI translation for any ISO code.
-19. **`app/services/llm_service.py` & `llm_providers/`**: Implements the Strategy Pattern. Decouples the application from any single AI vendor (seamlessly switching between Ollama, Gemini, and Mock providers).
+13. **`app/api/v1/web_router.py` & `app/web/pages.py`**: Public web endpoints (`/privacy`, `/terms`, `/delete-account`) and responsive glassmorphic HTML renderers providing mandatory App Store & Google Play compliance, including multi-language deletion form.
+14. **`app/services/reframing_service.py`**: Encapsulates the entire reframing business flow: validation $\rightarrow$ safety check $\rightarrow$ AI generation $\rightarrow$ conditional PostgreSQL save for authenticated users.
+15. **`app/services/safety_service.py`**: Zero-tolerance guardrail engine evaluating crisis/self-harm and criminal policy violations.
+16. **`app/services/history_service.py`**: PostgreSQL query logic ensuring users can only read, favorite, or delete their own records.
+17. **`app/services/user_service.py`**: Purges user accounts and cascades deletions across all associated records (Apple 5.1.1(v) & Google Play Data Deletion), supporting both in-app and web-initiated requests.
+18. **`app/services/report_service.py`**: Audits and persists flagged GenAI responses from users.
+19. **`app/services/localization_service.py`**: Dynamic translation engine combining base English strings, cached common languages, and on-demand AI translation for any ISO code.
+20. **`app/services/llm_service.py` & `llm_providers/`**: Implements the Strategy Pattern. Decouples the application from any single AI vendor (seamlessly switching between Ollama, Gemini, and Mock providers).
+
 
 ---
 

@@ -34,23 +34,23 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 23** | **OS Manifests & Permissions (Android INTERNET/Queries, iOS PrivacyInfo.xcprivacy)** | 🟢 Complete |
 | **Step 24** | **Medical / Wellness Disclaimers & Legal EULA/Privacy Links** | 🟢 Complete |
 | **Step 25** | **Social Login: Sign in with Apple & Google** (`IAuthProvider`, `SupabaseAuthProvider`, UI buttons) | 🟢 Complete |
-| **Step 26** | **Public Web Policies & Deletion Form** (Static web `/privacy` and `/delete-account` URLs for Store Console) | 🟡 Next Up |
-| **Step 27** | **Production Store Assets & Native Splash Screen** (`flutter_launcher_icons`, `flutter_native_splash`) | 🟡 Planned |
+| **Step 26** | **Public Web Policies & Deletion Form** (Static web `/privacy` and `/delete-account` URLs for Store Console) | 🟢 Complete |
+| **Step 27** | **Production Store Assets & Native Splash Screen** (`flutter_launcher_icons`, `flutter_native_splash`) | 🟡 Next Up |
 | **Step 28** | **Cloud Backend HTTPS Deployment & Reviewer Demo Account** (`demo@silverlining.app` provisioning) | 🟡 Planned |
 
 ---
 
 ## 🚀 Immediate Resume Instructions for Next Session
 When resuming work:
-1. **Starting Point**: **Step 26: Public Web Policies & Deletion Form**.
-   - Create public-facing static web pages or backend FastAPI endpoints (`/privacy`, `/terms`, `/delete-account`) required by Apple App Store Connect and Google Play Console submission checklists.
-   - Self-service web deletion request form for users who delete the app without deleting their account.
+1. **Starting Point**: **Step 27: Production Store Assets & Native Splash Screen**.
+   - Generate production 1024x1024 app store icon assets and adaptive launcher icons using `flutter_launcher_icons`.
+   - Implement branded dark-mode native launch splash screen using `flutter_native_splash`.
 2. **Alternative Starting Points** (if prioritized by user):
-   - **Step 27**: Custom app branding (1024x1024 icon + native splash screen).
    - **Step 28**: Cloud Backend HTTPS Deployment (Fly.io / Render / GCP Cloud Run) with demo account provisioning.
 3. **Verification Command**:
-   - `cd backend && PYTHONPATH=. .venv/bin/python tests/test_account_deletion.py && PYTHONPATH=. .venv/bin/python tests/test_report_api.py`
+   - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`
    - `cd app && flutter analyze && flutter test`
+
 
 ---
 
