@@ -52,8 +52,18 @@ async def root():
         "status": "online",
         "service": "Silver Lining AI Backend",
         "docs": "http://localhost:8000/docs",
+        "health": "/health",
         "privacy_policy": "/privacy",
         "terms_of_service": "/terms",
         "delete_account": "/delete-account",
     }
+
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "service": "Silver Lining AI Backend",
+        "version": "1.0.0"
+    }
+
 

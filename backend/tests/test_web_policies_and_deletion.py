@@ -12,9 +12,19 @@ def test_root_discovery_endpoints():
     response = client.get("/")
     assert response.status_code == 200
     data = response.json()
+    assert data["health"] == "/health"
     assert data["privacy_policy"] == "/privacy"
     assert data["terms_of_service"] == "/terms"
     assert data["delete_account"] == "/delete-account"
+
+def test_health_check_endpoint():
+    """Verify standard cloud container liveness/readiness probe on GET /health"""
+    response = client.get("/health")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "healthy"
+    assert data["service"] == "Silver Lining AI Backend"
+
 
 def test_privacy_policy_page():
     """Verify GET /privacy returns HTML complying with Apple 5.1.1 & Google Play"""

@@ -46,6 +46,11 @@ class AppConfig {
     const overrideUrl = String.fromEnvironment('API_BASE_URL');
     if (overrideUrl.isNotEmpty) return overrideUrl;
 
+    // Production release builds default to production HTTPS cloud backend:
+    if (kReleaseMode) {
+      return 'https://api.silverlining.app';
+    }
+
     if (kIsWeb) {
       return 'http://127.0.0.1:8000';
     }
@@ -55,3 +60,4 @@ class AppConfig {
     return 'http://127.0.0.1:8000';
   }
 }
+

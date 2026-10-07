@@ -128,12 +128,17 @@ backend/
 │   ├── test_account_deletion.py # In-app account deletion & cascading purge
 │   ├── test_report_api.py       # GenAI content reporting & DB audit
 │   └── test_web_policies_and_deletion.py # Public web endpoints & web-initiated deletion
+├── scripts/                     # 🛠️ Administrative & Operational Scripts
+│   └── seed_reviewer_account.py # Provisions demo@silverlining.app for App Store review
+├── Dockerfile                   # 🐳 Production container configuration
+├── .dockerignore                # 🚫 Excludes local environments & caches
 └── requirements.txt             # 📦 Backend Dependencies
 ```
 
 ### Why Each File Exists:
 
-1. **`app/main.py`**: Minimal 50-line bootstrap using FastAPI's `@asynccontextmanager` `lifespan` handler to auto-create tables on startup, register CORS for Flutter, bind `slowapi` exception handlers, and mount modular routers.
+1. **`app/main.py`**: Minimal 50-line bootstrap using FastAPI's `@asynccontextmanager` `lifespan` handler to auto-create tables on startup, register CORS for Flutter, bind `slowapi` exception handlers, expose cloud healthcheck (`GET /health`), and mount modular routers.
+
 2. **`app/core/config.py`**: Pydantic `BaseSettings` singleton validating all environment variables at startup (fail-fast principle). Auto-parses `.env`.
 3. **`app/core/database.py`**: Sets up SQLAlchemy connection pooling (`pool_pre_ping=True` to auto-heal dropped connections) and exposes the `get_session()` generator dependency to automatically open and close database sessions per request.
 4. **`app/core/security.py`**: Validates Supabase JWTs via both modern asymmetric `ES256` (live Supabase ECC keys via JWKS endpoint) and symmetric `HS256` (`SUPABASE_JWT_SECRET`). Exposes `get_current_user_optional` (allowing guest access) and `get_current_user` (requiring authentication).
