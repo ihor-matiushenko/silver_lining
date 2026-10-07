@@ -5,6 +5,7 @@ in PostgreSQL with realistic reflection history and favorites so the review team
 test cloud sync, favorites, and history operations upon first login.
 """
 
+from typing import TypedDict, List
 from sqlmodel import Session, select
 from datetime import datetime, timezone, timedelta
 from app.core.database import engine, init_db
@@ -13,7 +14,16 @@ from app.models.db_models import User, ReframeRecord
 REVIEWER_EMAIL = "demo@silverlining.app"
 REVIEWER_USER_ID = "usr_demo_reviewer_01"
 
-SAMPLE_REFRAMINGS = [
+class SampleReframing(TypedDict):
+    id: str
+    prompt: str
+    reframed: str
+    is_favorite: bool
+    category: str
+    days_ago: int
+
+SAMPLE_REFRAMINGS: List[SampleReframing] = [
+
     {
         "id": "ref_demo_01",
         "prompt": "I received critical feedback on my presentation today and felt completely overwhelmed.",
