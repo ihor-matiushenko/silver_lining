@@ -162,12 +162,18 @@ backend/
 The Flutter mobile application follows a clean layered presentation $\rightarrow$ service/facade $\rightarrow$ persistence architecture:
 
 ```
-app/lib/
-├── main.dart                       # 🚀 App entry point, MaterialApp & root theme
-├── config/
-│   └── app_config.dart             # ⚙️ Centralized environment flags, Supabase keys & apiBaseUrl
-├── models/                         # 📄 Strongly-typed Data Transfer Objects (DTOs)
-│   ├── app_language.dart           # Supported language codes & native display names
+app/
+├── assets/branding/                # 🎨 Production Master Store Assets
+│   ├── app_icon.png                # Master 1024x1024 app icon without alpha
+│   ├── app_icon_foreground.png     # Android adaptive icon foreground emblem
+│   └── splash_logo.png             # Centered glowing emblem for native splash screens
+├── lib/
+│   ├── main.dart                   # 🚀 App entry point, MaterialApp & root theme
+│   ├── config/
+│   │   └── app_config.dart         # ⚙️ Centralized environment flags, Supabase keys & apiBaseUrl
+│   ├── models/                     # 📄 Strongly-typed Data Transfer Objects (DTOs)
+│   │   ├── app_language.dart       # Supported language codes & native display names
+
 │   ├── history_item.dart           # Reframing history record model (JSON serialization)
 │   └── reframe_response.dart       # API response model from /api/v1/reframe
 ├── screens/                        # 📱 Full-screen page orchestrators

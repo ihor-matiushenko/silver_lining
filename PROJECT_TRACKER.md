@@ -35,21 +35,22 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 24** | **Medical / Wellness Disclaimers & Legal EULA/Privacy Links** | 🟢 Complete |
 | **Step 25** | **Social Login: Sign in with Apple & Google** (`IAuthProvider`, `SupabaseAuthProvider`, UI buttons) | 🟢 Complete |
 | **Step 26** | **Public Web Policies & Deletion Form** (Static web `/privacy` and `/delete-account` URLs for Store Console) | 🟢 Complete |
-| **Step 27** | **Production Store Assets & Native Splash Screen** (`flutter_launcher_icons`, `flutter_native_splash`) | 🟡 Next Up |
-| **Step 28** | **Cloud Backend HTTPS Deployment & Reviewer Demo Account** (`demo@silverlining.app` provisioning) | 🟡 Planned |
+| **Step 27** | **Production Store Assets & Native Splash Screen** (`flutter_launcher_icons`, `flutter_native_splash`) | 🟢 Complete |
+| **Step 28** | **Cloud Backend HTTPS Deployment & Reviewer Demo Account** (`demo@silverlining.app` provisioning) | 🟡 Next Up |
 
 ---
 
 ## 🚀 Immediate Resume Instructions for Next Session
 When resuming work:
-1. **Starting Point**: **Step 27: Production Store Assets & Native Splash Screen**.
-   - Generate production 1024x1024 app store icon assets and adaptive launcher icons using `flutter_launcher_icons`.
-   - Implement branded dark-mode native launch splash screen using `flutter_native_splash`.
+1. **Starting Point**: **Step 28: Cloud Backend HTTPS Deployment & Reviewer Demo Account**.
+   - Containerize and configure cloud HTTPS hosting (Fly.io, Render, or GCP Cloud Run) with persistent PostgreSQL database connection.
+   - Provision test reviewer account (`demo@silverlining.app`) required for Apple App Store Connect and Google Play Console App Review teams.
 2. **Alternative Starting Points** (if prioritized by user):
-   - **Step 28**: Cloud Backend HTTPS Deployment (Fly.io / Render / GCP Cloud Run) with demo account provisioning.
+   - Fastlane or automated build pipelines for release binary signing (`.ipa` and `.aab`).
 3. **Verification Command**:
    - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`
    - `cd app && flutter analyze && flutter test`
+
 
 
 ---
