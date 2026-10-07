@@ -16,6 +16,19 @@ AI Agents must **NEVER** modify files, create files, or execute implementation s
 
 ---
 
+## 🚨 MANDATORY WORKFLOW COMPLETION PROTOCOL: DOCS, COMMIT & PUSH
+
+**CRITICAL RULE FOR ALL AI ASSISTANTS UPON COMPLETING ANY WORK:**
+Whenever an AI agent finishes any feature, step, fix, refactor, or session milestone:
+1. **Update Documentation First**: AI agents MUST immediately update [ARCHITECTURE.md](file:///Users/ihormatiushenko/Workspace/silver_lining/ARCHITECTURE.md), [PROJECT_TRACKER.md](file:///Users/ihormatiushenko/Workspace/silver_lining/PROJECT_TRACKER.md), and [CHECKPOINT.md](file:///Users/ihormatiushenko/Workspace/silver_lining/CHECKPOINT.md) with complete, accurate technical summaries and next steps.
+2. **Git Commit**: Stage all modified files and commit with a clean, descriptive conventional commit message (`feat:`, `fix:`, `refactor:`, `docs:`).
+3. **ALWAYS GIT PUSH TO REMOTE**: AI agents MUST **ALWAYS** run `git push origin main` immediately after committing.
+   - **NEVER** leave unpushed commits on the local branch.
+   - The developer switches between multiple machines; failure to push causes machines to fall multiple steps behind. Always verify `git push origin main` succeeds!
+
+
+---
+
 ## 🏛️ Repository Overview & Architecture Principles
 
 Silver Lining AI is a full-stack cross-platform mobile application that provides positive psychological perspective reframing for everyday stress and struggles, strictly guarded by a 3-tier safety engine.
@@ -89,4 +102,8 @@ flutter test
    - Keep routers thin! Delegate business logic to `app/services/`.
    - Use Pydantic v2 syntax (avoid positional `Field(...)` ellipsis for required fields).
 3. **Continuous Documentation Sync**:
-   - Whenever any new file, endpoint, database model, or architectural pattern is created, modified, or deleted in the backend or frontend, AI agents MUST immediately update [ARCHITECTURE.md](file:///Users/ihormatiushenko/Workspace/silver_lining/ARCHITECTURE.md) to keep the system diagrams and file-by-file breakdown 100% accurate and up to date.
+   - Whenever any new file, endpoint, database model, or architectural pattern is created, modified, or deleted in the backend or frontend, AI agents MUST immediately update [ARCHITECTURE.md](file:///Users/ihormatiushenko/Workspace/silver_lining/ARCHITECTURE.md), [PROJECT_TRACKER.md](file:///Users/ihormatiushenko/Workspace/silver_lining/PROJECT_TRACKER.md), and [CHECKPOINT.md](file:///Users/ihormatiushenko/Workspace/silver_lining/CHECKPOINT.md) to keep system documentation 100% accurate.
+4. **Mandatory Git Push (`git push origin main`)**:
+   - Immediately after committing any change, AI agents MUST run `git push origin main`.
+   - Never end a turn or say goodbye without confirming the remote GitHub repository has received the pushed commits!
+
