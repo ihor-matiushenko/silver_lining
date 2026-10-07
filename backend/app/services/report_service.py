@@ -37,8 +37,10 @@ class ReportService:
         db.commit()
         db.refresh(record)
 
+        report_id = record.id if record.id is not None else ""
         return ReportResponse(
-            id=record.id,
+            id=report_id,
             status="received",
             message="Report submitted successfully for safety review."
         )
+
