@@ -35,6 +35,14 @@ class ReframingService:
         # Step 1: Run 3-Tier Safety Engine Evaluation
         safety_result = SafetyService.evaluate_input_safety(input_text)
         if safety_result is not None:
+            # Auto-provision user record in PostgreSQL if not yet created (satisfies Foreign Key constraint)
+            if user_id:
+                existing_user = db.get(User, user_id)
+                if not existing_user:
+                    user_email = (user.get("email") if user else None) or f"{user_id}@example.com"
+                    db.add(User(id=user_id, email=user_email, auth_provider="supabase"))
+                    db.commit()
+
             # Log safety trigger to database audit log
             safety_log = SafetyLog(
                 user_id=user_id,

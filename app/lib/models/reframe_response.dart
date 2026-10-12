@@ -5,6 +5,7 @@ class ReframeResponse {
   final String? reframedText;
   final bool crisisTriggered;
   final String? emergencyHotline;
+  final bool isError;
 
   const ReframeResponse({
     required this.isSafe,
@@ -12,6 +13,7 @@ class ReframeResponse {
     this.reframedText,
     required this.crisisTriggered,
     this.emergencyHotline,
+    this.isError = false,
   });
 
   /// Factory constructor to convert JSON map (from API or Mock) into strongly-typed Dart object.
@@ -22,6 +24,7 @@ class ReframeResponse {
       reframedText: json['reframed_text'],
       crisisTriggered: json['crisis_triggered'] ?? false,
       emergencyHotline: json['emergency_hotline'],
+      isError: json['is_error'] ?? false,
     );
   }
 
@@ -33,6 +36,7 @@ class ReframeResponse {
       'reframed_text': reframedText,
       'crisis_triggered': crisisTriggered,
       'emergency_hotline': emergencyHotline,
+      'is_error': isError,
     };
   }
 }

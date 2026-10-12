@@ -3,11 +3,15 @@ from app.core.config import settings
 settings.LLM_PROVIDER = "mock"
 
 from app.main import app
+from app.core.limiter import limiter
 
 client = TestClient(app)
 
 def run_rate_limiter_verification():
     print("\n🧪 Running Guest Rate Limiter Verification Test...\n" + "=" * 55)
+
+    # Reset limiter storage to ensure clean test state regardless of test order
+    limiter._limiter.storage.reset()
 
     print(f"📊 Current Guest Rate Limit Setting: {settings.GUEST_DAILY_LIMIT}/day")
 
@@ -43,6 +47,9 @@ def run_rate_limiter_verification():
     print("   ✅ Authenticated User Successfully Exempted from Guest Limit! HTTP 200 OK")
 
     print("\n" + "=" * 55 + "\n🎉 RATE LIMITER & AUTH EXEMPTION TEST PASSED 100%!\n")
+
+def test_rate_limiter_verification():
+    run_rate_limiter_verification()
 
 if __name__ == "__main__":
     run_rate_limiter_verification()

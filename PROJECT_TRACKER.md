@@ -37,21 +37,22 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 26** | **Public Web Policies & Deletion Form** (Static web `/privacy` and `/delete-account` URLs for Store Console) | 🟢 Complete |
 | **Step 27** | **Production Store Assets & Native Splash Screen** (`flutter_launcher_icons`, `flutter_native_splash`) | 🟢 Complete |
 | **Step 28** | **Cloud Backend HTTPS Deployment & Reviewer Demo Account** (`demo@silverlining.app` provisioning) | 🟢 Complete |
-| **Step 29** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Next Up |
-| **Step 30** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
+| **Step 29** | **Full-Stack Hardening, Edge-Case Bug Fixes & Test Expansion** (Auth init, FK safety, OAuth schemes, 100% test discovery) | 🟢 Complete |
+| **Step 30** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Next Up |
+| **Step 31** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
 
 ---
 
 ## 🚀 Immediate Resume Instructions for Next Session
 When resuming work:
-1. **Starting Point**: **Step 29: Release Binary Build & Signing**.
+1. **Starting Point**: **Step 30: Release Binary Build & Signing**.
    - Build signed production release archives (`.ipa` for iOS and `.aab` for Google Play).
    - Validate release builds with release profile checks.
 2. **Alternative Starting Points** (if prioritized by user):
-   - **Step 30**: Prepare screenshots and store listing copy.
+   - **Step 31**: Prepare screenshots and store listing copy.
 3. **Verification Command**:
-   - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`
-   - `cd app && flutter analyze && flutter test`
+   - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`  (16 tests passing 100%)
+   - `cd app && flutter analyze && flutter test`  (18 tests passing 100%)
 
 
 

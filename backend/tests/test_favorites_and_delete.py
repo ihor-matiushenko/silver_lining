@@ -88,5 +88,8 @@ def run_favorites_and_delete_tests():
 
     print("\n" + "=" * 55 + "\n🎉 FAVORITES & DELETE API TEST PASSED 100%!\n")
 
+def test_favorites_and_delete():
+    run_favorites_and_delete_tests()
+
 if __name__ == "__main__":
     run_favorites_and_delete_tests()

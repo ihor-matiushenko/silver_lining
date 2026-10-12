@@ -93,5 +93,8 @@ def run_multi_lang_tests():
     print("\n=======================================================")
     print("🎉 INSTANT MULTI-LANGUAGE BACKEND TESTS PASSED 100%! (0% CPU LOAD)")
 
+def test_multi_lang():
+    run_multi_lang_tests()
+
 if __name__ == "__main__":
     run_multi_lang_tests()

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session
 
 from app.core.database import get_session
-from app.core.security import get_current_user_optional
+from app.core.security import get_current_user_optional, verify_jwt_token
 from app.core.limiter import limiter, get_guest_rate_limit
 from app.models.schemas import ReframeRequest, ReframeResponse
 from app.services.reframing_service import ReframingService
@@ -11,8 +11,16 @@ from app.services.reframing_service import ReframingService
 reframe_router = APIRouter(tags=["Reframing AI"])
 
 def is_authenticated_request(request: Request) -> bool:
-    """Exempts authenticated requests containing Authorization header from guest rate limits"""
-    return bool(request.headers.get("authorization"))
+    """Exempts authenticated requests containing valid Authorization Bearer header from guest rate limits"""
+    auth_header = request.headers.get("authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return False
+    token = auth_header.split("Bearer ", 1)[1].strip()
+    try:
+        verify_jwt_token(token)
+        return True
+    except Exception:
+        return False
 
 @reframe_router.post("/reframe", response_model=ReframeResponse)
 @limiter.limit(get_guest_rate_limit, exempt_when=is_authenticated_request)

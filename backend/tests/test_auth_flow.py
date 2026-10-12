@@ -96,5 +96,8 @@ def run_auth_verification_tests():
 
     print("\n" + "=" * 55 + "\n🎉 ALL 4 AUTHENTICATION & BUSINESS LOGIC TESTS PASSED 100%!\n")
 
+def test_auth_flow():
+    run_auth_verification_tests()
+
 if __name__ == "__main__":
     run_auth_verification_tests()

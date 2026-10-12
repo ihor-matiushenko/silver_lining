@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/reframe_response.dart';
 import 'cards/crisis_shield_card.dart';
+import 'cards/error_feedback_card.dart';
 import 'cards/policy_refusal_card.dart';
 import 'cards/reframed_perspective_card.dart';
 
@@ -16,7 +17,13 @@ class ResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (response.crisisTriggered) {
-      return const CrisisShieldCard();
+      return CrisisShieldCard(
+        hotlinePhone: response.emergencyHotline ?? '988',
+      );
+    }
+
+    if (response.isError) {
+      return ErrorFeedbackCard(response: response);
     }
 
     if (!response.isSafe) {

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'screens/main_navigation_screen.dart';
+import 'services/auth_service.dart';
 import 'services/dynamic_localization_service.dart';
 import 'theme/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DynamicLocalizationService.instance.init();
+  await AuthService().initialize();
   runApp(const SilverLiningApp());
 }
 

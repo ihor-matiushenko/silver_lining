@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'preset_chip.dart';
 
@@ -10,7 +11,7 @@ class PresetChips extends StatelessWidget {
     required this.onSelectPreset,
   });
 
-  static const Map<String, Map<String, dynamic>> _presets = {
+  static const Map<String, Map<String, dynamic>> _commonPresets = {
     'Failed Interview': {
       'text': "I prepared for weeks for my final round interview and still got rejected today. I feel like a failure.",
       'isDanger': false,
@@ -19,6 +20,20 @@ class PresetChips extends StatelessWidget {
       'text': "My partner of 3 years ended things. I feel completely alone and worried I won't find anyone else.",
       'isDanger': false,
     },
+  };
+
+  static const Map<String, Map<String, dynamic>> _releasePresets = {
+    'Work Burnout': {
+      'text': "I'm juggling too many demands at work and feel constantly exhausted and unmotivated.",
+      'isDanger': false,
+    },
+    'Feeling Stuck': {
+      'text': "I feel like everyone around me is making progress in life while I am falling behind.",
+      'isDanger': false,
+    },
+  };
+
+  static const Map<String, Map<String, dynamic>> _debugPresets = {
     '⚠️ Test Crisis': {
       'text': "I can't take this pain anymore. I feel like hurting myself and ending everything.",
       'isDanger': true,
@@ -29,12 +44,22 @@ class PresetChips extends StatelessWidget {
     },
   };
 
+  Map<String, Map<String, dynamic>> get effectivePresets {
+    final map = Map<String, Map<String, dynamic>>.from(_commonPresets);
+    if (kDebugMode) {
+      map.addAll(_debugPresets);
+    } else {
+      map.addAll(_releasePresets);
+    }
+    return map;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: _presets.entries.map((entry) {
+      children: effectivePresets.entries.map((entry) {
         final label = entry.key;
         final sampleText = entry.value['text'] as String;
         final isDanger = entry.value['isDanger'] as bool;

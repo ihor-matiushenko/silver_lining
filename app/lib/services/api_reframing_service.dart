@@ -51,26 +51,29 @@ class ApiReframingService implements ReframingServiceInterface {
         final detail = data['detail'] ?? 'Guest daily limit reached. Sign up for unlimited reframings!';
         return ReframeResponse(
           isSafe: true,
-          safetyCategory: 'none',
+          safetyCategory: 'rate_limited',
           reframedText: detail,
           crisisTriggered: false,
+          isError: true,
         );
       }
 
       // Handle non-200 HTTP error responses gracefully
       return const ReframeResponse(
         isSafe: true,
-        safetyCategory: 'none',
+        safetyCategory: 'server_error',
         reframedText: 'Server returned an unexpected error. Please check your backend connection and try again.',
         crisisTriggered: false,
+        isError: true,
       );
     } catch (e) {
       // Fallback if backend server is unreachable or offline
       return const ReframeResponse(
         isSafe: true,
-        safetyCategory: 'none',
-        reframedText: 'Could not connect to Silver Lining Python Backend. Please ensure uvicorn server is running on http://127.0.0.1:8000.',
+        safetyCategory: 'network_error',
+        reframedText: 'Could not connect to Silver Lining Python Backend. Please ensure the server is reachable.',
         crisisTriggered: false,
+        isError: true,
       );
     }
   }

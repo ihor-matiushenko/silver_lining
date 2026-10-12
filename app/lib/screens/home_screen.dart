@@ -56,10 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
       _response = result;
     });
 
-    // Only save to local device storage if the user is a GUEST!
+    // Only save to local device storage if the user is a GUEST and the response is not an error!
     // (Authenticated users have their thoughts synced to PostgreSQL by the backend)
     if (!AuthService().isAuthenticated &&
         result.isSafe &&
+        !result.isError &&
         !result.crisisTriggered &&
         result.reframedText != null) {
       final now = DateTime.now();

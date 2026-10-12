@@ -61,5 +61,8 @@ def run_history_api_tests():
 
     print("\n" + "=" * 55 + "\n🎉 CLOUD HISTORY API TEST PASSED 100%!\n")
 
+def test_history_api():
+    run_history_api_tests()
+
 if __name__ == "__main__":
     run_history_api_tests()
