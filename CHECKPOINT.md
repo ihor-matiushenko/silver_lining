@@ -60,11 +60,23 @@ PYTHONPATH=. .venv/bin/python -m pytest tests/   # ✅ 100% PASS (16 test suites
 
 ---
 
-## 🚀 4. Immediate Resume Instructions for Next Session (Step 30)
+## 🚀 4. Immediate Resume Instructions for Next Session
 
 When resuming in the next session:
 
-### 📍 Starting Point: **Step 30: Release Binary Build & Signing**
+### 📍 Starting Point: **Manual Local Testing in Real iOS / Android Emulators**
+* **Context**: Validate the complete user experience end-to-end in real mobile emulators before building final store binaries:
+  1. **Android Emulator**:
+     - Android Studio installed (`/Applications/Android Studio.app`).
+     - Open Android Studio $\rightarrow$ Device Manager $\rightarrow$ Start AVD emulator (e.g. Pixel 8).
+  2. **iOS Simulator**:
+     - Xcode installed $\rightarrow$ run `open -a Simulator` (e.g. iPhone 15/16).
+  3. **Launch Local Stack**:
+     - Backend: `cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000`
+     - Flutter App: `cd app && flutter run` (select connected simulator/emulator device).
+     - Test full flow: guest reflection, rate limit guard card, login, cloud sync, favorites, delete account, and content reporting.
+
+### 📍 Next Milestone: **Step 30: Release Binary Build & Signing**
 * **Context**: Build signed production release archives ready for store distribution:
   1. iOS: `flutter build ipa --release` (creates Xcode archive & `.ipa` payload).
   2. Android: `flutter build appbundle --release` (creates Google Play App Bundle `.aab`).

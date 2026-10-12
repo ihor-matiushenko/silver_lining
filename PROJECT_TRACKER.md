@@ -45,11 +45,14 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 
 ## 🚀 Immediate Resume Instructions for Next Session
 When resuming work:
-1. **Starting Point**: **Step 30: Release Binary Build & Signing**.
-   - Build signed production release archives (`.ipa` for iOS and `.aab` for Google Play).
-   - Validate release builds with release profile checks.
-2. **Alternative Starting Points** (if prioritized by user):
-   - **Step 31**: Prepare screenshots and store listing copy.
+1. **Starting Point**: **Manual Local Testing in Real iOS / Android Emulators**:
+   - **Android Emulator**: Android Studio installed (`/Applications/Android Studio.app`). Launch Android Studio $\rightarrow$ Tools $\rightarrow$ Device Manager $\rightarrow$ Start AVD virtual device.
+   - **iOS Simulator**: Xcode installation via Mac App Store / Apple Developer portal $\rightarrow$ `open -a Simulator` $\rightarrow$ select iPhone 15/16.
+   - **Run Local Stack**:
+     - Terminal 1 (Backend): `cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000`
+     - Terminal 2 (Mobile App): `cd app && flutter run` (select connected iOS Simulator or Android AVD).
+     - Test full user journey: guest thoughts, rate limit guard, Supabase login, cloud history sync, content reporting, and language switcher.
+2. **Next Milestone**: **Step 30: Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`).
 3. **Verification Command**:
    - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`  (16 tests passing 100%)
    - `cd app && flutter analyze && flutter test`  (18 tests passing 100%)
