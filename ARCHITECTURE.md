@@ -391,3 +391,19 @@ graph LR
     Phase 1 --> Phase 2 --> Phase 3 --> Phase 4
 ```
 
+---
+
+## 🧪 9. Full-Stack Testing Architecture & Matrix (`TESTING_PLAN.md`)
+
+The testing architecture validates functionality across two dimensions: user authorization status and infrastructure environment.
+
+1. **Authorization Matrix**:
+   - **Guest / Unauthenticated**: Zero cloud DB insertion (`public.reframerecord`), offline local storage via `shared_preferences`, strict 5 reframings/day rate limit (`slowapi`), and instantaneous Tier-1 regex/safety fallback.
+   - **Authenticated**: Supabase JWT verification (`ES256` / `HS256`), dynamic user provisioning, cloud synchronization (`GET /api/v1/history`), favorite bookmarks (`POST /api/v1/favorite`), unlimited quota bypass, and compliant account deletion.
+2. **Infrastructure & Platform Environments**:
+   - **Local Sandbox**: Ollama (`qwen3-vl:8b`) + local PostgreSQL (`127.0.0.1:5432/silver_lining`).
+   - **Cloud Production**: Google Gemini 1.5 Flash (`gemini-1.5-flash`) + Supabase Managed PostgreSQL.
+   - **Platform Network Routing**: iOS Simulator (`127.0.0.1:8000`) vs Android Virtual Device (`10.0.2.2:8000`).
+   - Complete test suites, execution checklists, and Supabase inspection guides are detailed in [TESTING_PLAN.md](file:///Users/ihormatiushenko/Workspace/silver_lining/TESTING_PLAN.md).
+
+

@@ -38,8 +38,10 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 27** | **Production Store Assets & Native Splash Screen** (`flutter_launcher_icons`, `flutter_native_splash`) | 🟢 Complete |
 | **Step 28** | **Cloud Backend HTTPS Deployment & Reviewer Demo Account** (`demo@silverlining.app` provisioning) | 🟢 Complete |
 | **Step 29** | **Full-Stack Hardening, Edge-Case Bug Fixes & Test Expansion** (Auth init, FK safety, OAuth schemes, 100% test discovery) | 🟢 Complete |
-| **Step 30** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Next Up |
-| **Step 31** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
+| **Step 30** | **Comprehensive Full-Stack Testing Plan & Multi-Environment Matrix** (`TESTING_PLAN.md` covering Guest/Auth on iOS/Android, Ollama/Gemini, Local Postgres/Supabase) | 🟢 Complete |
+| **Step 31** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Next Up |
+| **Step 32** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
+
 
 ---
 
