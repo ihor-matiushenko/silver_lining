@@ -40,6 +40,7 @@ class InputFormCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               AppTextField(
+                key: const ValueKey('input_thought_field'),
                 controller: controller,
                 hintText: l10n.translate('reframeInputHint'),
               ),
@@ -50,6 +51,7 @@ class InputFormCard extends StatelessWidget {
               const SizedBox(height: 16),
 
               PrimaryButton(
+                key: const ValueKey('btn_reframe_action'),
                 label: l10n.translate('reframeButtonAction'),
                 isLoading: isLoading,
                 onPressed: onSubmit,

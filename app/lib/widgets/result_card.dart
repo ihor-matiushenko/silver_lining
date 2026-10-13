@@ -18,19 +18,26 @@ class ResultCard extends StatelessWidget {
   Widget build(BuildContext context) {
     if (response.crisisTriggered) {
       return CrisisShieldCard(
+        key: const ValueKey('card_crisis_shield'),
         hotlinePhone: response.emergencyHotline ?? '988',
       );
     }
 
     if (response.isError) {
-      return ErrorFeedbackCard(response: response);
+      return ErrorFeedbackCard(
+        key: const ValueKey('card_error_feedback'),
+        response: response,
+      );
     }
 
     if (!response.isSafe) {
-      return const PolicyRefusalCard();
+      return const PolicyRefusalCard(
+        key: ValueKey('card_policy_refusal'),
+      );
     }
 
     return ReframedPerspectiveCard(
+      key: const ValueKey('card_perspective_result'),
       text: response.reframedText ?? '',
     );
   }

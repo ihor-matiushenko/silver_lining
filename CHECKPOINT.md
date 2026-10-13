@@ -1,28 +1,23 @@
 # 📌 Silver Lining Project Checkpoint (`CHECKPOINT.md`)
 
 **Date**: October 13, 2026  
-**Status**: Step 30 (Comprehensive Full-Stack Testing Plan & Multi-Environment Matrix) Complete  
+**Status**: Step 31 (Mobile E2E Automation Foundation & Test Keys) Complete  
 **Branch**: `main`
 
 ---
 
 ## 🎯 1. Executive Summary
 
-This checkpoint records the delivery of **Step 30: Comprehensive Full-Stack Testing Plan & Multi-Environment Matrix** (`TESTING_PLAN.md`):
-1. **Multi-Environment Test Matrix**: Established clear phased progression from 100% offline local sandbox (Ollama `qwen3-vl:8b` + local PostgreSQL) to cloud production (Gemini `gemini-1.5-flash` + Supabase PostgreSQL).
-2. **Dual-User Experience Coverage**:
-   - **Guest / Unauthenticated**: Verifies 0 cloud DB insertion, local `shared_preferences` persistence, 5 reframings/day rate limiter enforcement via `slowapi`, and offline crisis shield fallback.
-   - **Authenticated**: Verifies Supabase session JWT verification, automated user provisioning, cross-device cloud history sync (`GET /api/v1/history`), cloud favorites (`POST /api/v1/favorite`), rate limit bypass, and store-compliant account deletion.
-3. **Cross-Platform Network & Device Matrix**:
-   - Detailed networking protocols for iOS Simulator (`127.0.0.1:8000`), Android AVD (`10.0.2.2:8000`), and physical devices (`adb reverse` / LAN IP).
-   - Validated keyboard handling, hardware back button, native phone dialers (`tel:988`), and OAuth deep-linking.
-4. **Supabase Cloud Table Inspection Playbook**:
-   - Provided exact navigation steps for Supabase Table Editor (`public.user`, `public.reframerecord`, `public.safetylog`, `public.reportrecord`), Authentication Users console, and SQL Editor queries.
+This checkpoint records the successful delivery of **Step 31: Mobile E2E Automation Foundation & Test Keys**:
+1. **Flutter `integration_test` SDK Configuration**: Added `integration_test: sdk: flutter` to `app/pubspec.yaml` dev_dependencies and established the `app/integration_test/` directory.
+2. **Stable `ValueKey` Instrumentation**:
+   - `Key('input_thought_field')`: Instrumented on `AppTextField` inside `InputFormCard` for reliable programmatic text entry.
+   - `Key('btn_reframe_action')`: Instrumented on `PrimaryButton` for deterministic submission triggers.
+   - `Key('main_bottom_nav_bar')`: Instrumented on `BottomNavigationBar` in `MainNavigationScreen` for seamless tab switching.
+   - `Key('btn_account_action')` & `Key('btn_language_action')`: Instrumented in `HomeAppBar` for automated auth and localization testing.
+   - `Key('card_perspective_result')`, `Key('card_crisis_shield')`, `Key('card_error_feedback')`, `Key('card_policy_refusal')`: Instrumented on subcards inside `ResultCard`.
+3. **Full Automated Verification**: All 18 Flutter widget/unit tests and 16 backend pytest suites passing 100% with 0 warnings.
 
-3. **Robust Rate-Limit Exemption Security**:
-   - Hardened `is_authenticated_request` in `backend/app/api/v1/reframe_router.py` to cryptographically verify Bearer JWT signatures, preventing guests from bypassing rate limits with arbitrary authorization headers.
-4. **Resilient Mobile Error & Rate-Limit State Handling**:
-   - Added `isError: bool` flag to `ReframeResponse`.
    - Prevented non-safe / rate-limit / server error responses from being persisted into local device history (`StorageService`) in `HomeScreen`.
    - Routed error and rate-limit states to a dedicated `ErrorFeedbackCard` in `ResultCard`, presenting helpful upgrade and retry actions instead of celebratory reflection UI.
 5. **Store Compliance & OAuth Configuration**:
@@ -82,13 +77,14 @@ When resuming in the next session:
      - Flutter App: `cd app && flutter run` (select connected simulator/emulator device).
      - Test full flow: guest reflection, rate limit guard card, login, cloud sync, favorites, delete account, and content reporting.
 
-### 📍 Next Milestone: **Step 31: Release Binary Build & Signing**
-* **Context**: Build signed production release archives ready for store distribution:
-  1. iOS: `flutter build ipa --release` (creates Xcode archive & `.ipa` payload).
-  2. Android: `flutter build appbundle --release` (creates Google Play App Bundle `.aab`).
+### 📍 Next Milestone: **Step 32: Automated Guest & Safety Integration Tests**
+* **Context**: Create runnable end-to-end integration test files using `integration_test`:
+  1. `app/integration_test/guest_flow_test.dart`: Automating TC-G01 & TC-G03.
+  2. `app/integration_test/safety_crisis_test.dart`: Automating TC-G05.
 * **Verification Command**:
-  - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`
   - `cd app && flutter analyze && flutter test`
+  - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`
+
 
 
 

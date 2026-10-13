@@ -46,6 +46,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           actions: [
             // 🌐 Language Selector Button
             IconButton(
+              key: const ValueKey('btn_language_action'),
               tooltip: l10n.translate('languageTitle'),
               icon: const Icon(Icons.language, color: Colors.white70),
               onPressed: () => LanguageSelectorModal.show(context),
@@ -53,6 +54,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
             // 👤 Account / Login Button
             IconButton(
+              key: const ValueKey('btn_account_action'),
               tooltip: isAuth
                   ? 'Account: ${AuthService().currentUserEmail ?? 'User'}'
                   : 'Sign In / Register',
