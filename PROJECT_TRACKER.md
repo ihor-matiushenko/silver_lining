@@ -40,9 +40,10 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 29** | **Full-Stack Hardening, Edge-Case Bug Fixes & Test Expansion** (Auth init, FK safety, OAuth schemes, 100% test discovery) | 🟢 Complete |
 | **Step 30** | **Comprehensive Full-Stack Testing Plan & Multi-Environment Matrix** (`TESTING_PLAN.md` covering Guest/Auth on iOS/Android, Ollama/Gemini, Local Postgres/Supabase) | 🟢 Complete |
 | **Step 31** | **Mobile E2E Automation Foundation & Test Keys** (`integration_test` SDK setup, stable `ValueKey`s across widgets) | 🟢 Complete |
-| **Step 32** | **Automated Guest & Safety Integration Tests** (`integration_test/guest_flow_test.dart` & `safety_crisis_test.dart`) | 🟡 Next Up |
-| **Step 33** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Planned |
-| **Step 34** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
+| **Step 32** | **Automated Guest E2E Integration Flow** (`integration_test/guest_flow_test.dart` automating TC-G01 & TC-G03) | 🟢 Complete |
+| **Step 33** | **Automated Crisis Shield & Auth E2E Tests** (`integration_test/safety_crisis_test.dart` & `auth_sync_test.dart`) | 🟡 Next Up |
+| **Step 34** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Planned |
+| **Step 35** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
 
 
 ---

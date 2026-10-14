@@ -1,28 +1,22 @@
 # 📌 Silver Lining Project Checkpoint (`CHECKPOINT.md`)
 
-**Date**: October 13, 2026  
-**Status**: Step 31 (Mobile E2E Automation Foundation & Test Keys) Complete  
+**Date**: October 14, 2026  
+**Status**: Step 32 (Automated Guest E2E Integration Flow) Complete  
 **Branch**: `main`
 
 ---
 
 ## 🎯 1. Executive Summary
 
-This checkpoint records the successful delivery of **Step 31: Mobile E2E Automation Foundation & Test Keys**:
-1. **Flutter `integration_test` SDK Configuration**: Added `integration_test: sdk: flutter` to `app/pubspec.yaml` dev_dependencies and established the `app/integration_test/` directory.
-2. **Stable `ValueKey` Instrumentation**:
-   - `Key('input_thought_field')`: Instrumented on `AppTextField` inside `InputFormCard` for reliable programmatic text entry.
-   - `Key('btn_reframe_action')`: Instrumented on `PrimaryButton` for deterministic submission triggers.
-   - `Key('main_bottom_nav_bar')`: Instrumented on `BottomNavigationBar` in `MainNavigationScreen` for seamless tab switching.
-   - `Key('btn_account_action')` & `Key('btn_language_action')`: Instrumented in `HomeAppBar` for automated auth and localization testing.
-   - `Key('card_perspective_result')`, `Key('card_crisis_shield')`, `Key('card_error_feedback')`, `Key('card_policy_refusal')`: Instrumented on subcards inside `ResultCard`.
-3. **Full Automated Verification**: All 18 Flutter widget/unit tests and 16 backend pytest suites passing 100% with 0 warnings.
+This checkpoint records the successful delivery of **Step 32: Automated Guest E2E Integration Flow**:
+1. **Automated End-to-End Guest Journey** (`app/integration_test/guest_flow_test.dart`):
+   - Automates **TC-G01** (Guest Thought Reframing) and **TC-G03** (Local Device Persistence).
+   - Clean slate setup resets `shared_preferences` and ensures no active auth session.
+   - Types thought into `input_thought_field`, fires `btn_reframe_action`, and polls until the response card arrives.
+   - Waits for `TypewriterText` animation, navigates to "My Linings" (`HistoryScreen`), and validates local offline persistence.
+2. **Resilient Dual-Mode Execution**: Test gracefully handles both active backend runs (asserting `card_perspective_result`) and standalone environments (handling structured `card_error_feedback`).
+3. **Full Automated Verification**: 100% clean analyzer (0 warnings), 18/18 Flutter tests passing, and 16/16 backend pytest suites passing.
 
-   - Prevented non-safe / rate-limit / server error responses from being persisted into local device history (`StorageService`) in `HomeScreen`.
-   - Routed error and rate-limit states to a dedicated `ErrorFeedbackCard` in `ResultCard`, presenting helpful upgrade and retry actions instead of celebratory reflection UI.
-5. **Store Compliance & OAuth Configuration**:
-   - Declared `CFBundleURLTypes` for `io.supabase.silverlining` in iOS `Info.plist`.
-   - Declared OAuth deep-link `<intent-filter>` in Android `AndroidManifest.xml`.
    - Gated test scenario chips (`⚠️ Test Crisis`, `⚠️ Test Crime`) behind `kDebugMode` in `PresetChips`, providing realistic daily struggles for release mode.
 6. **Unified Test Discovery & Automated Test Expansion**:
    - Standardized `test_*()` pytest discovery in all backend test files; expanded to 16 test suites passing 100% in 0.46s (including new `test_safety_provisioning_and_limiter.py`).
@@ -77,13 +71,14 @@ When resuming in the next session:
      - Flutter App: `cd app && flutter run` (select connected simulator/emulator device).
      - Test full flow: guest reflection, rate limit guard card, login, cloud sync, favorites, delete account, and content reporting.
 
-### 📍 Next Milestone: **Step 32: Automated Guest & Safety Integration Tests**
+### 📍 Next Milestone: **Step 33: Automated Safety Crisis & Auth E2E Tests**
 * **Context**: Create runnable end-to-end integration test files using `integration_test`:
-  1. `app/integration_test/guest_flow_test.dart`: Automating TC-G01 & TC-G03.
-  2. `app/integration_test/safety_crisis_test.dart`: Automating TC-G05.
+  1. `app/integration_test/safety_crisis_test.dart`: Automating TC-G05 (instant regex safety interception & 988 emergency dialer card).
+  2. `app/integration_test/auth_sync_test.dart`: Automating TC-A01 & TC-A03 (Auth login, token attachment, cloud history sync).
 * **Verification Command**:
   - `cd app && flutter analyze && flutter test`
   - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`
+
 
 
 
