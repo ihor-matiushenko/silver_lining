@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/history_item.dart';
 
 /// 💾 StorageService: Manages local offline device persistence for reframed history & favorites.
 class StorageService {
   static const String _storageKey = 'silver_lining_history_v1';
+
+  /// 🔔 Reactive notifier signaling changes to local device storage (saves, deletions, clears)
+  static final ValueNotifier<int> historyRevision = ValueNotifier<int>(0);
 
   /// Loads all history items saved on the device.
   static Future<List<HistoryItem>> loadHistoryItems() async {
@@ -30,7 +34,11 @@ class StorageService {
 
       final prefs = await SharedPreferences.getInstance();
       final String jsonString = jsonEncode(items.map((i) => i.toJson()).toList());
-      return await prefs.setString(_storageKey, jsonString);
+      final success = await prefs.setString(_storageKey, jsonString);
+      if (success) {
+        historyRevision.value++;
+      }
+      return success;
     } catch (e) {
       return false;
     }
@@ -63,7 +71,11 @@ class StorageService {
 
       final prefs = await SharedPreferences.getInstance();
       final String jsonString = jsonEncode(items.map((i) => i.toJson()).toList());
-      return await prefs.setString(_storageKey, jsonString);
+      final success = await prefs.setString(_storageKey, jsonString);
+      if (success) {
+        historyRevision.value++;
+      }
+      return success;
     } catch (e) {
       return false;
     }
@@ -73,7 +85,9 @@ class StorageService {
   static Future<bool> clearAllHistory() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      return await prefs.remove(_storageKey);
+      final success = await prefs.remove(_storageKey);
+      historyRevision.value++;
+      return success;
     } catch (e) {
       return false;
     }

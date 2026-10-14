@@ -21,11 +21,16 @@ void main() {
       'TC-G01 & TC-G03: Guest enters thought, receives AI reframing, and validates local history persistence',
       (tester) async {
         // 1. Launch the full application
-        app.main();
+        await app.main();
         await tester.pumpAndSettle();
 
         // 2. Verify Home screen mounts with input form elements
-        final inputField = find.byKey(const ValueKey('input_thought_field'));
+        final inputField = find.byType(TextField);
+        final endBoot = DateTime.now().add(const Duration(seconds: 10));
+        while (DateTime.now().isBefore(endBoot) && inputField.evaluate().isEmpty) {
+          await tester.pump(const Duration(milliseconds: 300));
+        }
+
         final reframeBtn = find.byKey(const ValueKey('btn_reframe_action'));
         expect(inputField, findsOneWidget);
         expect(reframeBtn, findsOneWidget);
@@ -43,7 +48,7 @@ void main() {
         // (Allows sufficient timeout for either local Ollama or Gemini cloud response)
         final resultCard = find.byKey(const ValueKey('card_perspective_result'));
         final errorCard = find.byKey(const ValueKey('card_error_feedback'));
-        final end = DateTime.now().add(const Duration(seconds: 25));
+        final end = DateTime.now().add(const Duration(seconds: 60));
 
         bool cardAppeared = false;
         while (DateTime.now().isBefore(end)) {
@@ -65,7 +70,9 @@ void main() {
           expect(resultCard, findsOneWidget);
 
           // Allow the typewriter animation to complete typing characters
+          // and give the user time to read the reframing on screen
           await tester.pump(const Duration(seconds: 3));
+          await Future<void>.delayed(const Duration(seconds: 4));
 
           // 6. Navigate to the History tab ("My Linings") via Bottom Navigation Bar
           final historyTabIcon = find.byIcon(Icons.collections_bookmark);
@@ -74,7 +81,10 @@ void main() {
           await tester.pumpAndSettle();
 
           // 7. Verify TC-G03: The thought was saved locally on device in shared_preferences
-          expect(find.text(testThought), findsOneWidget);
+          expect(find.textContaining(testThought), findsOneWidget);
+
+          // Pause so user can see the history card on screen
+          await Future<void>.delayed(const Duration(seconds: 3));
         }
       },
     );

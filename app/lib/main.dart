@@ -4,7 +4,7 @@ import 'services/auth_service.dart';
 import 'services/dynamic_localization_service.dart';
 import 'theme/app_colors.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DynamicLocalizationService.instance.init();
   await AuthService().initialize();

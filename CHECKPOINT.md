@@ -8,19 +8,19 @@
 
 ## 🎯 1. Executive Summary
 
-This checkpoint records the successful delivery of **Step 32: Automated Guest E2E Integration Flow**:
-1. **Automated End-to-End Guest Journey** (`app/integration_test/guest_flow_test.dart`):
-   - Automates **TC-G01** (Guest Thought Reframing) and **TC-G03** (Local Device Persistence).
-   - Clean slate setup resets `shared_preferences` and ensures no active auth session.
-   - Types thought into `input_thought_field`, fires `btn_reframe_action`, and polls until the response card arrives.
-   - Waits for `TypewriterText` animation, navigates to "My Linings" (`HistoryScreen`), and validates local offline persistence.
-2. **Resilient Dual-Mode Execution**: Test gracefully handles both active backend runs (asserting `card_perspective_result`) and standalone environments (handling structured `card_error_feedback`).
-3. **Full Automated Verification**: 100% clean analyzer (0 warnings), 18/18 Flutter tests passing, and 16/16 backend pytest suites passing.
+This checkpoint records the successful delivery and live device verification of **Step 32: Automated Guest E2E Integration Flow**:
+1. **Live Android Emulator Execution (API 37 `emulator-5554`)**:
+   - Built and installed `app-debug.apk` onto the running Android virtual device.
+   - Successfully executed automated guest reframing flow connecting to local FastAPI (`http://10.0.2.2:8000`) and live Ollama AI (`qwen3-vl:8b`).
+   - Verified that `card_perspective_result` rendered with typewriter animation on real device screen.
+2. **Reactive Local Storage Synchronization**:
+   - Added `StorageService.historyRevision` (`ValueNotifier<int>`) to signal offline storage modifications (inserts, deletes, clears).
+   - Subscribed `HistoryScreen` to `historyRevision` so the list dynamically reloads even inside persistent `IndexedStack` containers.
+3. **Comprehensive Automated Test Pass**:
+   - `guest_flow_test.dart`: 100% PASS on Android emulator (`emulator-5554`).
+   - Mobile Unit/Widget Suite: 18/18 tests passing (100% green).
+   - Backend Pytest Suite: 16/16 test suites passing.
 
-   - Gated test scenario chips (`⚠️ Test Crisis`, `⚠️ Test Crime`) behind `kDebugMode` in `PresetChips`, providing realistic daily struggles for release mode.
-6. **Unified Test Discovery & Automated Test Expansion**:
-   - Standardized `test_*()` pytest discovery in all backend test files; expanded to 16 test suites passing 100% in 0.46s (including new `test_safety_provisioning_and_limiter.py`).
-   - Added comprehensive Flutter widget and unit tests in `app/test/error_handling_test.dart`; expanded mobile suite to 18 tests passing 100% with 0 analyzer warnings.
 
 ---
 

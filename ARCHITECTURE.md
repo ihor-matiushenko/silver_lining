@@ -404,6 +404,9 @@ The testing architecture validates functionality across two dimensions: user aut
    - **Local Sandbox**: Ollama (`qwen3-vl:8b`) + local PostgreSQL (`127.0.0.1:5432/silver_lining`).
    - **Cloud Production**: Google Gemini 1.5 Flash (`gemini-1.5-flash`) + Supabase Managed PostgreSQL.
    - **Platform Network Routing**: iOS Simulator (`127.0.0.1:8000`) vs Android Virtual Device (`10.0.2.2:8000`).
+3. **Automated Mobile Integration Testing (`integration_test/`)**:
+   - `app/integration_test/guest_flow_test.dart`: Executed directly on real devices / Android emulators via Flutter Driver bridge.
+   - **Reactive Storage Sync**: `StorageService.historyRevision` (`ValueNotifier<int>`) notifies persistent container screens (like `IndexedStack` hosting `HistoryScreen`) of offline storage updates in real time.
    - Complete test suites, execution checklists, and Supabase inspection guides are detailed in [TESTING_PLAN.md](file:///Users/ihormatiushenko/Workspace/silver_lining/TESTING_PLAN.md).
 
 

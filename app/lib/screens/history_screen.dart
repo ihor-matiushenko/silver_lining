@@ -26,12 +26,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
   void initState() {
     super.initState();
     AuthService().addListener(_loadHistory);
+    StorageService.historyRevision.addListener(_loadHistory);
     _loadHistory();
   }
 
   @override
   void dispose() {
     AuthService().removeListener(_loadHistory);
+    StorageService.historyRevision.removeListener(_loadHistory);
     super.dispose();
   }
 
