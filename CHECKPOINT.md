@@ -1,25 +1,27 @@
 # 📌 Silver Lining Project Checkpoint (`CHECKPOINT.md`)
 
-**Date**: October 14, 2026  
-**Status**: Step 32 (Automated Guest E2E Integration Flow) Complete  
+**Date**: October 15, 2026  
+**Status**: Step 33 (Automated Safety Crisis Shield E2E Flow) Complete  
 **Branch**: `main`
 
 ---
 
 ## 🎯 1. Executive Summary
 
-This checkpoint records the successful delivery and live device verification of **Step 32: Automated Guest E2E Integration Flow**:
-1. **Live Android Emulator Execution (API 37 `emulator-5554`)**:
-   - Built and installed `app-debug.apk` onto the running Android virtual device.
-   - Successfully executed automated guest reframing flow connecting to local FastAPI (`http://10.0.2.2:8000`) and live Ollama AI (`qwen3-vl:8b`).
-   - Verified that `card_perspective_result` rendered with typewriter animation on real device screen.
-2. **Reactive Local Storage Synchronization**:
-   - Added `StorageService.historyRevision` (`ValueNotifier<int>`) to signal offline storage modifications (inserts, deletes, clears).
-   - Subscribed `HistoryScreen` to `historyRevision` so the list dynamically reloads even inside persistent `IndexedStack` containers.
+This checkpoint records the successful delivery and live device verification of **Step 33: Automated Safety Crisis Shield E2E Flow**:
+1. **Live Android Emulator Execution (`app/integration_test/safety_crisis_test.dart`)**:
+   - Automated **TC-G05** (Guest Crisis Shield Activation) on Android API 37 (`emulator-5554`).
+   - Submitted severe crisis input: *"I feel completely hopeless and want to end it all."*
+   - Verified that Tier-1 regex guardrails intercepted the input instantaneously ($<10\text{ms}$).
+   - Verified that `card_crisis_shield` rendered on screen with the emergency **Call 988 Crisis Lifeline** action button (`Icons.phone`).
+2. **Zero History Storage Verification**:
+   - Navigated to the "My Linings" tab via the bottom navigation bar.
+   - Asserted that the crisis thought was **never stored** in device history (`shared_preferences`), preserving user privacy and preventing re-triggering trauma.
 3. **Comprehensive Automated Test Pass**:
-   - `guest_flow_test.dart`: 100% PASS on Android emulator (`emulator-5554`).
+   - `safety_crisis_test.dart`: 100% PASS on Android emulator (`emulator-5554`) in 20s.
    - Mobile Unit/Widget Suite: 18/18 tests passing (100% green).
    - Backend Pytest Suite: 16/16 test suites passing.
+
 
 
 ---
@@ -71,13 +73,13 @@ When resuming in the next session:
      - Flutter App: `cd app && flutter run` (select connected simulator/emulator device).
      - Test full flow: guest reflection, rate limit guard card, login, cloud sync, favorites, delete account, and content reporting.
 
-### 📍 Next Milestone: **Step 33: Automated Safety Crisis & Auth E2E Tests**
-* **Context**: Create runnable end-to-end integration test files using `integration_test`:
-  1. `app/integration_test/safety_crisis_test.dart`: Automating TC-G05 (instant regex safety interception & 988 emergency dialer card).
-  2. `app/integration_test/auth_sync_test.dart`: Automating TC-A01 & TC-A03 (Auth login, token attachment, cloud history sync).
+### 📍 Next Milestone: **Step 34: Automated Authenticated & Cloud Sync E2E Tests**
+* **Context**: Create runnable end-to-end integration test file using `integration_test`:
+  - `app/integration_test/auth_sync_test.dart`: Automating TC-A01 & TC-A03 (Auth login modal, Bearer JWT session attachment, cloud thought submission, and cloud history synchronization via `GET /api/v1/history`).
 * **Verification Command**:
   - `cd app && flutter analyze && flutter test`
   - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`
+
 
 
 

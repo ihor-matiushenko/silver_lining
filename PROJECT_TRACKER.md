@@ -41,9 +41,10 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 30** | **Comprehensive Full-Stack Testing Plan & Multi-Environment Matrix** (`TESTING_PLAN.md` covering Guest/Auth on iOS/Android, Ollama/Gemini, Local Postgres/Supabase) | 🟢 Complete |
 | **Step 31** | **Mobile E2E Automation Foundation & Test Keys** (`integration_test` SDK setup, stable `ValueKey`s across widgets) | 🟢 Complete |
 | **Step 32** | **Automated Guest E2E Integration Flow** (`integration_test/guest_flow_test.dart` automating TC-G01 & TC-G03) | 🟢 Complete |
-| **Step 33** | **Automated Crisis Shield & Auth E2E Tests** (`integration_test/safety_crisis_test.dart` & `auth_sync_test.dart`) | 🟡 Next Up |
-| **Step 34** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Planned |
-| **Step 35** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
+| **Step 33** | **Automated Safety Crisis Shield E2E Flow** (`integration_test/safety_crisis_test.dart` automating TC-G05 on live Android emulator) | 🟢 Complete |
+| **Step 34** | **Automated Authenticated & Cloud Sync E2E Flow** (`integration_test/auth_sync_test.dart` automating TC-A01 & TC-A03) | 🟡 Next Up |
+| **Step 35** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Planned |
+| **Step 36** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
 
 
 ---
