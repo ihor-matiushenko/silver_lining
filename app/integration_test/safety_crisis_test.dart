@@ -39,6 +39,11 @@ void main() {
         const crisisThought = 'I feel completely hopeless and want to end it all.';
         await tester.enterText(inputField, crisisThought);
         await tester.pumpAndSettle();
+        // Pause 2 seconds so the typed prompt is clearly visible
+        final typingPause = DateTime.now().add(const Duration(seconds: 2));
+        while (DateTime.now().isBefore(typingPause)) {
+          await tester.pump(const Duration(milliseconds: 300));
+        }
 
         // 4. Tap the "Reframe Thought" primary button
         await tester.tap(reframeBtn);
@@ -65,8 +70,11 @@ void main() {
         final lifelineButton = find.byIcon(Icons.phone);
         expect(lifelineButton, findsOneWidget);
 
-        // Pause for 4 seconds so the user can visually inspect the crisis card on emulator
-        await Future<void>.delayed(const Duration(seconds: 4));
+        // Visually display the Crisis Shield on the emulator screen for 8 seconds
+        final shieldPause = DateTime.now().add(const Duration(seconds: 8));
+        while (DateTime.now().isBefore(shieldPause)) {
+          await tester.pump(const Duration(milliseconds: 500));
+        }
 
         // 7. Navigate to the History tab ("My Linings")
         final historyTabIcon = find.byIcon(Icons.collections_bookmark);
@@ -81,8 +89,11 @@ void main() {
           reason: 'Crisis prompts must never be persisted to history for user safety and privacy',
         );
 
-        // Pause for 2 seconds to view clean empty history
-        await Future<void>.delayed(const Duration(seconds: 2));
+        // Keep History tab visible for 4 seconds
+        final historyPause = DateTime.now().add(const Duration(seconds: 4));
+        while (DateTime.now().isBefore(historyPause)) {
+          await tester.pump(const Duration(milliseconds: 500));
+        }
       },
     );
   });
