@@ -61,24 +61,41 @@ PYTHONPATH=. .venv/bin/python -m pytest tests/   # ✅ 100% PASS (16 test suites
 
 When resuming in the next session:
 
-### 📍 Starting Point: **Manual Local Testing in Real iOS / Android Emulators**
-* **Context**: Validate the complete user experience end-to-end in real mobile emulators before building final store binaries:
-  1. **Android Emulator**:
-     - Android Studio installed (`/Applications/Android Studio.app`).
-     - Open Android Studio $\rightarrow$ Device Manager $\rightarrow$ Start AVD emulator (e.g. Pixel 8).
-  2. **iOS Simulator**:
-     - Xcode installed $\rightarrow$ run `open -a Simulator` (e.g. iPhone 15/16).
-  3. **Launch Local Stack**:
-     - Backend: `cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000`
-     - Flutter App: `cd app && flutter run` (select connected simulator/emulator device).
-     - Test full flow: guest reflection, rate limit guard card, login, cloud sync, favorites, delete account, and content reporting.
+### 📍 Starting Point: **Step 34: Automated Authenticated & Cloud Sync E2E Tests**
+* **Context**: Create and run the authenticated integration test file:
+  - `app/integration_test/auth_sync_test.dart`: Automating TC-A01 & TC-A03:
+    1. Authenticates user session via `SupabaseAuthProvider` (or `MockAuthProvider` in offline dev).
+    2. Submits authenticated thought with `Authorization: Bearer <jwt_token>`.
+    3. Verifies PostgreSQL persistence in `public.reframerecord`.
+    4. Asserts cloud history synchronization on `HistoryScreen` via `GET /api/v1/history`.
+    5. Tests bookmark favorite toggle via `POST /api/v1/favorite`.
 
-### 📍 Next Milestone: **Step 34: Automated Authenticated & Cloud Sync E2E Tests**
-* **Context**: Create runnable end-to-end integration test file using `integration_test`:
-  - `app/integration_test/auth_sync_test.dart`: Automating TC-A01 & TC-A03 (Auth login modal, Bearer JWT session attachment, cloud thought submission, and cloud history synchronization via `GET /api/v1/history`).
-* **Verification Command**:
-  - `cd app && flutter analyze && flutter test`
-  - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`
+### 📍 Operational E2E Verification Protocol (How to Run with Visible Emulator UI):
+1. **Start Backend**:
+   ```bash
+   cd backend && .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+   ```
+2. **Reverse Android Emulator Port**:
+   ```bash
+   ~/Library/Android/sdk/platform-tools/adb reverse tcp:8000 tcp:8000
+   ```
+3. **Focus Emulator Window**:
+   ```bash
+   osascript -e 'tell application "System Events" to set frontmost of first process whose name contains "qemu" to true'
+   ```
+4. **Execute Verified E2E Tests**:
+   ```bash
+   cd app
+   flutter test integration_test/guest_flow_test.dart -d emulator-5554    # TC-G01 & TC-G03 (100% PASS)
+   flutter test integration_test/safety_crisis_test.dart -d emulator-5554 # TC-G05 (100% PASS)
+   flutter test integration_test/auth_sync_test.dart -d emulator-5554     # TC-A01 & TC-A03 (Step 34)
+   ```
+5. **Rate Limiting Note**: Guest tests consume the backend's 5/day guest quota. If repeated test runs encounter HTTP 429, restart uvicorn to reset the in-memory limiter.
+6. **Active Frame Pumping Note**: When writing pauses in Flutter integration tests, use `while (DateTime.now().isBefore(end)) { await tester.pump(const Duration(milliseconds: 300)); }` so that frames are continuously rendered to the emulator display.
+
+### 📍 Verification Commands:
+- `cd app && flutter analyze && flutter test` (0 issues, 18/18 tests green)
+- `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/` (16 test suites passing 100%)
 
 
 

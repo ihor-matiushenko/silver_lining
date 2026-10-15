@@ -51,14 +51,20 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 
 ## 🚀 Immediate Resume Instructions for Next Session
 When resuming work:
-1. **Starting Point**: **Manual Local Testing in Real iOS / Android Emulators**:
-   - **Android Emulator**: Android Studio installed (`/Applications/Android Studio.app`). Launch Android Studio $\rightarrow$ Tools $\rightarrow$ Device Manager $\rightarrow$ Start AVD virtual device.
-   - **iOS Simulator**: Xcode installation via Mac App Store / Apple Developer portal $\rightarrow$ `open -a Simulator` $\rightarrow$ select iPhone 15/16.
-   - **Run Local Stack**:
-     - Terminal 1 (Backend): `cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000`
-     - Terminal 2 (Mobile App): `cd app && flutter run` (select connected iOS Simulator or Android AVD).
-     - Test full user journey: guest thoughts, rate limit guard, Supabase login, cloud history sync, content reporting, and language switcher.
-2. **Next Milestone**: **Step 30: Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`).
+1. **Starting Point**: **Step 34: Automated Authenticated & Cloud Sync E2E Flow**:
+   - Create `app/integration_test/auth_sync_test.dart` automating TC-A01 & TC-A03:
+     - Authentication modal login via `SupabaseAuthProvider` / `MockAuthProvider`.
+     - Bearer JWT session attachment to `ApiReframingService`.
+     - Authenticated thought submission and cloud history synchronization via `GET /api/v1/history`.
+     - Bookmark favorite toggle via `POST /api/v1/favorite`.
+2. **Operational E2E Execution Protocol**:
+   - Backend: `cd backend && .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000`
+   - Android ADB Reverse: `~/Library/Android/sdk/platform-tools/adb reverse tcp:8000 tcp:8000`
+   - Window Focus: `osascript -e 'tell application "System Events" to set frontmost of first process whose name contains "qemu" to true'`
+   - Run Tests:
+     - Guest Flow: `cd app && flutter test integration_test/guest_flow_test.dart -d emulator-5554`
+     - Safety Crisis: `cd app && flutter test integration_test/safety_crisis_test.dart -d emulator-5554`
+     - Auth Sync: `cd app && flutter test integration_test/auth_sync_test.dart -d emulator-5554`
 3. **Verification Command**:
    - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`  (16 tests passing 100%)
    - `cd app && flutter analyze && flutter test`  (18 tests passing 100%)

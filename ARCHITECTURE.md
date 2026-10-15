@@ -405,8 +405,20 @@ The testing architecture validates functionality across two dimensions: user aut
    - **Cloud Production**: Google Gemini 1.5 Flash (`gemini-1.5-flash`) + Supabase Managed PostgreSQL.
    - **Platform Network Routing**: iOS Simulator (`127.0.0.1:8000`) vs Android Virtual Device (`10.0.2.2:8000`).
 3. **Automated Mobile Integration Testing (`integration_test/`)**:
-   - `app/integration_test/guest_flow_test.dart`: Executed directly on real devices / Android emulators via Flutter Driver bridge.
+   - `app/integration_test/guest_flow_test.dart`: Validates unauthenticated thought reframing with Ollama, typewriter animation rendering, and local history persistence.
+   - `app/integration_test/safety_crisis_test.dart`: Validates instantaneous Tier-1 crisis detection ($<10\text{ms}$), 988 emergency lifeline action shield, and zero history storage invariant.
    - **Reactive Storage Sync**: `StorageService.historyRevision` (`ValueNotifier<int>`) notifies persistent container screens (like `IndexedStack` hosting `HistoryScreen`) of offline storage updates in real time.
+   - **Live Emulator Execution & Visual Rendering Protocol**:
+     - **Active Frame Pumping**: In Flutter `integration_test`, avoid raw `Future.delayed()` for visual pauses because it freezes the Flutter engine loop without pumping new frames to the Android surface. Always use a loop with `tester.pump(const Duration(milliseconds: 300))` so the UI actively updates and remains visible on the emulator display.
+     - **ADB Reverse Port Forwarding**: For Android emulators communicating with the local FastAPI backend on port 8000, run:
+       ```bash
+       ~/Library/Android/sdk/platform-tools/adb reverse tcp:8000 tcp:8000
+       ```
+     - **Window Focus**: To bring the emulator to the front of the macOS desktop, use:
+       ```bash
+       osascript -e 'tell application "System Events" to set frontmost of first process whose name contains "qemu" to true'
+       ```
+     - **Guest Rate Limit Isolation**: The backend enforces 5 reframings/day per IP for unauthenticated users. When running repeated integration test suites, reset the backend limiter or restart Uvicorn to avoid receiving HTTP 429 errors during guest test runs.
    - Complete test suites, execution checklists, and Supabase inspection guides are detailed in [TESTING_PLAN.md](file:///Users/ihormatiushenko/Workspace/silver_lining/TESTING_PLAN.md).
 
 

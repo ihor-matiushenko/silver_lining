@@ -40,6 +40,12 @@ void main() {
         await tester.enterText(inputField, testThought);
         await tester.pumpAndSettle();
 
+        // Pause 2 seconds with active pumping so typed text is clearly visible on emulator
+        final typingPause = DateTime.now().add(const Duration(seconds: 2));
+        while (DateTime.now().isBefore(typingPause)) {
+          await tester.pump(const Duration(milliseconds: 300));
+        }
+
         // 4. Tap the "Reframe Thought" primary button
         await tester.tap(reframeBtn);
         await tester.pump();
@@ -69,10 +75,11 @@ void main() {
         if (resultCard.evaluate().isNotEmpty) {
           expect(resultCard, findsOneWidget);
 
-          // Allow the typewriter animation to complete typing characters
-          // and give the user time to read the reframing on screen
-          await tester.pump(const Duration(seconds: 3));
-          await Future<void>.delayed(const Duration(seconds: 4));
+          // Allow the typewriter animation to complete and keep card visible for 6 seconds
+          final readPause = DateTime.now().add(const Duration(seconds: 6));
+          while (DateTime.now().isBefore(readPause)) {
+            await tester.pump(const Duration(milliseconds: 300));
+          }
 
           // 6. Navigate to the History tab ("My Linings") via Bottom Navigation Bar
           final historyTabIcon = find.byIcon(Icons.collections_bookmark);
@@ -83,8 +90,11 @@ void main() {
           // 7. Verify TC-G03: The thought was saved locally on device in shared_preferences
           expect(find.textContaining(testThought), findsOneWidget);
 
-          // Pause so user can see the history card on screen
-          await Future<void>.delayed(const Duration(seconds: 3));
+          // Keep History tab visible for 4 seconds so user can inspect it
+          final historyPause = DateTime.now().add(const Duration(seconds: 4));
+          while (DateTime.now().isBefore(historyPause)) {
+            await tester.pump(const Duration(milliseconds: 300));
+          }
         }
       },
     );
