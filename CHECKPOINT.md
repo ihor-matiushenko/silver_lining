@@ -1,26 +1,27 @@
 # 📌 Silver Lining Project Checkpoint (`CHECKPOINT.md`)
 
-**Date**: October 15, 2026  
-**Status**: Step 33 (Automated Safety Crisis Shield E2E Flow) Complete  
+**Date**: October 19, 2026  
+**Status**: Environment Setup, Package Installation & Ollama Runtime Verification Complete  
 **Branch**: `main`
 
 ---
 
 ## 🎯 1. Executive Summary
 
-This checkpoint records the successful delivery and live device verification of **Step 33: Automated Safety Crisis Shield E2E Flow**:
-1. **Live Android Emulator Execution (`app/integration_test/safety_crisis_test.dart`)**:
-   - Automated **TC-G05** (Guest Crisis Shield Activation) on Android API 37 (`emulator-5554`).
-   - Submitted severe crisis input: *"I feel completely hopeless and want to end it all."*
-   - Verified that Tier-1 regex guardrails intercepted the input instantaneously ($<10\text{ms}$).
-   - Verified that `card_crisis_shield` rendered on screen with the emergency **Call 988 Crisis Lifeline** action button (`Icons.phone`).
-2. **Zero History Storage Verification**:
-   - Navigated to the "My Linings" tab via the bottom navigation bar.
-   - Asserted that the crisis thought was **never stored** in device history (`shared_preferences`), preserving user privacy and preventing re-triggering trauma.
-3. **Comprehensive Automated Test Pass**:
-   - `safety_crisis_test.dart`: 100% PASS on Android emulator (`emulator-5554`) in 20s.
-   - Mobile Unit/Widget Suite: 18/18 tests passing (100% green).
-   - Backend Pytest Suite: 16/16 test suites passing.
+This checkpoint records the successful environment validation, complete package installation, and AI runtime setup:
+1. **Flutter Mobile App Dependencies (`app/`)**:
+   - Resolved and fetched all Dart/Flutter packages with `flutter pub get`.
+   - Verified static analysis (`flutter analyze`: 0 issues) and widget/unit tests (`flutter test`: 18/18 passed).
+2. **Backend Engine Environment (`backend/`)**:
+   - Initialized Python 3.11 virtual environment (`backend/.venv`).
+   - Installed all backend dependencies via `pip install -r requirements.txt`.
+   - Hardened PostgreSQL driver support by adding `psycopg[binary]>=3.1.18` for SQLAlchemy 2.0+ compatibility.
+   - Initialized `backend/.env` with local database connection (`postgresql://postgres@127.0.0.1:5432/silver_lining`) and dev JWT secret.
+   - Executed and passed all backend test suites (`test_auth_flow.py`, `test_history_api.py`, `test_favorites_and_delete.py`, `test_rate_limiter.py`).
+3. **Ollama Local AI Runtime**:
+   - Installed and linked Ollama 0.40.6 (`/opt/homebrew/bin/ollama`).
+   - Launched Ollama background service daemon (`http://localhost:11434`).
+   - Verified active local model `llama3.2:latest` with live perspective reframing generation.
 
 
 

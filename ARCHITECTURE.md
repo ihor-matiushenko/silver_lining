@@ -91,7 +91,7 @@ backend/
 │   ├── main.py                  # 🔌 Application Entry Point & Lifespan
 │   ├── core/                    # ⚙️ Infrastructure & Cross-Cutting Concerns
 │   │   ├── config.py            # Strongly-typed environment settings (BaseSettings)
-│   │   ├── database.py          # PostgreSQL engine, pool & session generator
+│   │   ├── database.py          # PostgreSQL engine (psycopg binary driver), pool & session generator
 │   │   ├── security.py          # Supabase JWT signature verification & Auth dependencies
 │   │   └── limiter.py           # slowapi rate limiter configuration (5/day guests)
 │   ├── models/                  # 📄 Data Structures & Entities

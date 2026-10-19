@@ -38,7 +38,7 @@ pip install -r requirements.txt
 Create `backend/.env` (or copy from `backend/.env.example`):
 ```env
 # 🐘 Local PostgreSQL Database Connection URL
-DATABASE_URL=postgresql://username:password@127.0.0.1:5432/silver_lining
+DATABASE_URL=postgresql://postgres@127.0.0.1:5432/silver_lining
 
 # 🔐 Supabase Auth JWT Secret Key (Minimum 32 bytes)
 SUPABASE_JWT_SECRET=dev-secret-key-must-be-at-least-32-bytes-long-for-jwt-security
@@ -49,7 +49,7 @@ GUEST_DAILY_LIMIT=5
 # 🤖 AI Provider Strategy Choice: "ollama" (Free Local) or "gemini" (Cloud)
 LLM_PROVIDER=ollama
 OLLAMA_URL=http://localhost:11434/api/generate
-OLLAMA_MODEL=qwen3-vl:8b
+OLLAMA_MODEL=llama3.2:latest # or qwen3-vl:8b
 
 # Google Gemini Settings (Optional cloud alternative)
 GEMINI_API_KEY=
