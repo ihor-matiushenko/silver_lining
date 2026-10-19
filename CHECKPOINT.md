@@ -21,7 +21,7 @@ This checkpoint records the successful environment validation, complete package 
 3. **Ollama Local AI Runtime**:
    - Installed and linked Ollama 0.40.6 (`/opt/homebrew/bin/ollama`).
    - Launched Ollama background service daemon (`http://localhost:11434`).
-   - Verified active local model `llama3.2:latest` with live perspective reframing generation.
+   - Verified active local model `llama3.2:latest` and initiated `qwen2.5:14b` setup optimized for Apple Silicon M4 Max (48 GB unified RAM).
 
 
 

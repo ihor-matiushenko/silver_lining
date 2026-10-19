@@ -49,7 +49,7 @@ GUEST_DAILY_LIMIT=5
 # 🤖 AI Provider Strategy Choice: "ollama" (Free Local) or "gemini" (Cloud)
 LLM_PROVIDER=ollama
 OLLAMA_URL=http://localhost:11434/api/generate
-OLLAMA_MODEL=llama3.2:latest # or qwen3-vl:8b
+OLLAMA_MODEL=qwen2.5:14b # or llama3.2:latest
 
 # Google Gemini Settings (Optional cloud alternative)
 GEMINI_API_KEY=
