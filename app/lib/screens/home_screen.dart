@@ -74,6 +74,13 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 
       await StorageService.saveHistoryItem(newItem);
+    } else if (AuthService().isAuthenticated &&
+        result.isSafe &&
+        !result.isError &&
+        !result.crisisTriggered &&
+        result.reframedText != null) {
+      // ☁️ Signal history listeners that an authenticated cloud record has been persisted
+      StorageService.historyRevision.value++;
     }
   }
 

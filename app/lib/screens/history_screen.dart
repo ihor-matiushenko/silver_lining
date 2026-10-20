@@ -137,6 +137,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Row(
               children: [
                 ChoiceChip(
+                  key: const ValueKey('chip_filter_all'),
                   label: Text('All Saved (${_historyItems.length})'),
                   selected: !_showFavoritesOnly,
                   selectedColor: AppColors.primary,
@@ -144,6 +145,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ),
                 const SizedBox(width: 10),
                 ChoiceChip(
+                  key: const ValueKey('chip_filter_favorites'),
                   label: Text('♥ Favorites (${_historyItems.where((i) => i.isFavorite).length})'),
                   selected: _showFavoritesOnly,
                   selectedColor: AppColors.secondary,

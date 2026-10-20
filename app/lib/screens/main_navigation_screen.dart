@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/storage_service.dart';
 import '../theme/app_colors.dart';
 import 'history_screen.dart';
 import 'home_screen.dart';
@@ -29,7 +30,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       bottomNavigationBar: BottomNavigationBar(
         key: const ValueKey('main_bottom_nav_bar'),
         currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+          if (index == 1) {
+            StorageService.historyRevision.value++;
+          }
+        },
         backgroundColor: AppColors.surface,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: Colors.grey,

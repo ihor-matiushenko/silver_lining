@@ -79,6 +79,7 @@ class PrimaryAuthForm extends StatelessWidget {
           const Text('Email Address', style: AppTypography.subtitle),
           const SizedBox(height: 6),
           TextFormField(
+            key: const ValueKey('input_auth_email'),
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
             style: AppTypography.body,
@@ -105,6 +106,7 @@ class PrimaryAuthForm extends StatelessWidget {
           const Text('Password', style: AppTypography.subtitle),
           const SizedBox(height: 6),
           TextFormField(
+            key: const ValueKey('input_auth_password'),
             controller: passwordController,
             obscureText: obscurePassword,
             style: AppTypography.body,
@@ -155,6 +157,7 @@ class PrimaryAuthForm extends StatelessWidget {
 
           // Submit Button
           ElevatedButton(
+            key: const ValueKey('btn_auth_submit'),
             onPressed: isLoading ? null : onSubmit,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,

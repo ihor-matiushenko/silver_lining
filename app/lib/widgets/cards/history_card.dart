@@ -31,6 +31,7 @@ class HistoryCard extends StatelessWidget {
               Row(
                 children: [
                   IconButton(
+                    key: const ValueKey('btn_favorite_toggle'),
                     icon: Icon(
                       item.isFavorite ? Icons.favorite : Icons.favorite_border,
                       color: item.isFavorite ? AppColors.secondary : Colors.grey,

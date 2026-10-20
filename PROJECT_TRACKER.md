@@ -42,8 +42,8 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 31** | **Mobile E2E Automation Foundation & Test Keys** (`integration_test` SDK setup, stable `ValueKey`s across widgets) | 🟢 Complete |
 | **Step 32** | **Automated Guest E2E Integration Flow** (`integration_test/guest_flow_test.dart` automating TC-G01 & TC-G03) | 🟢 Complete |
 | **Step 33** | **Automated Safety Crisis Shield E2E Flow** (`integration_test/safety_crisis_test.dart` automating TC-G05 on live Android emulator) | 🟢 Complete |
-| **Step 34** | **Automated Authenticated & Cloud Sync E2E Flow** (`integration_test/auth_sync_test.dart` automating TC-A01 & TC-A03) | 🟡 Next Up |
-| **Step 35** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Planned |
+| **Step 34** | **Automated Authenticated & Cloud Sync E2E Flow** (`integration_test/auth_sync_test.dart` automating TC-A01, TC-A02, TC-A03 & TC-A04) | 🟢 Complete |
+| **Step 35** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Next Up |
 | **Step 36** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
 
 
@@ -51,12 +51,10 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 
 ## 🚀 Immediate Resume Instructions for Next Session
 When resuming work:
-1. **Starting Point**: **Step 34: Automated Authenticated & Cloud Sync E2E Flow**:
-   - Create `app/integration_test/auth_sync_test.dart` automating TC-A01 & TC-A03:
-     - Authentication modal login via `SupabaseAuthProvider` / `MockAuthProvider`.
-     - Bearer JWT session attachment to `ApiReframingService`.
-     - Authenticated thought submission and cloud history synchronization via `GET /api/v1/history`.
-     - Bookmark favorite toggle via `POST /api/v1/favorite`.
+1. **Starting Point**: **Step 35: Release Binary Build & Signing**:
+   - Build Android release AppBundle: `cd app && flutter build appbundle --release`.
+   - Prepare iOS production release archive: `cd app && flutter build ipa --release`.
+   - Verify signing configurations, obfuscation flags, and release assets.
 2. **Operational E2E Execution Protocol**:
    - Backend: `cd backend && .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000`
    - Android ADB Reverse: `~/Library/Android/sdk/platform-tools/adb reverse tcp:8000 tcp:8000`
@@ -68,9 +66,6 @@ When resuming work:
 3. **Verification Command**:
    - `cd backend && PYTHONPATH=. .venv/bin/python -m pytest tests/`  (16 tests passing 100%)
    - `cd app && flutter analyze && flutter test`  (18 tests passing 100%)
-
-
-
 
 ---
 
