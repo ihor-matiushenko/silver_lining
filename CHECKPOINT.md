@@ -58,6 +58,9 @@ flutter test      # ✅ 100% PASS (All 18 widget and unit tests green!)
 cd app
 flutter test integration_test/auth_sync_test.dart -d emulator-5554
 # ✅ 100% PASS (TC-A01, TC-A02, TC-A03 & TC-A04 verified on emulator-5554)
+# Hardened: unique thought per run (re-runnable against persistent DB, verified 2 consecutive runs)
+#           and hard-fail on error card (TC-A03/A04 can never be silently skipped)
+# NOTE: Uses MockAuthProvider (dev_mock_jwt_token). Real Supabase login is NOT yet covered.
 ```
 
 ### Backend Test Suite (`backend/tests/`)
