@@ -75,13 +75,17 @@ PYTHONPATH=. .venv/bin/python -m pytest tests/  # ✅ 100% PASS (16/16 tests pas
 
 ## 🚀 4. Immediate Resume Instructions for Next Session
 
-When resuming in the next session:
-
-### 📍 Starting Point: **Step 35: Release Binary Build & Signing**
-* **Context**:
-  1. Build Android production AppBundle: `cd app && flutter build appbundle --release`.
-  2. Build iOS production archive: `cd app && flutter build ipa --release`.
-  3. Validate release signing, ProGuard rules, and asset bundling.
+### 📍 Planned Items for Next Session:
+1. **iOS Simulator Setup & E2E Test Suite Run**:
+   - Verify Xcode installation at `/Applications/Xcode.app`.
+   - Run `open -a Simulator` to boot iPhone simulator.
+   - Run integration test suites against iOS simulator: `cd app && flutter test integration_test/live_supabase_auth_sync_test.dart -d "iPhone 16"`.
+2. **Cloud LLM Architecture & Provider Strategy**:
+   - Discuss cloud AI reframing implementation, model selection, prompt tuning, and backend integration.
+3. **Step 35: Release Binary Build & Signing**:
+   - Build Android production AppBundle: `cd app && flutter build appbundle --release`.
+   - Build iOS production archive: `cd app && flutter build ipa --release`.
+   - Validate release signing, ProGuard rules, and asset bundling.
 
 ### 📍 Operational E2E Verification Protocol:
 1. **Start Backend**:
