@@ -118,6 +118,7 @@ class AccountLegalDialog extends StatelessWidget {
           ),
         ],
       ),
+      actionsAlignment: MainAxisAlignment.spaceBetween,
       actions: [
         // In-App Account Deletion (Apple 5.1.1(v) & Google Play Data Deletion)
         TextButton.icon(
@@ -126,22 +127,27 @@ class AccountLegalDialog extends StatelessWidget {
           label: const Text('Delete Account', style: TextStyle(fontSize: 12)),
           onPressed: () => _confirmDeleteAccount(context),
         ),
-        const Spacer(),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close', style: TextStyle(color: Colors.white70)),
-        ),
-        ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.secondary.withValues(alpha: 0.8),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          ),
-          icon: const Icon(Icons.logout, size: 16),
-          label: const Text('Sign Out'),
-          onPressed: () async {
-            Navigator.of(context).pop();
-            await AuthService().signOut();
-          },
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close', style: TextStyle(color: Colors.white70)),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.secondary.withValues(alpha: 0.8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              icon: const Icon(Icons.logout, size: 16),
+              label: const Text('Sign Out'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await AuthService().signOut();
+              },
+            ),
+          ],
         ),
       ],
     );

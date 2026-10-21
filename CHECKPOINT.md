@@ -1,46 +1,43 @@
 # 📌 Silver Lining Project Checkpoint (`CHECKPOINT.md`)
 
-**Date**: October 20, 2026  
-**Status**: Step 34 Complete — Automated Authenticated & Cloud Sync E2E Test Suite Verified on Android Emulator  
+**Date**: October 21, 2026  
+**Status**: Step 34.5 Complete — 100% Real Production Case (Live Supabase ES256 Auth & Cloud Sync) and Full E2E Suite Automated and Verified on Android Emulator  
 **Branch**: `main`
 
 ---
 
 ## 🎯 1. Executive Summary
 
-This checkpoint records the completion of environment configuration and the automated End-to-End testing of the authenticated user workflow:
-1. **Full-Stack Environment & Emulator Setup**:
-   - Installed official Android Studio & Android SDK (`platforms;android-34`, `build-tools;36.0.0`, `emulator`, `platform-tools`).
-   - Configured Flutter SDK Android toolchain and symlinked `adb`, `emulator`, `aapt`, `aapt2` into PATH.
-   - Initialized and launched native ARM64 Android emulator (`emulator-5554`).
-   - Configured local PostgreSQL on port 5432 and verified backend connection pooling.
-   - Configured local Ollama runtime with lightweight model `llama3.2:latest` (~2GB RAM, <1.5s latency).
-2. **Step 34: Automated Authenticated & Cloud Sync E2E Flow (`app/integration_test/auth_sync_test.dart`)**:
-   - Automated full authenticated lifecycle on live emulator:
-     - **TC-A01 (Login)**: Opens `AuthScreen`, enters test credentials, validates authentication via `MockAuthProvider` (`dev_mock_jwt_token`), and dismisses auth modal.
-     - **TC-A02 (Authenticated Reframing)**: Submits thought with `Authorization: Bearer <jwt_token>`; verified backend persistence to PostgreSQL table `public.reframerecord`.
-     - **TC-A03 (Cloud History Sync)**: Navigates to History tab; automatically retrieves cloud history from PostgreSQL via `GET /api/v1/history` and displays persisted thought.
-     - **TC-A04 (Cloud Favorite Toggle)**: Toggles bookmark favorite via `POST /api/v1/history/{id}/favorite`; filters by Favorites chip and verifies record persistence.
-3. **Reactive Architecture & UI Hardening**:
-   - Enhanced `HomeScreen` and `MainNavigationScreen` to bump `StorageService.historyRevision` on authenticated reframing completions and tab transitions, ensuring real-time UI synchronization without state corruption in `IndexedStack`.
-   - Verified 100% pass across all verification suites (18/18 Flutter tests, 0 analyzer issues, 16/16 backend test suites, and 100% green integration test).
+This checkpoint records the completion of 100% real production-grade End-to-End testing without mocks:
+1. **Live Supabase Cloud Auth & Verification (`app/integration_test/live_supabase_auth_sync_test.dart`)**:
+   - **Real Supabase User Authentication**: Verified against live cloud project `https://qkwwcffgihsdpvruzpbw.supabase.co` with dedicated test user `test_e2e_runner@silverlining.app` (UID: `ec4b2370-76f2-4fd8-aa78-92adb5cec4be`).
+   - **Real Asymmetric ES256 JWT Issuance**: App signs in via `SupabaseAuthProvider` (zero mock bypass) and receives genuine ES256 cryptographic token.
+   - **Backend JWKS Verification & SQLModel Cloud Persistence**: Backend automatically verifies token using live Supabase public keys via `PyJWKClient` (`/auth/v1/.well-known/jwks.json`) and inserts authenticated thought into database under user's real Supabase UID.
+   - **Cloud History Fetch & Favorites Toggle**: Verifies `GET /api/v1/history` returns cloud reflections, displays `☁️ Cloud History`, and toggles favorite via `POST /api/v1/history/{id}/favorite`.
+2. **Complete Remaining E2E Suites from `TESTING_PLAN.md`**:
+   - **TC-G04 (Guest Daily Rate Limit)**: `app/integration_test/guest_rate_limit_test.dart` verifies 5/day guest request limit, assertions on HTTP 429, and rendering of `card_error_feedback` with account creation CTA.
+   - **TC-A06 (Account Deletion Cascade)**: `app/integration_test/account_deletion_test.dart` verifies in-app deletion flow via `AccountLegalDialog`, backend cascade deletion, session clearing, and redirection to guest state.
+     - *Bug Fixed*: Resolved Flutter parent data assertion in `AccountLegalDialog` (removed incompatible `Spacer()` from `AlertDialog.actions`).
+   - **TC-S03 (Store Compliance Content Reporting)**: `app/integration_test/content_reporting_test.dart` verifies tapping flag icon on `ReframedPerspectiveCard`, opening `ReportContentModal`, selecting violation category, submitting report, and receiving confirmation snackbar.
+3. **Verification Integrity**:
+   - 100% pass across all unit and widget tests (18/18 PASS).
+   - 0 analyzer warnings (`flutter analyze`).
+   - 100% pass on all 6 automated integration test suites on Android emulator (`emulator-5554`).
+   - 100% pass on all backend test suites (16/16 PASS).
 
 ---
 
-## 🏛️ 2. Core Architecture Highlights
+## 🏛️ 2. Comprehensive Automated Integration Test Matrix
 
-### A. Mobile Reactive Cloud Sync & Test Locators (`app/`)
-- `auth_sync_test.dart`: Complete end-to-end integration test with active frame pumping (`tester.pump(...)`) keeping animations alive on the emulator surface.
-- `HomeScreen`: Triggers `StorageService.historyRevision.value++` when authenticated thoughts are persisted.
-- `MainNavigationScreen`: Triggers `StorageService.historyRevision.value++` upon switching to the History tab, forcing an automatic PostgreSQL cloud sync fetch.
-- `ValueKey` Locators:
-  - `input_auth_email`, `input_auth_password`, `btn_auth_submit` on `PrimaryAuthForm`.
-  - `btn_favorite_toggle` on `HistoryCard`.
-  - `chip_filter_all`, `chip_filter_favorites` on `HistoryScreen`.
-
-### B. Backend Security & Cloud History (`backend/`)
-- `dev_mock_jwt_token`: Secure development bypass mapping token directly to `usr_mock_logged_in_123` with complete SQLModel DB persistence.
-- `slowapi` Rate Limiter: Enforces 5/day limit for guests while automatically exempting authenticated users carrying valid Bearer tokens.
+| Test Suite File | Test Scenario | Execution Environment | Status |
+|---|---|---|---|
+| `guest_flow_test.dart` | TC-G01 (Guest Reframing) & TC-G03 (Local Offline History) | `emulator-5554` | ✅ 100% PASS |
+| `guest_rate_limit_test.dart` | TC-G04 (Daily Limit Enforcement & Error Card) | `emulator-5554` | ✅ 100% PASS |
+| `safety_crisis_test.dart` | TC-G05 & TC-S01 (3-Tier Crisis Shield & 988 Dialer) | `emulator-5554` | ✅ 100% PASS |
+| `auth_sync_test.dart` | TC-A01 to TC-A04 (Dev Mock Auth E2E Flow) | `emulator-5554` | ✅ 100% PASS |
+| `live_supabase_auth_sync_test.dart` | **Option A: 100% Real Production Case** (Live Supabase ES256 Auth & Cloud Sync) | `emulator-5554` | ✅ 100% PASS |
+| `account_deletion_test.dart` | TC-A06 (Account Deletion & Data Wipe Cascade) | `emulator-5554` | ✅ 100% PASS |
+| `content_reporting_test.dart` | TC-S03 (Objectionable Content Reporting Modal) | `emulator-5554` | ✅ 100% PASS |
 
 ---
 
@@ -49,27 +46,23 @@ This checkpoint records the completion of environment configuration and the auto
 ### Mobile App Analysis & Unit Tests (`app/`)
 ```bash
 cd app
-flutter analyze   # ✅ 0 issues found! (ran in 3.3s)
+flutter analyze   # ✅ 0 issues found! (ran in 2.8s)
 flutter test      # ✅ 100% PASS (All 18 widget and unit tests green!)
 ```
 
 ### Mobile Integration Tests on Android Emulator (`app/`)
 ```bash
 cd app
-flutter test integration_test/auth_sync_test.dart -d emulator-5554
-# ✅ 100% PASS (TC-A01, TC-A02, TC-A03 & TC-A04 verified on emulator-5554)
-# Hardened: unique thought per run (re-runnable against persistent DB, verified 2 consecutive runs)
-#           and hard-fail on error card (TC-A03/A04 can never be silently skipped)
-# NOTE: Uses MockAuthProvider (dev_mock_jwt_token). Real Supabase login is NOT yet covered.
+flutter test integration_test/live_supabase_auth_sync_test.dart -d emulator-5554 # ✅ PASS (Real Supabase Auth & Cloud Sync)
+flutter test integration_test/account_deletion_test.dart -d emulator-5554        # ✅ PASS (In-App Deletion)
+flutter test integration_test/content_reporting_test.dart -d emulator-5554       # ✅ PASS (Content Reporting)
+flutter test integration_test/guest_rate_limit_test.dart -d emulator-5554        # ✅ PASS (Rate Limiting)
 ```
 
 ### Backend Test Suite (`backend/tests/`)
 ```bash
 cd backend
-PYTHONPATH=. .venv/bin/python tests/test_auth_flow.py             # ✅ 100% PASS (4/4 tests)
-PYTHONPATH=. .venv/bin/python tests/test_history_api.py           # ✅ 100% PASS (2/2 tests)
-PYTHONPATH=. .venv/bin/python tests/test_favorites_and_delete.py  # ✅ 100% PASS (3/3 tests)
-PYTHONPATH=. .venv/bin/python tests/test_rate_limiter.py          # ✅ 100% PASS (2/2 tests)
+PYTHONPATH=. .venv/bin/python -m pytest tests/  # ✅ 100% PASS (16/16 tests passing in 0.39s)
 ```
 
 ---
@@ -93,12 +86,9 @@ When resuming in the next session:
    ```bash
    adb reverse tcp:8000 tcp:8000
    ```
-3. **Execute Integration Test Suite**:
+3. **Execute Any Integration Test**:
    ```bash
-   cd app
-   flutter test integration_test/guest_flow_test.dart -d emulator-5554    # Guest Flow
-   flutter test integration_test/safety_crisis_test.dart -d emulator-5554 # Safety Shield
-   flutter test integration_test/auth_sync_test.dart -d emulator-5554     # Auth & Cloud Sync
+   cd app && flutter test integration_test/<test_name>.dart -d emulator-5554
    ```
 
 

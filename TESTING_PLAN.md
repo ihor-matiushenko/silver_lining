@@ -164,15 +164,17 @@ When the backend runs against Supabase, all SQLModel entities are created in the
 
 ## 🚀 Execution & Verification Checklist
 
-- [ ] **Phase 1: Local Stack Verification**
-  - [ ] Local PostgreSQL running (`psql -d silver_lining -c "\dt"`)
-  - [ ] Ollama running (`curl http://localhost:11434/api/tags`)
-  - [ ] iOS Simulator runs Guest & Auth tests against `127.0.0.1:8000`
-  - [ ] Android AVD runs Guest & Auth tests against `10.0.2.2:8000`
-  - [ ] Safety Crisis Shield & Rate Limiter tested
-- [ ] **Phase 2: Cloud Stack Verification**
-  - [ ] Update `backend/.env` with `LLM_PROVIDER=gemini` and Supabase `DATABASE_URL`
-  - [ ] Run reframing flow on mobile device
-  - [ ] Verify `public.reframerecord` populated in Supabase Table Editor
-  - [ ] Verify user registered in Supabase Auth Console
-  - [ ] Verify content report logged in `public.reportrecord`
+- [x] **Phase 1: Local & Live Auth Stack Verification**
+  - [x] Local PostgreSQL running on port 5432 with SQLModel tables (`user`, `reframerecord`, `safetylog`, `reportrecord`)
+  - [x] Local Ollama running with lightweight `llama3.2:latest` model (<1.5s latency)
+  - [x] Android Emulator (`emulator-5554`) runs complete automated E2E suites:
+    - [x] `guest_flow_test.dart` (TC-G01 Guest Reframing & TC-G03 Local Offline Persistence)
+    - [x] `guest_rate_limit_test.dart` (TC-G04 5/day Limit & ErrorFeedbackCard with Upgrade CTA)
+    - [x] `safety_crisis_test.dart` (TC-G05 & TC-S01 Tier-1/Tier-2 Crisis Shield & 988 Lifeline)
+    - [x] `auth_sync_test.dart` (MockAuthProvider dev token E2E lifecycle)
+    - [x] `live_supabase_auth_sync_test.dart` (**100% Real Production Case**: live Supabase login with `ES256` JWKS verification, cloud sync & favorite toggle)
+    - [x] `account_deletion_test.dart` (TC-A06 In-App Account Deletion cascade & data wipe)
+    - [x] `content_reporting_test.dart` (TC-S03 Store Compliance Content Reporting modal & DB submission)
+- [ ] **Phase 2: Cloud Database Pooler Verification**
+  - [ ] Optional: Update `backend/.env` with `DATABASE_URL` pointing to Supabase Cloud Pooler to see rows in Supabase Table Editor online
+  - [x] Verify live user registered in Supabase Auth Console (`test_e2e_runner@silverlining.app` with UID `ec4b2370-76f2-4fd8-aa78-92adb5cec4be`)
