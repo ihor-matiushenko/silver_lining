@@ -46,19 +46,18 @@ class AccountLegalDialog extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () async {
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
               Navigator.of(confirmCtx).pop(); // dismiss confirm
               Navigator.of(context).pop(); // dismiss account dialog
               await AuthService().deleteAccount();
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: AppColors.surface,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    content: const Text('Account and personal data permanently deleted.'),
-                  ),
-                );
-              }
+              scaffoldMessenger.showSnackBar(
+                SnackBar(
+                  backgroundColor: AppColors.surface,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  content: const Text('Account and personal data permanently deleted.'),
+                ),
+              );
             },
             child: const Text('Delete Permanently', style: TextStyle(color: Colors.white)),
           ),

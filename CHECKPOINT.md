@@ -36,7 +36,8 @@ This checkpoint records the completion of 100% real production-grade End-to-End 
 | `safety_crisis_test.dart` | TC-G05 & TC-S01 (3-Tier Crisis Shield & 988 Dialer) | `emulator-5554` | ✅ 100% PASS |
 | `auth_sync_test.dart` | TC-A01 to TC-A04 (Dev Mock Auth E2E Flow) | `emulator-5554` | ✅ 100% PASS |
 | `live_supabase_auth_sync_test.dart` | **Option A: 100% Real Production Case** (Live Supabase ES256 Auth & Cloud Sync) | `emulator-5554` | ✅ 100% PASS |
-| `account_deletion_test.dart` | TC-A06 (Account Deletion & Data Wipe Cascade) | `emulator-5554` | ✅ 100% PASS |
+| `live_supabase_account_deletion_test.dart` | **100% Real Production Case** (Live Supabase Registration, Reflection, Deletion & Session Invalidation) | `emulator-5554` | ✅ 100% PASS |
+| `account_deletion_test.dart` | TC-A06 (Account Deletion & Data Wipe Cascade via Mock) | `emulator-5554` | ✅ 100% PASS |
 | `content_reporting_test.dart` | TC-S03 (Objectionable Content Reporting Modal) | `emulator-5554` | ✅ 100% PASS |
 
 ---
@@ -46,17 +47,18 @@ This checkpoint records the completion of 100% real production-grade End-to-End 
 ### Mobile App Analysis & Unit Tests (`app/`)
 ```bash
 cd app
-flutter analyze   # ✅ 0 issues found! (ran in 2.8s)
+flutter analyze   # ✅ 0 issues found! (ran in 2.6s)
 flutter test      # ✅ 100% PASS (All 18 widget and unit tests green!)
 ```
 
 ### Mobile Integration Tests on Android Emulator (`app/`)
 ```bash
 cd app
-flutter test integration_test/live_supabase_auth_sync_test.dart -d emulator-5554 # ✅ PASS (Real Supabase Auth & Cloud Sync)
-flutter test integration_test/account_deletion_test.dart -d emulator-5554        # ✅ PASS (In-App Deletion)
-flutter test integration_test/content_reporting_test.dart -d emulator-5554       # ✅ PASS (Content Reporting)
-flutter test integration_test/guest_rate_limit_test.dart -d emulator-5554        # ✅ PASS (Rate Limiting)
+flutter test integration_test/live_supabase_auth_sync_test.dart -d emulator-5554        # ✅ PASS (Real Supabase Auth & Cloud Sync)
+flutter test integration_test/live_supabase_account_deletion_test.dart -d emulator-5554 # ✅ PASS (Real Supabase Signup & Deletion)
+flutter test integration_test/account_deletion_test.dart -d emulator-5554               # ✅ PASS (In-App Deletion)
+flutter test integration_test/content_reporting_test.dart -d emulator-5554              # ✅ PASS (Content Reporting)
+flutter test integration_test/guest_rate_limit_test.dart -d emulator-5554               # ✅ PASS (Rate Limiting)
 ```
 
 ### Backend Test Suite (`backend/tests/`)

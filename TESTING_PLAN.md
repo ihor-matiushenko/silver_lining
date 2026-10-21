@@ -173,6 +173,7 @@ When the backend runs against Supabase, all SQLModel entities are created in the
     - [x] `safety_crisis_test.dart` (TC-G05 & TC-S01 Tier-1/Tier-2 Crisis Shield & 988 Lifeline)
     - [x] `auth_sync_test.dart` (MockAuthProvider dev token E2E lifecycle)
     - [x] `live_supabase_auth_sync_test.dart` (**100% Real Production Case**: live Supabase login with `ES256` JWKS verification, cloud sync & favorite toggle)
+    - [x] `live_supabase_account_deletion_test.dart` (**100% Real Production Case**: live Supabase signup, reflection, deletion cascade & session invalidation)
     - [x] `account_deletion_test.dart` (TC-A06 In-App Account Deletion cascade & data wipe)
     - [x] `content_reporting_test.dart` (TC-S03 Store Compliance Content Reporting modal & DB submission)
 - [ ] **Phase 2: Cloud Database Pooler Verification**
