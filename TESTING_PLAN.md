@@ -176,6 +176,8 @@ When the backend runs against Supabase, all SQLModel entities are created in the
     - [x] `live_supabase_account_deletion_test.dart` (**100% Real Production Case**: live Supabase signup, reflection, deletion cascade & session invalidation)
     - [x] `account_deletion_test.dart` (TC-A06 In-App Account Deletion cascade & data wipe)
     - [x] `content_reporting_test.dart` (TC-S03 Store Compliance Content Reporting modal & DB submission)
+    - [x] `policy_refusal_test.dart` (TC-S02 Tier-2 Crime / Theft Policy Interception & PolicyRefusalCard)
+    - [x] `language_switcher_test.dart` (Dynamic Language Selector Modal, Ukrainian localization & UI re-render)
 - [ ] **Phase 2: Cloud Database Pooler Verification**
   - [ ] Optional: Update `backend/.env` with `DATABASE_URL` pointing to Supabase Cloud Pooler to see rows in Supabase Table Editor online
   - [x] Verify live user registered in Supabase Auth Console (`test_e2e_runner@silverlining.app` with UID `ec4b2370-76f2-4fd8-aa78-92adb5cec4be`)

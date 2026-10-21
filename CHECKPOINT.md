@@ -39,6 +39,8 @@ This checkpoint records the completion of 100% real production-grade End-to-End 
 | `live_supabase_account_deletion_test.dart` | **100% Real Production Case** (Live Supabase Registration, Reflection, Deletion & Session Invalidation) | `emulator-5554` | ✅ 100% PASS |
 | `account_deletion_test.dart` | TC-A06 (Account Deletion & Data Wipe Cascade via Mock) | `emulator-5554` | ✅ 100% PASS |
 | `content_reporting_test.dart` | TC-S03 (Objectionable Content Reporting Modal) | `emulator-5554` | ✅ 100% PASS |
+| `policy_refusal_test.dart` | TC-S02 (Tier-2 Crime/Theft Policy Refusal Card & Zero Storage) | `emulator-5554` | ✅ 100% PASS |
+| `language_switcher_test.dart` | Dynamic Language Switcher (EN -> UK Ukrainian Modal & Re-render) | `emulator-5554` | ✅ 100% PASS |
 
 ---
 
@@ -59,6 +61,8 @@ flutter test integration_test/live_supabase_account_deletion_test.dart -d emulat
 flutter test integration_test/account_deletion_test.dart -d emulator-5554               # ✅ PASS (In-App Deletion)
 flutter test integration_test/content_reporting_test.dart -d emulator-5554              # ✅ PASS (Content Reporting)
 flutter test integration_test/guest_rate_limit_test.dart -d emulator-5554               # ✅ PASS (Rate Limiting)
+flutter test integration_test/policy_refusal_test.dart -d emulator-5554                # ✅ PASS (Tier-2 Policy Refusal)
+flutter test integration_test/language_switcher_test.dart -d emulator-5554             # ✅ PASS (Language Switcher)
 ```
 
 ### Backend Test Suite (`backend/tests/`)

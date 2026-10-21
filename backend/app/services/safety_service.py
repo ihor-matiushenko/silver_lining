@@ -25,6 +25,7 @@ class SafetyService:
     # Tier 2 Crime / Illegal patterns with word boundaries (avoids false positives like "my account was hacked")
     CRIME_PATTERNS = [
         r"\b(i\s+stole|i\s+steal|how\s+to\s+steal|how\s+to\s+rob|stole\s+money)\b",
+        r"\b(shoplift|shoplifting|how\s+to\s+shoplift)\b",
         r"\b(robbed|murder|murdered|how\s+to\s+murder)\b",
         r"\b(how\s+to\s+hack|hack\s+into|planning\s+to\s+hack)\b",
         r"\b(commit\s+fraud|how\s+to\s+pirate|pirate\s+software)\b",
