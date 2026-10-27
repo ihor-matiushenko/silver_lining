@@ -56,6 +56,8 @@ void main() {
         await tester.pumpAndSettle();
 
         // 3. Submit registration against live Supabase
+        await tester.ensureVisible(submitBtn);
+        await tester.pumpAndSettle();
         await tester.tap(submitBtn);
         await tester.pump();
 

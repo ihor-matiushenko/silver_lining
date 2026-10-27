@@ -67,6 +67,8 @@ void main() {
         }
 
         // Tap Sign In button (communicates directly with https://qkwwcffgihsdpvruzpbw.supabase.co)
+        await tester.ensureVisible(submitBtn);
+        await tester.pumpAndSettle();
         await tester.tap(submitBtn);
         await tester.pump();
 

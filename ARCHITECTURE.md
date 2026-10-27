@@ -405,6 +405,7 @@ The testing architecture validates functionality across two dimensions: user aut
    - **Cloud Production**: Google Gemini 1.5 Flash (`gemini-1.5-flash`) + Supabase Managed PostgreSQL.
    - **Platform Network Routing**: iOS Simulator (`127.0.0.1:8000`) vs Android Virtual Device (`10.0.2.2:8000`).
 3. **Automated Mobile Integration Testing (`integration_test/`)**:
+   - *Dual-Platform Verification*: All test suites are 100% verified on both **Android Virtual Device** (`emulator-5554`) and **iOS Simulator** (`iPhone 17`).
    - `app/integration_test/guest_flow_test.dart`: Validates unauthenticated thought reframing with Ollama, typewriter animation rendering, and local history persistence (TC-G01 & TC-G03).
    - `app/integration_test/guest_rate_limit_test.dart`: Validates that unauthenticated users hitting the 5/day daily quota trigger HTTP 429 and receive the structured `ErrorFeedbackCard` with account registration CTA (TC-G04).
    - `app/integration_test/safety_crisis_test.dart`: Validates instantaneous Tier-1 crisis detection ($<10\text{ms}$), 988 emergency lifeline action shield, and zero history storage invariant (TC-G05 & TC-S01).

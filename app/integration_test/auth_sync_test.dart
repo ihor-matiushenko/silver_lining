@@ -62,6 +62,8 @@ void main() {
         }
 
         // Tap Sign In button
+        await tester.ensureVisible(submitBtn);
+        await tester.pumpAndSettle();
         await tester.tap(submitBtn);
         await tester.pumpAndSettle();
 

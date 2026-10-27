@@ -40,6 +40,8 @@ void main() {
         await tester.enterText(passwordField, 'Password123!');
         await tester.pumpAndSettle();
 
+        await tester.ensureVisible(submitBtn);
+        await tester.pumpAndSettle();
         await tester.tap(submitBtn);
         await tester.pumpAndSettle();
 

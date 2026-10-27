@@ -44,6 +44,7 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 33** | **Automated Safety Crisis Shield E2E Flow** (`integration_test/safety_crisis_test.dart` automating TC-G05 on live Android emulator) | 🟢 Complete |
 | **Step 34** | **Automated Authenticated & Cloud Sync E2E Flow** (`integration_test/auth_sync_test.dart` automating TC-A01, TC-A02, TC-A03 & TC-A04) | 🟢 Complete |
 | **Step 34.5** | **100% Real Production Case & Full E2E Suite** (`live_supabase_auth_sync_test.dart`, `live_supabase_account_deletion_test.dart`, `account_deletion_test.dart`, `content_reporting_test.dart`, `guest_rate_limit_test.dart`, `policy_refusal_test.dart`, `language_switcher_test.dart` verified on Android emulator) | 🟢 Complete |
+| **Step 34.6** | **iOS Simulator Full E2E Suite Verification** (CocoaPods & Xcode 27 configured; 100% of integration suites verified on iPhone 17 Simulator) | 🟢 Complete |
 | **Step 35** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Next Up |
 | **Step 36** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
 

@@ -80,42 +80,44 @@ class AccountLegalDialog extends StatelessWidget {
           Text('Account & Legal', style: TextStyle(color: Colors.white, fontSize: 18)),
         ],
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Signed in as:', style: TextStyle(color: Colors.grey, fontSize: 12)),
-          const SizedBox(height: 4),
-          Text(email, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-          const SizedBox(height: 12),
-          const Text('☁️ Cloud History Sync Active', style: TextStyle(color: AppColors.success, fontSize: 13)),
-          const SizedBox(height: 16),
-          const Divider(color: Colors.white12),
-          const SizedBox(height: 8),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Signed in as:', style: TextStyle(color: Colors.grey, fontSize: 12)),
+            const SizedBox(height: 4),
+            Text(email, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+            const SizedBox(height: 12),
+            const Text('☁️ Cloud History Sync Active', style: TextStyle(color: AppColors.success, fontSize: 13)),
+            const SizedBox(height: 16),
+            const Divider(color: Colors.white12),
+            const SizedBox(height: 8),
 
-          // Store Compliance Legal & Medical Links
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: [
-              ActionChip(
-                label: const Text('Medical Disclaimer', style: TextStyle(fontSize: 11)),
-                backgroundColor: AppColors.background,
-                onPressed: () => LegalInfoDialog.showMedicalDisclaimer(context),
-              ),
-              ActionChip(
-                label: const Text('Privacy Policy', style: TextStyle(fontSize: 11)),
-                backgroundColor: AppColors.background,
-                onPressed: () => LegalInfoDialog.showPrivacyPolicy(context),
-              ),
-              ActionChip(
-                label: const Text('Terms of Service', style: TextStyle(fontSize: 11)),
-                backgroundColor: AppColors.background,
-                onPressed: () => LegalInfoDialog.showTermsOfService(context),
-              ),
-            ],
-          ),
-        ],
+            // Store Compliance Legal & Medical Links
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                ActionChip(
+                  label: const Text('Medical Disclaimer', style: TextStyle(fontSize: 11)),
+                  backgroundColor: AppColors.background,
+                  onPressed: () => LegalInfoDialog.showMedicalDisclaimer(context),
+                ),
+                ActionChip(
+                  label: const Text('Privacy Policy', style: TextStyle(fontSize: 11)),
+                  backgroundColor: AppColors.background,
+                  onPressed: () => LegalInfoDialog.showPrivacyPolicy(context),
+                ),
+                ActionChip(
+                  label: const Text('Terms of Service', style: TextStyle(fontSize: 11)),
+                  backgroundColor: AppColors.background,
+                  onPressed: () => LegalInfoDialog.showTermsOfService(context),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       actionsAlignment: MainAxisAlignment.spaceBetween,
       actions: [
