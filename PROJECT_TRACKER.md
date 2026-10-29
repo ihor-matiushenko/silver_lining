@@ -45,7 +45,8 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 34** | **Automated Authenticated & Cloud Sync E2E Flow** (`integration_test/auth_sync_test.dart` automating TC-A01, TC-A02, TC-A03 & TC-A04) | 🟢 Complete |
 | **Step 34.5** | **100% Real Production Case & Full E2E Suite** (`live_supabase_auth_sync_test.dart`, `live_supabase_account_deletion_test.dart`, `account_deletion_test.dart`, `content_reporting_test.dart`, `guest_rate_limit_test.dart`, `policy_refusal_test.dart`, `language_switcher_test.dart` verified on Android emulator) | 🟢 Complete |
 | **Step 34.6** | **iOS Simulator Full E2E Suite Verification** (CocoaPods & Xcode 27 configured; 100% of integration suites verified on iPhone 17 Simulator) | 🟢 Complete |
-| **Step 35** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Next Up |
+| **Step 34.7** | **On-Device SLM Benchmarking & Local Inference Architecture** (Benchmarking `llama3.2:1b`, `qwen2.5:1.5b`, `llama3.2:3b` on M4 Max Mac; Dart FFI / `llama.cpp` design) | 🟡 In Progress / Next Up |
+| **Step 35** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Planned |
 | **Step 36** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
 
 
@@ -53,7 +54,11 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 
 ## 🚀 Immediate Resume Instructions for Next Session
 When resuming work:
-1. **Starting Point**: **Step 35: Release Binary Build & Signing**:
+1. **Starting Point**: **Step 34.7: On-Device SLM Benchmarking on M4 Max Mac**:
+   - Pull candidate models: `ollama pull llama3.2:1b` and `ollama pull qwen2.5:1.5b`.
+   - Run side-by-side benchmark comparing speed (tokens/sec), RAM, empathy quality, and Ukrainian language fidelity.
+   - Design the Flutter Dart FFI / `llama.cpp` on-device engine integration.
+2. **Step 35: Release Binary Build & Signing (Subsequent Step)**:
    - Build Android release AppBundle: `cd app && flutter build appbundle --release`.
    - Prepare iOS production release archive: `cd app && flutter build ipa --release`.
    - Verify signing configurations, obfuscation flags, and release assets.

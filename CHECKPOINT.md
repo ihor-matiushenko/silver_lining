@@ -1,12 +1,23 @@
 # 📌 Silver Lining Project Checkpoint (`CHECKPOINT.md`)
 
-**Date**: October 27, 2026  
-**Status**: Step 34.6 Complete — 100% Real Production Case (Live Supabase ES256 Auth & Cloud Sync) and Full E2E Suite Automated and Verified on BOTH Android Emulator (`emulator-5554`) & iOS Simulator (`iPhone 17`)  
+**Date**: October 29, 2026  
+**Status**: Step 34.6 Complete (100% Mobile E2E Verified on Android & iOS) + Step 34.7 Initiated (On-Device SLM Architecture & Local Inference Evaluation on M4 Max Mac)  
 **Branch**: `main`
 
 ---
 
 ## 🎯 1. Executive Summary
+
+This checkpoint records two key project milestones:
+1. **Completion of 100% Real Production-Grade Mobile E2E Testing**:
+   - All 10 automated integration test suites executed directly on **iPhone 17 Simulator** and **Android Emulator** (`emulator-5554`) with 100% PASS.
+   - Dual-platform live Supabase `ES256` token issuance, cloud sync, cascade deletion, crisis shields, reporting, and language switching fully verified.
+   - 18/18 Flutter tests passing, 16/16 backend tests passing, 0 analyzer issues.
+2. **On-Device SLM (Small Language Model) Architecture Exploration (Step 34.7)**:
+   - Evaluated the transition from Cloud AI APIs to 100% On-Device Small Language Models (1B–3B parameters) for total user privacy, $0 cloud costs, and 100% offline functionality.
+   - Examined model candidates for mobile execution (`llama3.2:1b`, `qwen2.5:1.5b`, `llama3.2:3b`) in 4-bit `Q4_K_M` GGUF formats.
+   - Detailed key AI abbreviations and architectural patterns (LLM vs SLM, GGUF, Quantization, FFI, LiteRT, LoRA).
+   - Formulated the benchmarking protocol to run on the M4 Max Mac (48 GB RAM) before embedding via Dart FFI / `llama.cpp`.
 
 This checkpoint records the completion of 100% real production-grade End-to-End testing without mocks across **both mobile platforms (Android & iOS)**:
 1. **iOS Simulator Toolchain & Runtime Setup**:
@@ -81,16 +92,20 @@ PYTHONPATH=. .venv/bin/python -m pytest tests/  # ✅ 100% PASS (16/16 tests pas
 ## 🚀 4. Immediate Resume Instructions for Next Session
 
 ### 📍 Planned Items for Next Session:
-1. **iOS Simulator Setup & E2E Test Suite Run**:
-   - Verify Xcode installation at `/Applications/Xcode.app`.
-   - Run `open -a Simulator` to boot iPhone simulator.
-   - Run integration test suites against iOS simulator: `cd app && flutter test integration_test/live_supabase_auth_sync_test.dart -d "iPhone 16"`.
-2. **Cloud LLM Architecture & Provider Strategy**:
-   - Discuss cloud AI reframing implementation, model selection, prompt tuning, and backend integration.
-3. **Step 35: Release Binary Build & Signing**:
+1. **On-Device SLM Benchmarking on M4 Max Mac (Step 34.7)**:
+   - Pull candidate models in Ollama: `ollama pull llama3.2:1b` and `ollama pull qwen2.5:1.5b`.
+   - Run side-by-side benchmark with existing `llama3.2:latest` (3.2B) across 4 core scenarios:
+     1. Everyday stress ("I spilled coffee before my presentation")
+     2. Career setback ("I didn't get the job promotion")
+     3. Multilingual fidelity (Ukrainian: "Я відчуваю, що дуже виснажений...")
+     4. Social anxiety ("They haven't replied to my text...")
+   - Compare tokens/sec generation speed, memory footprint, empathy tone, and language accuracy.
+2. **Flutter On-Device AI Embedding Architecture**:
+   - Design the Dart FFI / `llama.cpp` integration bridge for Flutter (`fllama` or custom C++ library).
+   - Design the on-device model delivery strategy (initial binary vs first-launch background download).
+3. **Step 35: Release Binary Build & Signing (Subsequent Step)**:
    - Build Android production AppBundle: `cd app && flutter build appbundle --release`.
    - Build iOS production archive: `cd app && flutter build ipa --release`.
-   - Validate release signing, ProGuard rules, and asset bundling.
 
 ### 📍 Operational E2E Verification Protocol:
 1. **Start Backend**:

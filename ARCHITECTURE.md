@@ -430,4 +430,40 @@ The testing architecture validates functionality across two dimensions: user aut
      - **Guest Rate Limit Isolation**: The backend enforces 5 reframings/day per IP for unauthenticated users. Authenticated users (carrying a valid Bearer token) are automatically exempted by `slowapi`.
    - Complete test suites, execution checklists, and Supabase inspection guides are detailed in [TESTING_PLAN.md](file:///Users/ihormatiushenko/Workspace/silver_lining/TESTING_PLAN.md).
 
+---
+
+## 📱 10. On-Device Small Language Model (SLM) Architecture Evolution
+
+To maximize user privacy, eliminate cloud API costs, and guarantee 100% offline functionality, the system design supports transitioning from Cloud LLMs (Gemini) to **On-Device SLM Inference**:
+
+```mermaid
+graph TD
+    subgraph Mobile Device (100% Offline & Private)
+        Input[User Enters Stress Point] --> T1[Tier-1 Regex Crisis Shield <1ms]
+        T1 -->|Crisis Detected| 988[CrisisShieldCard + 988 Dialer]
+        T1 -->|Safe| FFI[Flutter Dart FFI Bridge]
+        
+        FFI --> Engine[llama.cpp Embedded C++ Engine]
+        Model[(Quantized GGUF Model 1B-3B: ~800MB-1.9GB)] --> Engine
+        
+        Engine -->|Apple Metal / Android Vulkan| NPU[Device Hardware Accelerator]
+        Engine -->|Token Streaming Callback| UI[TypewriterText Animated UI]
+        
+        UI --> LocalStore[StorageService: shared_preferences / SQLite]
+    end
+```
+
+### Architectural Principles of On-Device Reframing:
+1. **Model Candidates (4-bit `Q4_K_M` GGUF)**:
+   - `llama3.2:1b` (1.2B parameters, ~800 MB storage, ~1.1 GB RAM footprint): ultra-fast execution, lowest power draw.
+   - `qwen2.5:1.5b` (1.5B parameters, ~980 MB storage, ~1.4 GB RAM footprint): superior multilingual fidelity (Ukrainian, Spanish, German).
+   - `llama3.2:3b` (3.2B parameters, ~2.0 GB storage, ~2.5 GB RAM footprint): rich emotional empathy for flagship devices.
+2. **Delivery Strategy**:
+   - Thin app binary (~35 MB) published to App Store / Google Play.
+   - First-launch or onboarding background downloader caches the `.gguf` file to `getApplicationDocumentsDirectory()`.
+3. **Safety Shield Preservation**:
+   - Tier-1 Regex Crisis Shield executes in Dart in $<1\text{ms}$ prior to model invocation.
+   - Tier-2 Policy Refusal is enforced via specialized system prompt instructions and temperature tuning.
+
+
 
