@@ -1,23 +1,25 @@
 # 📌 Silver Lining Project Checkpoint (`CHECKPOINT.md`)
 
-**Date**: October 29, 2026  
-**Status**: Step 34.6 Complete (100% Mobile E2E Verified on Android & iOS) + Step 34.7 Initiated (On-Device SLM Architecture & Local Inference Evaluation on M4 Max Mac)  
+**Date**: November 4, 2026  
+**Status**: Step 34.7a Complete (5-Model M4 Max SLM Benchmark & Route 1 Pure On-Device Selection) -> Ready for Step 34.7b (Custom MLX LoRA Fine-Tuning of `Gemma 3 270M` on M4 Max)  
 **Branch**: `main`
 
 ---
 
 ## 🎯 1. Executive Summary
 
-This checkpoint records two key project milestones:
-1. **Completion of 100% Real Production-Grade Mobile E2E Testing**:
+This checkpoint records our latest milestones across Mobile E2E Verification and On-Device SLM Engineering:
+1. **M4 Max 5-Model SLM Benchmark Completed (Step 34.7a)**:
+   - Pulled and benchmarked 5 quantized models in Ollama (`qwen2.5:0.5b`, `gemma3:1b`, `qwen2.5:1.5b`, `llama3.2:1b`, `llama3.2:latest` 3B) across 5 scenarios (Everyday Stress, Career Setback, Ukrainian Multilingual Fidelity, Social Anxiety, and Gray-Area Theft Refusal).
+   - **`gemma3:1b` (`806 MB` disk / `769 MB` RAM / `260 tok/s`)** decisively won on warm English empathy, 100% native Ukrainian fluency, and strict gray-area safety refusal (whereas `qwen2.5:1.5b` rationalized stealing and broke Ukrainian grammar, and `llama3.2:1b` hallucinated Russian *"robot"* for Ukrainian *"на роботі"*).
+2. **Selected Route 1 — Pure 100% On-Device Dual-Tier AI Architecture (`ON_DEVICE_ML_TRAINING_PLAN.md`)**:
+   - Chosen **100% Offline / Zero Cloud LLM** strategy supporting **both older/low-RAM phones and modern flagships**:
+     - **Compact Universal Default (`~200 MB` disk / `~260 MB` RAM)**: Custom LoRA fine-tuned **`Gemma 3 270M` (`Q4_K_M` GGUF)** trained via Apple `mlx-lm` on ~1,600 distilled multilingual reframing + safety refusal pairs. Runs smoothly even on older `2–4 GB RAM` phones!
+     - **Optional Pro Pack (`~806 MB` disk / `~769 MB` RAM)**: **`Gemma 3 1B` (`Q4_K_M` GGUF)** selectable in Settings on modern `>= 4 GB RAM` devices.
+   - Selected `llamadart` (`^0.17.5`, MIT license, 160/160 pub points) as our cross-platform `llama.cpp` Dart FFI runtime (Apple Metal + Android Vulkan/CPU) paired with `<1ms` pure-Dart `LocalSafetyService`.
+3. **Completion of 100% Real Production-Grade Mobile E2E Testing (Step 34.6)**:
    - All 10 automated integration test suites executed directly on **iPhone 17 Simulator** and **Android Emulator** (`emulator-5554`) with 100% PASS.
-   - Dual-platform live Supabase `ES256` token issuance, cloud sync, cascade deletion, crisis shields, reporting, and language switching fully verified.
    - 18/18 Flutter tests passing, 16/16 backend tests passing, 0 analyzer issues.
-2. **On-Device SLM (Small Language Model) Architecture Exploration (Step 34.7)**:
-   - Evaluated the transition from Cloud AI APIs to 100% On-Device Small Language Models (1B–3B parameters) for total user privacy, $0 cloud costs, and 100% offline functionality.
-   - Examined model candidates for mobile execution (`llama3.2:1b`, `qwen2.5:1.5b`, `llama3.2:3b`) in 4-bit `Q4_K_M` GGUF formats.
-   - Detailed key AI abbreviations and architectural patterns (LLM vs SLM, GGUF, Quantization, FFI, LiteRT, LoRA).
-   - Formulated the benchmarking protocol to run on the M4 Max Mac (48 GB RAM) before embedding via Dart FFI / `llama.cpp`.
 
 This checkpoint records the completion of 100% real production-grade End-to-End testing without mocks across **both mobile platforms (Android & iOS)**:
 1. **iOS Simulator Toolchain & Runtime Setup**:
@@ -91,19 +93,18 @@ PYTHONPATH=. .venv/bin/python -m pytest tests/  # ✅ 100% PASS (16/16 tests pas
 
 ## 🚀 4. Immediate Resume Instructions for Next Session
 
-### 📍 Planned Items for Next Session:
-1. **On-Device SLM Benchmarking on M4 Max Mac (Step 34.7)**:
-   - Pull candidate models in Ollama: `ollama pull llama3.2:1b` and `ollama pull qwen2.5:1.5b`.
-   - Run side-by-side benchmark with existing `llama3.2:latest` (3.2B) across 4 core scenarios:
-     1. Everyday stress ("I spilled coffee before my presentation")
-     2. Career setback ("I didn't get the job promotion")
-     3. Multilingual fidelity (Ukrainian: "Я відчуваю, що дуже виснажений...")
-     4. Social anxiety ("They haven't replied to my text...")
-   - Compare tokens/sec generation speed, memory footprint, empathy tone, and language accuracy.
-2. **Flutter On-Device AI Embedding Architecture**:
-   - Design the Dart FFI / `llama.cpp` integration bridge for Flutter (`fllama` or custom C++ library).
-   - Design the on-device model delivery strategy (initial binary vs first-launch background download).
-3. **Step 35: Release Binary Build & Signing (Subsequent Step)**:
+### 📍 Planned Items for Next Session (Full Guide in `ON_DEVICE_ML_TRAINING_PLAN.md`):
+1. **Pre-Flight M4 Max Memory Cleanup**:
+   - Shut down booted background iOS Simulator (`xcrun simctl shutdown all`) to free ~6–8 GB RAM across 360 iOS background daemons.
+   - *(Optional)* Close unused Chrome tabs / quit Citrix Workspace & Telegram (~4 GB extra headroom). Keep `ollama` daemon running (`42 MB` idle).
+2. **Step 34.7b — Custom MLX LoRA Fine-Tuning of `Gemma 3 270M` on M4 Max (`ml_training/`)**:
+   - **Phase 1**: Set up isolated `ml_training/.venv` (`/opt/homebrew/bin/python3.11`), install `mlx`, `mlx-lm`, `huggingface_hub`, build `llama.cpp` (`llama-quantize`), and run the baseline ("Before Training") benchmark on untuned `mlx-community/gemma-3-270m-it-bf16`.
+   - **Phase 2**: Synthesize & validate ~1,600 gold-standard reframing + safety refusal examples (`train.jsonl`, `valid.jsonl`, `test.jsonl`) across EN, UK, ES, DE, FR using a local Teacher model on Ollama (e.g., `gemma3:12b`) or Gemini.
+   - **Phase 3 & 4**: Train LoRA adapters via `mlx_lm.lora` (~8–12 mins on M4 Max Metal GPU), fuse weights (`mlx_lm.fuse`), quantize to `silver-lining-270m-q4_k_m.gguf` (~200 MB), and benchmark "Before vs. After"!
+   - **Phase 5**: Publish `.gguf` artifacts (`270M` Compact + optional `1B` Pro) to Hugging Face Hub ($0 CDN).
+3. **Step 34.8 — Pure 100% On-Device Flutter Integration (`llamadart` `^0.17.5`)**:
+   - Build `<1ms` pure-Dart `LocalSafetyService`, `ModelManagerService` (200 MB universal Compact brain for older & modern phones + optional 806 MB Pro `1B`), and `OnDeviceReframingService`.
+4. **Step 35: Release Binary Build & Signing (Subsequent Step)**:
    - Build Android production AppBundle: `cd app && flutter build appbundle --release`.
    - Build iOS production archive: `cd app && flutter build ipa --release`.
 

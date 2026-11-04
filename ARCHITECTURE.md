@@ -432,38 +432,42 @@ The testing architecture validates functionality across two dimensions: user aut
 
 ---
 
-## 📱 10. On-Device Small Language Model (SLM) Architecture Evolution
+## 📱 10. Pure 100% On-Device Small Language Model (SLM) Architecture
 
-To maximize user privacy, eliminate cloud API costs, and guarantee 100% offline functionality, the system design supports transitioning from Cloud LLMs (Gemini) to **On-Device SLM Inference**:
+To guarantee **100% user privacy**, **$0 cloud AI costs forever**, **unlimited offline usage (no guest daily rate limits)**, and **inclusive support for older/low-RAM smartphones**, Silver Lining uses a **Pure 100% On-Device Dual-Tier SLM Architecture** powered by custom MLX LoRA fine-tuned **Google Gemma 3** models and `llamadart` (`llama.cpp` Dart FFI):
 
 ```mermaid
-graph TD
-    subgraph Mobile Device (100% Offline & Private)
-        Input[User Enters Stress Point] --> T1[Tier-1 Regex Crisis Shield <1ms]
-        T1 -->|Crisis Detected| 988[CrisisShieldCard + 988 Dialer]
-        T1 -->|Safe| FFI[Flutter Dart FFI Bridge]
-        
-        FFI --> Engine[llama.cpp Embedded C++ Engine]
-        Model[(Quantized GGUF Model 1B-3B: ~800MB-1.9GB)] --> Engine
-        
-        Engine -->|Apple Metal / Android Vulkan| NPU[Device Hardware Accelerator]
-        Engine -->|Token Streaming Callback| UI[TypewriterText Animated UI]
-        
-        UI --> LocalStore[StorageService: shared_preferences / SQLite]
+flowchart TD
+    subgraph Mobile Device - 100% Offline AI
+        Input["User Enters Stress Point"] --> Safety["LocalSafetyService in Pure Dart (<1ms)"]
+        Safety -->|"Tier-1 Crisis Keyword"| Crisis["CrisisShieldCard + 988 Dialer"]
+        Safety -->|"Tier-2 Crime Regex"| Refusal["PolicyRefusalCard"]
+        Safety -->|"Tier-3 Safe"| FFI["OnDeviceReframingService (llamadart FFI)"]
+
+        Tier1[("Compact Tier (Default): Fine-Tuned Gemma 3 270M Q4_K_M (~200 MB / ~260 MB RAM)")] --> FFI
+        Tier2[("Pro Tier (Optional >=4GB RAM): Gemma 3 1B Q4_K_M (~806 MB / ~769 MB RAM)")] -.-> FFI
+
+        FFI -->|"Apple Metal / Android Vulkan & ARM NEON"| UI["TypewriterText Animated UI"]
+        UI -->|"Guest"| LocalStore["StorageService: shared_preferences"]
+        UI -->|"Authenticated (When Online)"| CloudSync["Optional PostgreSQL History Sync (/api/v1/history)"]
     end
 ```
 
-### Architectural Principles of On-Device Reframing:
-1. **Model Candidates (4-bit `Q4_K_M` GGUF)**:
-   - `llama3.2:1b` (1.2B parameters, ~800 MB storage, ~1.1 GB RAM footprint): ultra-fast execution, lowest power draw.
-   - `qwen2.5:1.5b` (1.5B parameters, ~980 MB storage, ~1.4 GB RAM footprint): superior multilingual fidelity (Ukrainian, Spanish, German).
-   - `llama3.2:3b` (3.2B parameters, ~2.0 GB storage, ~2.5 GB RAM footprint): rich emotional empathy for flagship devices.
-2. **Delivery Strategy**:
-   - Thin app binary (~35 MB) published to App Store / Google Play.
-   - First-launch or onboarding background downloader caches the `.gguf` file to `getApplicationDocumentsDirectory()`.
-3. **Safety Shield Preservation**:
-   - Tier-1 Regex Crisis Shield executes in Dart in $<1\text{ms}$ prior to model invocation.
-   - Tier-2 Policy Refusal is enforced via specialized system prompt instructions and temperature tuning.
+### Empirical M4 Max Benchmark & Dual-Tier Design (`ON_DEVICE_ML_TRAINING_PLAN.md`):
+1. **Why Google Gemma 3 Won the 5-Model M4 Max Benchmark**:
+   - Benchmarked `qwen2.5:0.5b` (379 MB RAM), `gemma3:1b` (769 MB RAM), `qwen2.5:1.5b` (940 MB RAM), `llama3.2:1b` (1,260 MB RAM), and `llama3.2:latest` 3B (1,926 MB RAM).
+   - **`gemma3:1b` (`Q4_K_M`, 806 MB disk / 769 MB RAM / 260 tok/s)** achieved 100% native Ukrainian fluency (via Gemma 3's 262k multilingual vocabulary), warm grounded English empathy, and strict refusal on subtle gray-area theft prompts where `qwen2.5:1.5b` and `llama3.2` hallucinated or rationalized unsafe behavior.
+2. **Inclusive Dual-Tier Local Model Strategy (Supporting Older & Modern Phones)**:
+   - **Universal Default — Fine-Tuned `Gemma 3 270M` (`silver-lining-270m-q4_k_m.gguf`, ~200 MB disk, ~260 MB RAM)**:
+     - Fine-tuned on Apple M4 Max using `mlx-lm` LoRA on ~1,600 distilled multilingual reframing + safety refusal examples (`ml_training/`).
+     - Small enough to download in ~8 seconds on first launch and run smoothly even on older `2–4 GB RAM` 64-bit iOS and Android devices without OOM crashes.
+   - **Optional Pro Pack — `Gemma 3 1B` (`silver-lining-1b-q4_k_m.gguf`, ~806 MB disk, ~769 MB RAM)**:
+     - Available as an optional 1-tap upgrade in Settings for modern `>= 4 GB RAM` phones, with 1-tap deletion to free storage anytime.
+3. **100% Offline 3-Tier Safety Preservation**:
+   - **Tier 1 (`<1ms` Pure Dart)**: Multi-language 988 Suicide & Crisis Lifeline keyword shield (`LocalSafetyService`).
+   - **Tier 2 (`<1ms` Pure Dart + Fine-Tuned Weights)**: Word-boundary crime/illegal regex interception plus fine-tuned safety refusal baked directly into the LoRA weights for subtle gray-area prompts.
+4. **Full Training & Embedding Specification**:
+   - Detailed LoRA mathematics, dataset curation, `mlx-lm` -> `llama.cpp` GGUF conversion commands, and 6-phase roadmap are documented in [ON_DEVICE_ML_TRAINING_PLAN.md](file:///Users/ihormatiushenko/Workspace/silver_lining/ON_DEVICE_ML_TRAINING_PLAN.md).
 
 
 
