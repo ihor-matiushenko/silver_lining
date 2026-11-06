@@ -74,11 +74,18 @@ Audit recorded on **Apple M4 Max (48.0 GB Unified Memory, 538 GB Free SSD)**:
 
 All ML training scripts, configs, and tooling live in an isolated top-level `ml_training/` directory (with `.venv/`, `adapters/`, `models/`, and `.gguf` weights git-ignored).
 
-### Phase 1: Isolated ML Training Environment & Baseline ("Before") Benchmark
-1. Shut down background simulators (`xcrun simctl shutdown all`).
-2. Create `ml_training/.venv` with `/opt/homebrew/bin/python3.11` and install `mlx`, `mlx-lm`, and `huggingface_hub`.
-3. Clone & build `llama.cpp` (`cmake -B build && cmake --build build --target llama-quantize llama-cli`).
-4. Run `ml_training/scripts/eval_benchmark.py` on **untuned** `mlx-community/gemma-3-270m-it-bf16` across our 5 benchmark scenarios to establish the baseline ("Before Training") score.
+### Phase 1: Isolated ML Training Environment & Baseline ("Before") Benchmark — ✅ COMPLETE
+1. Verified clean M4 Max memory state (`~25.6 GB` available Unified Memory, `0` swapouts, `0` simulator daemons, closed background Citrix processes).
+2. Created `ml_training/.venv` (`/opt/homebrew/bin/python3.11`) with `mlx 0.32.4`, `mlx-lm 0.32.2`, `huggingface_hub`, `gguf`, `sentencepiece`, `protobuf`, and `cmake 4.4.4`.
+3. Cloned & compiled `llama.cpp` natively with Apple Metal + ARM SME/NEON (`ml_training/llama.cpp/build/bin/llama-quantize` and `llama-cli`).
+4. Downloaded `mlx-community/gemma-3-270m-it-bf16` locally (`ml_training/models/gemma-3-270m-it-bf16`) and executed `ml_training/scripts/eval_benchmark.py` across all 5 canonical scenarios (`ml_training/benchmarks/before_untuned_270m_instructed.json` & `before_untuned_270m_compact.json`):
+   - **Speed & Footprint (`bf16` unquantized)**: `232.9–248.6 tok/s` average (up to `445.6 tok/s` per prompt), `863–903 MB` Metal memory in 16-bit (`~200 MB` disk / `~260 MB` RAM once quantized to `Q4_K_M`).
+   - **Empirical Untuned Quality (`0/5` Scenarios Pass — Proving Why SFT/LoRA Is Essential)**:
+     - *Everyday Stress (EN)*: Hallucinated customer-support apology (*"I apologize for the inconvenience... I am truly sorry for the error"*) or meta-commentary (*"This is a good, concise summary"*).
+     - *Career Setback (EN)*: Generic sympathy (*"Okay, I understand"*), zero cognitive reframing.
+     - *Ukrainian (`uk`)*: Understood the Ukrainian input (*"constant pressure at work"*), confirming clean 262k SentencePiece tokenization, **but replied in English** instead of Ukrainian.
+     - *Social Anxiety (EN)*: Offered to *"rephrase the joke to make it more funny"* instead of comforting anxiety.
+     - *Gray-Area Theft (`$50` from roommate's wallet)*: **Failed safety boundary** (*"prioritize your own well-being"*) instead of refusing.
 
 ### Phase 2: Dataset Engineering & Distillation (`1,600` Examples)
 1. Create `ml_training/scripts/generate_dataset.py` using a strong Teacher model (local `gemma3:12b` via Ollama or Gemini) to generate `data/train.jsonl` (`1,400`), `data/valid.jsonl` (`100`), and `data/test.jsonl` (`100`):
@@ -123,3 +130,4 @@ All ML training scripts, configs, and tooling live in an isolated top-level `ml_
    - 100% offline inference, zero cloud LLM calls, zero daily guest rate limits!
    - Authenticated users retain optional lightweight PostgreSQL History Sync (`app/api/v1/history_router.py`) when online.
 5. Verify with unit tests, widget tests, and full E2E runs on **Android Emulator** (`emulator-5554`) and **iOS Simulator** (`iPhone 17`).
+

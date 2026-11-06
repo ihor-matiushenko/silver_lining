@@ -466,8 +466,12 @@ flowchart TD
 3. **100% Offline 3-Tier Safety Preservation**:
    - **Tier 1 (`<1ms` Pure Dart)**: Multi-language 988 Suicide & Crisis Lifeline keyword shield (`LocalSafetyService`).
    - **Tier 2 (`<1ms` Pure Dart + Fine-Tuned Weights)**: Word-boundary crime/illegal regex interception plus fine-tuned safety refusal baked directly into the LoRA weights for subtle gray-area prompts.
-4. **Full Training & Embedding Specification**:
-   - Detailed LoRA mathematics, dataset curation, `mlx-lm` -> `llama.cpp` GGUF conversion commands, and 6-phase roadmap are documented in [ON_DEVICE_ML_TRAINING_PLAN.md](file:///Users/ihormatiushenko/Workspace/silver_lining/ON_DEVICE_ML_TRAINING_PLAN.md).
+4. **ML Training & Quantization Workspace (`ml_training/`)**:
+   - `ml_training/requirements.txt`: Isolated Python 3.11 dependencies (`mlx 0.32.4`, `mlx-lm 0.32.2`, `huggingface_hub`, `gguf`, `sentencepiece`, `protobuf`, `cmake`).
+   - `ml_training/scripts/eval_benchmark.py`: 5-scenario empirical evaluator measuring Metal GPU RAM, warmed-up `tok/s`, multilingual Ukrainian fidelity, and gray-area theft refusal in both `instructed` and `compact` (`[SilverLining | lang=...]`) prompt modes.
+   - `ml_training/benchmarks/`: Stores JSON scorecards (`before_untuned_270m_instructed.json`, `before_untuned_270m_compact.json`) proving untuned `Gemma 3 270M` scores `0/5` on persona/language/safety despite `248.6 tok/s` speed, establishing the baseline prior to LoRA distillation.
+   - `ml_training/llama.cpp/` *(git-ignored build)*: Native Apple Silicon Metal + ARM SME/NEON build of `llama-quantize`, `llama-cli`, and `convert_hf_to_gguf.py`.
+   - Full LoRA mathematics, dataset curation, and 6-phase roadmap are documented in [ON_DEVICE_ML_TRAINING_PLAN.md](file:///Users/ihormatiushenko/Workspace/silver_lining/ON_DEVICE_ML_TRAINING_PLAN.md).
 
 
 

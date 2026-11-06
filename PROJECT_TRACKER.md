@@ -46,7 +46,7 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 34.5** | **100% Real Production Case & Full E2E Suite** (`live_supabase_auth_sync_test.dart`, `live_supabase_account_deletion_test.dart`, `account_deletion_test.dart`, `content_reporting_test.dart`, `guest_rate_limit_test.dart`, `policy_refusal_test.dart`, `language_switcher_test.dart` verified on Android emulator) | 🟢 Complete |
 | **Step 34.6** | **iOS Simulator Full E2E Suite Verification** (CocoaPods & Xcode 27 configured; 100% of integration suites verified on iPhone 17 Simulator) | 🟢 Complete |
 | **Step 34.7a** | **M4 Max 5-Model SLM Benchmark & Route 1 Selection** (`qwen2.5:0.5b`, `gemma3:1b`, `qwen2.5:1.5b`, `llama3.2:1b`, `llama3.2:3b` benchmarked; selected Pure 100% On-Device Dual-Tier Gemma 3 architecture in `ON_DEVICE_ML_TRAINING_PLAN.md`) | 🟢 Complete |
-| **Step 34.7b** | **Custom MLX LoRA Fine-Tuning & GGUF Quantization** (Distill ~1,600 multilingual/safety examples, fine-tune `Gemma 3 270M` via Apple `mlx-lm` on M4 Max, fuse & quantize to ~200 MB `Q4_K_M` `.gguf`, benchmark & publish to Hugging Face) | 🟡 Next Up |
+| **Step 34.7b** | **Custom MLX LoRA Fine-Tuning & GGUF Quantization** (**Phase 1 Complete**: MLX `0.32.4` env, Metal `llama-quantize` built, untuned `Gemma 3 270M` baseline `0/5` @ `248.6 tok/s` recorded; **Next**: Phase 2–5 distill 1,600 examples, LoRA train, quantize `Q4_K_M`, publish) | 🟡 In Progress (Phase 1 Done) |
 | **Step 34.8** | **Pure 100% On-Device Flutter Embedding (`llamadart`)** (`LocalSafetyService` `<1ms` Dart shield, `ModelManagerService` 200 MB Compact / 806 MB Pro downloader, `OnDeviceReframingService`, E2E verification on Android & iOS) | 🟡 Planned |
 | **Step 35** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Planned |
 | **Step 36** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
@@ -56,10 +56,9 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 
 ## 🚀 Immediate Resume Instructions for Next Session
 When resuming work:
-1. **Starting Point**: **Step 34.7b — Custom MLX LoRA Fine-Tuning on M4 Max** (full guide in `ON_DEVICE_ML_TRAINING_PLAN.md`):
-   - **Pre-Flight Memory Cleanup**: Run `xcrun simctl shutdown all` to free ~6–8 GB RAM held by background iOS Simulator processes.
-   - **Phase 1**: Create `ml_training/.venv` (`/opt/homebrew/bin/python3.11`), install `mlx`, `mlx-lm`, `huggingface_hub`, build `llama.cpp` (`llama-quantize`), and run the baseline ("Before Training") benchmark on untuned `mlx-community/gemma-3-270m-it-bf16`.
-   - **Phase 2**: Generate & validate the 1,600-example multilingual + safety refusal dataset (`train.jsonl`, `valid.jsonl`, `test.jsonl`) using a local Teacher model on Ollama (e.g., `gemma3:12b`) or Gemini.
+1. **Starting Point**: **Step 34.7b — Phase 2 & 3: Dataset Distillation & MLX LoRA Training** (full guide in `ON_DEVICE_ML_TRAINING_PLAN.md`):
+   - **Phase 1 (Done)**: M4 Max memory verified (`~25.6 GB` available, `0` simulator daemons), `ml_training/.venv` (`mlx 0.32.4`, `mlx-lm 0.32.2`) + `llama.cpp` (`llama-quantize`, `llama-cli`) built, and untuned `Gemma 3 270M` baseline recorded (`0/5` pass @ `248.6 tok/s` in `ml_training/benchmarks/`).
+   - **Phase 2 (Next)**: Pull local Teacher model `gemma3:12b` via Ollama, generate & validate the 1,600-example multilingual + safety refusal dataset (`train.jsonl`, `valid.jsonl`, `test.jsonl`) in `[SilverLining | lang=...]` compact format.
    - **Phase 3 & 4**: Run `mlx_lm.lora` (~10 mins on M4 Max GPU), fuse weights, quantize to `silver-lining-270m-q4_k_m.gguf` (~200 MB), and benchmark "Before vs. After"!
 2. **Step 34.8: Pure 100% On-Device Flutter Integration (Subsequent Step)**:
    - Integrate `llamadart` (`^0.17.5`), `LocalSafetyService`, `ModelManagerService` (200 MB Compact default for older & modern phones + optional 806 MB Pro `1B`), and `OnDeviceReframingService`.
@@ -102,6 +101,6 @@ When resuming work:
 - [x] Git & GitHub Remote Synced (`silver_lining.git`)
 
 ---
-*Updated: 2026-11-04*
+*Updated: 2026-11-06*
 
 

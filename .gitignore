@@ -37,3 +37,11 @@ app/.pub/
 app/build/
 app/ios/Pods/
 app/ios/.symlinks/
+
+# On-Device ML Training & Quantization Artifacts
+ml_training/.venv/
+ml_training/models/
+ml_training/adapters/
+ml_training/llama.cpp/
+*.gguf
+*.safetensors
