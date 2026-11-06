@@ -467,10 +467,11 @@ flowchart TD
    - **Tier 1 (`<1ms` Pure Dart)**: Multi-language 988 Suicide & Crisis Lifeline keyword shield (`LocalSafetyService`).
    - **Tier 2 (`<1ms` Pure Dart + Fine-Tuned Weights)**: Word-boundary crime/illegal regex interception plus fine-tuned safety refusal baked directly into the LoRA weights for subtle gray-area prompts.
 4. **ML Training & Quantization Workspace (`ml_training/`)**:
-   - `ml_training/requirements.txt`: Isolated Python 3.11 dependencies (`mlx 0.32.4`, `mlx-lm 0.32.2`, `huggingface_hub`, `gguf`, `sentencepiece`, `protobuf`, `cmake`).
-   - `ml_training/scripts/eval_benchmark.py`: 5-scenario empirical evaluator measuring Metal GPU RAM, warmed-up `tok/s`, multilingual Ukrainian fidelity, and gray-area theft refusal in both `instructed` and `compact` (`[SilverLining | lang=...]`) prompt modes.
-   - `ml_training/benchmarks/`: Stores JSON scorecards (`before_untuned_270m_instructed.json`, `before_untuned_270m_compact.json`) proving untuned `Gemma 3 270M` scores `0/5` on persona/language/safety despite `248.6 tok/s` speed, establishing the baseline prior to LoRA distillation.
-   - `ml_training/llama.cpp/` *(git-ignored build)*: Native Apple Silicon Metal + ARM SME/NEON build of `llama-quantize`, `llama-cli`, and `convert_hf_to_gguf.py`.
+   - `ml_training/requirements.txt`: Isolated Python 3.11 dependencies (`mlx 0.32.4`, `mlx-lm 0.32.2`, `huggingface_hub`, `gguf`, `sentencepiece`, `protobuf`, `cmake`, `torch`).
+   - `ml_training/scripts/generate_dataset.py` & `validate_dataset.py`: Distills and validates `1,600` gold-standard examples via local Ollama `gemma3:12b` (`data/train.jsonl` `1,400`, `valid.jsonl` `100`, `test.jsonl` `100`) across `en`, `uk`, `es`, `de`, `fr` (75% reframing, 15% gray-area refusal, 10% edge cases).
+   - `ml_training/lora_config.yaml`: Rank-16 LoRA training configuration across all 18 transformer blocks (`mask_prompt: true`, cosine LR decay), converging to **`val_loss = 2.304`** (`-38.1%` vs untuned `3.721`) at Checkpoint `700` (Epoch 2) in 2m 18s (`2,504 tok/s`).
+   - `ml_training/scripts/export_gguf.py` & `publish_to_hf.py`: Fuses Checkpoint `700`, deduplicates the bit-identical tied `lm_head.weight` tensor (saving `168M` redundant parameters), exports GGUF, quantizes to **`silver-lining-270m-q4_k_m.gguf` (`249.2 MB`)** and **`silver-lining-270m-q8_0.gguf` (`285.9 MB`)**, and publishes to Hugging Face Hub.
+   - `ml_training/scripts/eval_benchmark.py` & `eval_gguf.py`: Empirical 5-scenario MLX & `llama-completion` benchmarks (`ml_training/benchmarks/`) proving improvement from `0/5` untuned to **`5/5` (`323.1 tok/s`)** when using `parse_special=true`, `temp=0.0`, and `repeat_penalty=1.0`.
    - Full LoRA mathematics, dataset curation, and 6-phase roadmap are documented in [ON_DEVICE_ML_TRAINING_PLAN.md](file:///Users/ihormatiushenko/Workspace/silver_lining/ON_DEVICE_ML_TRAINING_PLAN.md).
 
 

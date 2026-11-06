@@ -1,0 +1,36 @@
+# Silver Lining AI — MLX LoRA Fine-Tuning Configuration (Gemma 3 270M)
+model: "/Users/ihormatiushenko/Workspace/silver_lining/ml_training/models/gemma-3-270m-it-bf16"
+train: true
+fine_tune_type: "lora"
+optimizer: "adamw"
+data: "/Users/ihormatiushenko/Workspace/silver_lining/ml_training/data"
+seed: 42
+
+# Fine-tune all 18 transformer blocks of Gemma 3 270M with Rank-16 LoRA
+num_layers: -1
+batch_size: 4
+iters: 1000
+val_batches: -1
+learning_rate: 1.0e-4
+
+lr_schedule:
+  name: "cosine_decay"
+  warmup: 50
+  warmup_init: 1.0e-6
+  arguments: [1.0e-4, 950, 1.0e-5]
+
+steps_per_report: 25
+steps_per_eval: 100
+save_every: 100
+adapter_path: "/Users/ihormatiushenko/Workspace/silver_lining/ml_training/adapters"
+
+test: true
+test_batches: -1
+max_seq_length: 512
+mask_prompt: true
+
+lora_parameters:
+  rank: 16
+  scale: 32.0
+  dropout: 0.05
+

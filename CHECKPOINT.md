@@ -1,7 +1,7 @@
 # 📌 Silver Lining Project Checkpoint (`CHECKPOINT.md`)
 
 **Date**: November 6, 2026  
-**Status**: Step 34.7b Phase 1 Complete (M4 Max Cleanup, MLX `0.32.4` + Metal `llama.cpp` Built, Untuned `Gemma 3 270M` Baseline Recorded) -> Ready for Step 34.7b Phase 2 & 3 (Dataset Distillation & MLX LoRA Training)  
+**Status**: Step 34.7b Phases 1–4 Complete (`1,600` Examples Distilled, `Gemma 3 270M` MLX LoRA Trained to `val_loss=2.304`, `249.2 MB` `Q4_K_M` & `285.9 MB` `Q8_0` `.gguf` Verified `5/5` @ `323 tok/s`) -> Ready for Phase 5 (Hugging Face Upload) & Step 34.8 (`llamadart` Flutter Integration)  
 **Branch**: `main`
 
 ---
@@ -9,10 +9,11 @@
 ## 🎯 1. Executive Summary
 
 This checkpoint records our latest milestones across Mobile E2E Verification and On-Device SLM Engineering:
-1. **Step 34.7b Phase 1 Completed — MLX Toolchain, Native Metal `llama.cpp`, & Untuned `270M` Baseline**:
-   - Verified M4 Max memory headroom (`~25.6 GB` available Unified Memory, `0` swapouts, `0` simulator daemons; closed background Citrix Workspace apps).
-   - Provisioned `ml_training/.venv` (`Python 3.11`, `mlx 0.32.4`, `mlx-lm 0.32.2`, `huggingface_hub`, `gguf`, `sentencepiece`, `protobuf`, `cmake 4.4.4`) and built `llama.cpp` (`llama-quantize` + `llama-cli`) with Apple Metal & ARM SME/NEON acceleration.
-   - Downloaded `mlx-community/gemma-3-270m-it-bf16` locally and recorded empirical **"Before Fine-Tuning"** baselines (`ml_training/benchmarks/before_untuned_270m_instructed.json` & `before_untuned_270m_compact.json`): **232.9–248.6 tok/s** avg (`863–903 MB` 16-bit Metal RAM), scoring **`0/5`** on persona/language/safety (replies in English to Ukrainian, apologizes like customer support, and rationalizes/accepts `$50` roommate theft instead of refusing)—confirming why Phase 2–3 LoRA distillation is transformative.
+1. **Step 34.7b Phases 1–4 Completed — Dataset Distillation, MLX LoRA Fine-Tuning, & `5/5` GGUF Quantization**:
+   - **Phase 1 (Baseline & Toolchain)**: Built isolated `ml_training/.venv` (`mlx 0.32.4`, `mlx-lm 0.32.2`, `torch`) + native Apple Metal `llama.cpp` (`llama-quantize`, `llama-completion`) and recorded untuned `Gemma 3 270M` baseline (`0/5` pass @ `248.6 tok/s`).
+   - **Phase 2 (Distillation & Validation)**: Pulled `gemma3:12b` locally in Ollama and synthesized `1,600` multilingual (`en`, `uk`, `es`, `de`, `fr`) reframing, gray-area refusal, and edge-case examples (`train.jsonl` `1,400`, `valid.jsonl` `100`, `test.jsonl` `100`), passing `validate_dataset.py` 100%.
+   - **Phase 3 (LoRA Training)**: Trained `3.797M` Rank-16 LoRA parameters across all 18 layers in **2m 18s** (`2,504 tok/s`), lowering validation loss by **`-38.1%`** (`3.721 -> 2.304` at Epoch-2 Checkpoint `700`).
+   - **Phase 4 (Fuse, Tied-Embedding Deduplication & GGUF Verification)**: Deduplicated bit-identical `lm_head.weight` (`-168M` redundant params), exported **`silver-lining-270m-q4_k_m.gguf` (`249.2 MB`)** and **`silver-lining-270m-q8_0.gguf` (`285.9 MB`)**, and verified **`5/5` scenarios passing** via C++ `llama-completion` at **`323.1 tok/s`** (`parse_special=true, temp=0.0, repeat_penalty=1.0`).
 2. **M4 Max 5-Model SLM Benchmark Completed (Step 34.7a)**:
    - Pulled and benchmarked 5 quantized models in Ollama (`qwen2.5:0.5b`, `gemma3:1b`, `qwen2.5:1.5b`, `llama3.2:1b`, `llama3.2:latest` 3B) across 5 scenarios (Everyday Stress, Career Setback, Ukrainian Multilingual Fidelity, Social Anxiety, and Gray-Area Theft Refusal).
    - **`gemma3:1b` (`806 MB` disk / `769 MB` RAM / `260 tok/s`)** decisively won on warm English empathy, 100% native Ukrainian fluency, and strict gray-area safety refusal (whereas `qwen2.5:1.5b` rationalized stealing and broke Ukrainian grammar, and `llama3.2:1b` hallucinated Russian *"robot"* for Ukrainian *"на роботі"*).
@@ -98,13 +99,10 @@ PYTHONPATH=. .venv/bin/python -m pytest tests/  # ✅ 100% PASS (16/16 tests pas
 ## 🚀 4. Immediate Resume Instructions for Next Session
 
 ### 📍 Planned Items for Next Step (Full Guide in `ON_DEVICE_ML_TRAINING_PLAN.md`):
-1. **Step 34.7b — Custom MLX LoRA Fine-Tuning of `Gemma 3 270M` on M4 Max (`ml_training/`)**:
-   - **Phase 1 (Complete)**: `ml_training/.venv` (`mlx 0.32.4`, `mlx-lm 0.32.2`), Metal `llama-quantize` & `llama-cli`, local `gemma-3-270m-it-bf16`, and untuned baseline JSON reports (`0/5` pass @ `248.6 tok/s`) complete.
-   - **Phase 2 (Next)**: Pull local Teacher model (`ollama pull gemma3:12b`) and synthesize & validate ~1,600 gold-standard reframing + safety refusal examples (`train.jsonl`, `valid.jsonl`, `test.jsonl`) across EN, UK, ES, DE, FR in `[SilverLining | lang=...]` format.
-   - **Phase 3 & 4**: Train LoRA adapters via `mlx_lm.lora` (~8–12 mins on M4 Max Metal GPU), fuse weights (`mlx_lm.fuse`), quantize to `silver-lining-270m-q4_k_m.gguf` (~200 MB), and benchmark "Before vs. After"!
-   - **Phase 5**: Publish `.gguf` artifacts (`270M` Compact + optional `1B` Pro) to Hugging Face Hub ($0 CDN).
+1. **Step 34.7b Phase 5 — Publish Quantized `.gguf` Artifacts to Hugging Face Hub ($0 CDN)**:
+   - Run `HF_TOKEN=hf_... ml_training/.venv/bin/python ml_training/scripts/publish_to_hf.py --repo-id <your-hf-username>/silver-lining-gemma3-gguf` to upload `silver-lining-270m-q4_k_m.gguf` (`249.2 MB`) and `silver-lining-270m-q8_0.gguf` (`285.9 MB`) + SHA-256 Model Card.
 2. **Step 34.8 — Pure 100% On-Device Flutter Integration (`llamadart` `^0.17.5`)**:
-   - Build `<1ms` pure-Dart `LocalSafetyService`, `ModelManagerService` (200 MB universal Compact brain for older & modern phones + optional 806 MB Pro `1B`), and `OnDeviceReframingService`.
+   - Build `<1ms` pure-Dart `LocalSafetyService`, `ModelManagerService` (`249.2 MB` universal Compact brain for older & modern phones + optional `806 MB` Pro `1B`), and `OnDeviceReframingService` (enforcing `parse_special=true`, `temp=0.0`, `repeat_penalty=1.0`, `n_ctx=1024`).
 3. **Step 35: Release Binary Build & Signing (Subsequent Step)**:
    - Build Android production AppBundle: `cd app && flutter build appbundle --release`.
    - Build iOS production archive: `cd app && flutter build ipa --release`.

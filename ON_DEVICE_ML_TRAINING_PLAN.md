@@ -87,38 +87,28 @@ All ML training scripts, configs, and tooling live in an isolated top-level `ml_
      - *Social Anxiety (EN)*: Offered to *"rephrase the joke to make it more funny"* instead of comforting anxiety.
      - *Gray-Area Theft (`$50` from roommate's wallet)*: **Failed safety boundary** (*"prioritize your own well-being"*) instead of refusing.
 
-### Phase 2: Dataset Engineering & Distillation (`1,600` Examples)
-1. Create `ml_training/scripts/generate_dataset.py` using a strong Teacher model (local `gemma3:12b` via Ollama or Gemini) to generate `data/train.jsonl` (`1,400`), `data/valid.jsonl` (`100`), and `data/test.jsonl` (`100`):
-   - **75% Empathetic Cognitive Reframings** across diverse daily struggles (work burnout, career rejection, social anxiety, parenting, academics, finances, daily mishaps).
-   - **Multilingual Split**: 50% English (`en`), 25% Ukrainian (`uk`), 25% Spanish/German/French (`es`, `de`, `fr`).
-   - **15% Gray-Area Safety Refusals** (stealing, fraud, hacking, revenge, harming others — polite 1-sentence refusal in the user's language).
-   - **10% Edge Cases** (2-word vents, mixed slang, grief validation without toxic positivity).
-2. Create `ml_training/scripts/validate_dataset.py` enforcing schema integrity, 2–3 sentence caps, zero meta-chatter (*"Sure! Here is..."*), language match, and zero train/valid leakage.
+### Phase 2: Dataset Engineering & Distillation (`1,600` Examples) — ✅ COMPLETE
+1. Pulled local Teacher model `gemma3:12b` (`7.3 GB`) in Ollama and ran `ml_training/scripts/generate_dataset.py` with JSON-schema constrained decoding across 15 life domains, 8 gray-area safety themes, and 4 edge-case categories in `en` (50%), `uk` (25%), and `es`/`de`/`fr` (25%).
+2. Stratified deterministically (`seed=42`) into `data/train.jsonl` (`1,400`), `data/valid.jsonl` (`100`), and `data/test.jsonl` (`100`) using `[SilverLining | lang=<code>|auto]` compact headers (65% explicit language tag, 35% `lang=auto`).
+3. Passed `ml_training/scripts/validate_dataset.py` **100%** (`0` schema errors, `0` cross-split/benchmark leakage, Cyrillic script purity verified).
 
-### Phase 3: LoRA Fine-Tuning on M4 Max GPU (`mlx_lm.lora`)
-1. Author `ml_training/lora_config.yaml` (`model: mlx-community/gemma-3-270m-it-bf16`, `rank: 16`, `scale: 32.0`, `dropout: 0.05`, `learning_rate: 1e-4`, `batch_size: 4`, `iters: 1000`, `steps_per_eval: 100`).
-2. Run `mlx_lm.lora --config ml_training/lora_config.yaml --train` (~8–12 mins on M4 Max Metal GPU) and inspect `Train Loss` vs. `Val Loss`.
+### Phase 3: LoRA Fine-Tuning on M4 Max GPU (`mlx_lm.lora`) — ✅ COMPLETE
+1. Configured `ml_training/lora_config.yaml` (`num_layers: -1`, `rank: 16`, `scale: 32.0`, `dropout: 0.05`, `mask_prompt: true`, `adamw` with 50-step warmup + cosine decay `1e-4 -> 1e-5`, `batch_size: 4`, `iters: 1000`, `save_every: 100`, `val_batches: -1`).
+2. Trained `3.797M` LoRA parameters in **2m 18s** on M4 Max Metal GPU (`2,504 tok/s`), achieving global minimum validation loss at **Checkpoint `700` (End of Epoch 2)**: **`val_loss = 2.304`** (down **`-38.1%`** from untuned `3.721`, avoiding Epoch-3 memorization where `val_loss` rose to `2.551`).
 
-### Phase 4: Fuse, Quantize to `.gguf`, & "Before vs. After" Evaluation
-1. Fuse best checkpoint adapter:
-   ```bash
-   mlx_lm.fuse --model mlx-community/gemma-3-270m-it-bf16 \
-     --adapter-path ml_training/adapters \
-     --save-path ml_training/models/silver-lining-270m-fused
-   ```
-2. Convert & quantize via `llama.cpp`:
-   ```bash
-   python convert_hf_to_gguf.py ml_training/models/silver-lining-270m-fused \
-     --outfile ml_training/models/silver-lining-270m-f16.gguf --outtype f16
-   ./build/bin/llama-quantize \
-     ml_training/models/silver-lining-270m-f16.gguf \
-     ml_training/models/silver-lining-270m-q4_k_m.gguf q4_k_m
-   ```
-3. Benchmark `silver-lining-270m-q4_k_m.gguf` (~200 MB) side-by-side against untuned `270M` and `gemma3:1b` (`806 MB`) on speed, RAM, English empathy, Ukrainian fluency, and gray-area refusal!
-4. *(Optional Pro Tier)*: Run the same pipeline on `mlx-community/gemma-3-1b-it-bf16` to produce `silver-lining-1b-q4_k_m.gguf` (~806 MB).
+### Phase 4: Fuse, Quantize to `.gguf`, & "Before vs. After" Evaluation — ✅ COMPLETE
+1. Built reproducible `ml_training/scripts/export_gguf.py`:
+   - Fuses `0000700_adapters.safetensors` into `Gemma 3 270M`, strips the out-of-range multimodal `<image_soft_token>` (`ID 262144`), and **deduplicates the bit-identical tied `lm_head.weight` tensor** (saving `168M` redundant parameters / `~130 MB` in every `.gguf`!).
+   - Produced verified GGUF artifacts:
+     - **`silver-lining-270m-q4_k_m.gguf`**: **`249.2 MB`** (`sha256: 13e05897f2bd86b649c59e1bdf9c93f159383285fab5530fba6db435d34a9625`)
+     - **`silver-lining-270m-q8_0.gguf`**: **`285.9 MB`** (`sha256: 644212e8f375b59f25524f833359fbfdb13c58422565a8300e3980b33670d0b6`)
+2. Verified **5/5 scenarios passing** in both MLX (`after_finetuned_270m_mlx_compact.json`) and native C++ `llama.cpp` (`llama-completion --special --temp 0.0` at **`323.1 tok/s`**, `after_finetuned_270m_q4_k_m_gguf.json` & `after_finetuned_270m_q8_0_gguf.json`):
+   - **Critical `llamadart` Production Findings**:
+     1. Must tokenize prompts with **`parse_special = true`** so `<start_of_turn>` (`105`) and `<end_of_turn>` (`106`) are parsed as Gemma 3 control tokens.
+     2. Keep **`repeat_penalty = 1.0`** and **`temp = 0.0`–`0.1`** (penalizing prompt tokens like `"I"` in `"I took $50..."` otherwise suppresses `"I understand..., but I cannot..."` safety refusals!).
 
-### Phase 5: Free Global Model Hosting (Hugging Face Hub)
-1. Publish `silver-lining-270m-q4_k_m.gguf` (~200 MB) and optional `silver-lining-1b-q4_k_m.gguf` (~806 MB) to Hugging Face Hub ($0 CDN with resumable HTTP `Range` downloads and SHA-256 verification).
+### Phase 5: Free Global Model Hosting (Hugging Face Hub) — 🟡 Script Ready (`publish_to_hf.py`)
+1. Authored `ml_training/scripts/publish_to_hf.py` to upload `silver-lining-270m-q4_k_m.gguf` (`249.2 MB`) and `silver-lining-270m-q8_0.gguf` (`285.9 MB`) + SHA-256 Model Card to Hugging Face Hub ($0 CDN with resumable HTTP `Range` downloads).
 
 ### Phase 6: Pure 100% On-Device Flutter Integration (`app/`)
 1. Add `llamadart: ^0.17.5` (MIT-licensed cross-platform `llama.cpp` FFI for iOS Metal & Android Vulkan/CPU) and `path_provider` to `app/pubspec.yaml`.

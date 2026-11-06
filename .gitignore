@@ -43,5 +43,6 @@ ml_training/.venv/
 ml_training/models/
 ml_training/adapters/
 ml_training/llama.cpp/
+ml_training/data/raw_pool.jsonl
 *.gguf
 *.safetensors
