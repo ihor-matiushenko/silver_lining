@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import '../models/history_item.dart';
 import '../models/reframe_response.dart';
-import '../services/api_reframing_service.dart';
 import '../services/auth_service.dart';
 import '../services/dynamic_localization_service.dart';
+import '../services/model_manager_service.dart';
+import '../services/on_device_reframing_service.dart';
 import '../services/reframing_service_interface.dart';
 import '../services/storage_service.dart';
 import '../widgets/app_bar/home_app_bar.dart';
+import '../widgets/cards/ai_model_status_card.dart';
 import '../widgets/footers/medical_disclaimer_footer.dart';
 import '../widgets/forms/input_form_card.dart';
 import '../widgets/result_card.dart';
 
 /// 📱 HomeScreen: Page layout component for entering concerns and displaying AI reframings.
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final ReframingServiceInterface? service;
+
+  const HomeScreen({super.key, this.service});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -22,12 +26,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _controller = TextEditingController();
 
-  // Inject Real Live API Reframing Service connecting Flutter to Python FastAPI & Ollama AI
-  final ReframingServiceInterface _service = ApiReframingService();
+  // Uses OnDeviceReframingService (100% offline Gemma 3 270M GGUF when ready, with seamless Cloud fallback)
+  late final ReframingServiceInterface _service =
+      widget.service ?? OnDeviceReframingService();
 
   // Reactive state variables
   bool _isLoading = false;
   ReframeResponse? _response;
+
+  @override
+  void initState() {
+    super.initState();
+    ModelManagerService.instance.checkAndAutoLoadCachedModel();
+  }
 
   @override
   void dispose() {
@@ -93,6 +104,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // 🧠 On-Device AI Status & One-Tap Model Downloader Card
+            const AiModelStatusCard(),
+            const SizedBox(height: 16),
+
             // Reusable Input Form Component
             InputFormCard(
               controller: _controller,

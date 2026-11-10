@@ -113,14 +113,14 @@ All ML training scripts, configs, and tooling live in an isolated top-level `ml_
    - **Q4_K_M (`249.2 MB`)**: `https://huggingface.co/ihor-matiushenko/silver-lining-gemma3-gguf/resolve/main/silver-lining-270m-q4_k_m.gguf`
    - **Q8_0 (`285.9 MB`)**: `https://huggingface.co/ihor-matiushenko/silver-lining-gemma3-gguf/resolve/main/silver-lining-270m-q8_0.gguf`
 
-### Phase 6: Pure 100% On-Device Flutter Integration (`app/`)
-1. Add `llamadart: ^0.17.5` (MIT-licensed cross-platform `llama.cpp` FFI for iOS Metal & Android Vulkan/CPU) and `path_provider` to `app/pubspec.yaml`.
-2. Implement `LocalSafetyService` (`app/lib/services/local_safety_service.dart`): `<1ms` pure-Dart Tier-1 988 Crisis Shield + Tier-2 Crime Regexes across EN, UK, ES, DE, FR.
-3. Implement `ModelManagerService` (`app/lib/services/model_manager_service.dart`):
-   - **Default Universal Brain**: `Silver Lining Compact 270M` (~200 MB) — works on older (`2–4 GB RAM`) and modern phones alike, downloaded once on first launch with a sleek resumable progress card.
-   - **Optional Pro Brain**: `Silver Lining Pro 1B` (~806 MB) — selectable in settings on `>= 4 GB RAM` phones, with 1-tap delete to reclaim storage.
-4. Implement `OnDeviceReframingService` (`app/lib/services/on_device_reframing_service.dart`) implementing `ReframingServiceInterface`:
-   - 100% offline inference, zero cloud LLM calls, zero daily guest rate limits!
-   - Authenticated users retain optional lightweight PostgreSQL History Sync (`app/api/v1/history_router.py`) when online.
-5. Verify with unit tests, widget tests, and full E2E runs on **Android Emulator** (`emulator-5554`) and **iOS Simulator** (`iPhone 17`).
+### Phase 6: Pure 100% On-Device Flutter Integration (`app/`) — ✅ COMPLETE
+1. Added `llamadart: ^0.19.3`, `llamadart_llama_cpp_flutter: ^0.19.3` (Apple SwiftPM XCFramework companion), `path_provider: ^2.1.6`, and `crypto: ^3.0.8` to `app/pubspec.yaml`.
+2. Implemented [`LocalSafetyService`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/local_safety_service.dart): `<1ms` pure-Dart Tier-1 988 Crisis Shield + Tier-2 Crime Regexes + output-level refusal detection across EN, UK, ES, DE, FR.
+3. Implemented [`ModelManagerService`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/model_manager_service.dart):
+   - **Default Universal Brain**: `Compact Brain (Q4_K_M • 249 MB)` (`silver-lining-270m-q4_k_m.gguf`) — works on older (`2–4 GB RAM`) and modern phones alike, downloaded from `ihor-matiushenko/silver-lining-gemma3-gguf` with HTTP `Range` resume & SHA-256 verification.
+   - **Optional High-Precision Brain**: `High-Precision Brain (Q8_0 • 286 MB)` (`silver-lining-270m-q8_0.gguf`) — selectable via tier menu, with 1-tap unload/cache cleanup.
+4. Implemented [`OnDeviceReframingService`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/on_device_reframing_service.dart) implementing `ReframingServiceInterface`:
+   - 100% offline inference (`temp=0.0, penalty=1.0, maxTokens=150, stopSequences=['<end_of_turn>']`), zero cloud LLM calls, zero daily guest rate limits!
+   - Authenticated users retain optional lightweight PostgreSQL History Sync (`POST /api/v1/history` in [`history_router.py`](file:///Users/ihormatiushenko/Workspace/silver_lining/backend/app/api/v1/history_router.py)) when online.
+5. Added [`AiModelStatusCard`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/cards/ai_model_status_card.dart) to [`HomeScreen`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/screens/home_screen.dart) and verified `24/24` Flutter tests (`test/on_device_slm_test.dart`) + `16/16` backend tests passing with `0` analyzer warnings.
 

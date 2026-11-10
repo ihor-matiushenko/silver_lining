@@ -1,7 +1,7 @@
 # 📌 Silver Lining Project Checkpoint (`CHECKPOINT.md`)
 
 **Date**: November 10, 2026  
-**Status**: Step 34.7b Complete (All Phases 1–5 Done: `1,600` Examples Distilled, `Gemma 3 270M` MLX LoRA Trained to `val_loss=2.304`, `249.2 MB` `Q4_K_M` & `285.9 MB` `Q8_0` `.gguf` Verified `5/5` @ `323 tok/s` & Published to `https://huggingface.co/ihor-matiushenko/silver-lining-gemma3-gguf`) -> Ready for Step 34.8 (`llamadart` Flutter Integration)  
+**Status**: Step 34.7b & Step 34.8 Complete (On-Device `Gemma 3 270M` `.gguf` Published to Hugging Face CDN + Integrated into Flutter via `llamadart 0.19.3`, `LocalSafetyService`, `ModelManagerService`, `OnDeviceReframingService`, & `AiModelStatusCard`; `24/24` Flutter Tests & `16/16` Backend Tests Passing) -> Ready for Step 35 (Release Binary Build & Signing)  
 **Branch**: `main`
 
 ---
@@ -9,7 +9,13 @@
 ## 🎯 1. Executive Summary
 
 This checkpoint records our latest milestones across Mobile E2E Verification and On-Device SLM Engineering:
-1. **Step 34.7b Phases 1–5 Completed — Dataset Distillation, MLX LoRA Fine-Tuning, `5/5` GGUF Quantization, & Hugging Face Hub CDN Publishing**:
+1. **Step 34.8 Completed — Pure 100% On-Device Flutter SLM Integration (`llamadart 0.19.3`)**:
+   - Integrated `llamadart: ^0.19.3` and `llamadart_llama_cpp_flutter: ^0.19.3` (Apple SwiftPM XCFramework companion) into `app/pubspec.yaml`.
+   - Built [`LocalSafetyService`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/local_safety_service.dart) (`<1ms` pure-Dart Tier-1 988 Crisis Shield + Tier-2 Crime Regexes + output-level refusal detection across `en`, `uk`, `es`, `de`, `fr`).
+   - Built [`ModelManagerService`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/model_manager_service.dart) supporting HTTP `Range` resumable downloads and SHA-256 verification from `https://huggingface.co/ihor-matiushenko/silver-lining-gemma3-gguf` for both `Compact Q4_K_M (249.2 MB)` and `High-Precision Q8_0 (285.9 MB)` tiers.
+   - Built [`OnDeviceReframingService`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/on_device_reframing_service.dart) and [`AiModelStatusCard`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/cards/ai_model_status_card.dart), plus `POST /api/v1/history` in [`history_router.py`](file:///Users/ihormatiushenko/Workspace/silver_lining/backend/app/api/v1/history_router.py) for authenticated cloud history sync.
+   - Verified `24/24` Flutter unit & widget tests passing (`test/on_device_slm_test.dart`), `16/16` backend tests passing, and `0` analyzer issues.
+2. **Step 34.7b Phases 1–5 Completed — Dataset Distillation, MLX LoRA Fine-Tuning, `5/5` GGUF Quantization, & Hugging Face Hub CDN Publishing**:
    - **Phase 1 (Baseline & Toolchain)**: Built isolated `ml_training/.venv` (`mlx 0.32.4`, `mlx-lm 0.32.2`, `torch`) + native Apple Metal `llama.cpp` (`llama-quantize`, `llama-completion`) and recorded untuned `Gemma 3 270M` baseline (`0/5` pass @ `248.6 tok/s`).
    - **Phase 2 (Distillation & Validation)**: Pulled `gemma3:12b` locally in Ollama and synthesized `1,600` multilingual (`en`, `uk`, `es`, `de`, `fr`) reframing, gray-area refusal, and edge-case examples (`train.jsonl` `1,400`, `valid.jsonl` `100`, `test.jsonl` `100`), passing `validate_dataset.py` 100%.
    - **Phase 3 (LoRA Training)**: Trained `3.797M` Rank-16 LoRA parameters across all 18 layers in **2m 18s** (`2,504 tok/s`), lowering validation loss by **`-38.1%`** (`3.721 -> 2.304` at Epoch-2 Checkpoint `700`).
@@ -99,10 +105,10 @@ PYTHONPATH=. .venv/bin/python -m pytest tests/  # ✅ 100% PASS (16/16 tests pas
 
 ## 🚀 4. Immediate Resume Instructions for Next Session
 
-### 📍 Planned Items for Next Step (Full Guide in `ON_DEVICE_ML_TRAINING_PLAN.md`):
-1. **Step 34.8 — Pure 100% On-Device Flutter Integration (`llamadart` `^0.17.5`)**:
-   - Build `<1ms` pure-Dart `LocalSafetyService`, `ModelManagerService` (`249.2 MB` universal Compact brain downloaded from `https://huggingface.co/ihor-matiushenko/silver-lining-gemma3-gguf/resolve/main/silver-lining-270m-q4_k_m.gguf` + optional `806 MB` Pro `1B`), and `OnDeviceReframingService` (enforcing `parse_special=true`, `temp=0.0`, `repeat_penalty=1.0`, `n_ctx=1024`).
-2. **Step 35: Release Binary Build & Signing (Subsequent Step)**:
+### 📍 Planned Items for Next Step:
+1. **Step 35: Release Binary Build & Signing**:
+   - Build Android production AppBundle: `cd app && flutter build appbundle --release`.
+   - Build iOS production archive: `cd app && flutter build ipa --release`.
    - Build Android production AppBundle: `cd app && flutter build appbundle --release`.
    - Build iOS production archive: `cd app && flutter build ipa --release`.
 

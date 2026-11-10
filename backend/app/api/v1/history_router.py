@@ -5,9 +5,24 @@ from sqlmodel import Session
 from app.core.database import get_session
 from app.core.security import get_current_user
 from app.models.db_models import ReframeRecord
+from app.models.schemas import HistoryCreateRequest
 from app.services.history_service import HistoryService
 
 history_router = APIRouter(prefix="/history", tags=["Cloud History"])
+
+@history_router.post("", response_model=ReframeRecord)
+async def create_user_history_record(
+    payload: HistoryCreateRequest,
+    db: Session = Depends(get_session),
+    user: dict = Depends(get_current_user)
+):
+    """Persists an on-device generated reframing record to PostgreSQL for the authenticated user."""
+    return HistoryService.create_record(
+        db=db,
+        user_id=user["sub"],
+        payload=payload,
+        user_email=user.get("email"),
+    )
 
 @history_router.get("", response_model=List[ReframeRecord])
 async def get_user_history(

@@ -189,6 +189,9 @@ app/
 ├── services/                       # 🧠 Domain services & external integrations
 │   ├── auth_service.dart           # Facade extending ChangeNotifier for reactive auth state
 │   ├── api_reframing_service.dart  # HTTP API client (JWT injection & dual-mode sync)
+│   ├── local_safety_service.dart   # <1ms Pure-Dart Tier-1 Crisis (988) & Tier-2 Crime Guardrails
+│   ├── model_manager_service.dart  # Hugging Face CDN downloader, SHA-256 verifier & LlamaEngine manager
+│   ├── on_device_reframing_service.dart # 100% Offline Gemma 3 270M GGUF inference service (llamadart)
 │   ├── storage_service.dart        # Local Key-Value store (shared_preferences)
 │   ├── dynamic_localization_service.dart # Real-time backend UI dictionary fetcher
 │   ├── emergency_launcher_service.dart   # Native OS phone intent launcher (url_launcher)
@@ -214,6 +217,7 @@ app/
     ├── buttons/
     │   └── social_auth_buttons.dart# Modular "or continue with" divider + Apple & Google OAuth buttons
     ├── cards/
+    │   ├── ai_model_status_card.dart  # On-Device AI status, tier selector & resumable download card
     │   ├── crisis_shield_card.dart # Tier 1: Red card with 1-tap 988 emergency dialer
     │   ├── policy_refusal_card.dart# Tier 2: Amber card explaining prohibited prompts
     │   ├── reframed_perspective_card.dart # Tier 3: Violet card showing AI silver lining

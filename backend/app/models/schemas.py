@@ -98,4 +98,20 @@ class WebDeleteAccountResponse(BaseModel):
         description="Whether a registered account was located and purged"
     )
 
+# ☁️ On-Device AI Cloud History Sync Request Schema
+class HistoryCreateRequest(BaseModel):
+    prompt_text: str = Field(
+        min_length=1,
+        description="Original user thought or stress point"
+    )
+    reframed_text: str = Field(
+        min_length=1,
+        description="Reframed positive perspective generated on-device"
+    )
+    language: str = Field(
+        default="auto",
+        description="ISO language code used for reframing"
+    )
+
+
 

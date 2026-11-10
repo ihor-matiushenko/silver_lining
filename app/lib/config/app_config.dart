@@ -59,5 +59,23 @@ class AppConfig {
     }
     return 'http://127.0.0.1:8000';
   }
+
+  // 🧠 On-Device SLM (Gemma 3 270M Fine-Tuned GGUF) Configuration
+  static const String hfRepoId = 'ihor-matiushenko/silver-lining-gemma3-gguf';
+
+  static const String compactModelFileName = 'silver-lining-270m-q4_k_m.gguf';
+  static const String compactModelSha256 =
+      '13e05897f2bd86b649c59e1bdf9c93f159383285fab5530fba6db435d34a9625';
+  static const int compactModelSizeBytes = 261317920; // 249.2 MB
+
+  static const String proModelFileName = 'silver-lining-270m-q8_0.gguf';
+  static const String proModelSha256 =
+      '644212e8f375b59f25524f833359fbfdb13c58422565a8300e3980b33670d0b6';
+  static const int proModelSizeBytes = 299748640; // 285.9 MB
+
+  /// Resolves the Hugging Face CDN download URL for a given model filename
+  static String hfModelDownloadUrl(String fileName) =>
+      'https://huggingface.co/$hfRepoId/resolve/main/$fileName';
 }
+
 

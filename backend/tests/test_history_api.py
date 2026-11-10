@@ -59,6 +59,25 @@ def run_history_api_tests():
     print(f"   ✅ Authenticated History Request Succeeded! Retrieved {len(records)} records from PostgreSQL for user '{test_user_id}'.")
     print(f"   Latest Record Prompt: '{records[0]['prompt_text']}'")
 
+    # -------------------------------------------------------------
+    # 🧠 TEST 3: Authenticated POST /api/v1/history (On-Device Sync)
+    # -------------------------------------------------------------
+    print("\n3️⃣ Testing Authenticated POST /api/v1/history (On-Device SLM Cloud Sync)...")
+    response_post = client.post(
+        "/api/v1/history",
+        headers={"Authorization": f"Bearer {test_token}"},
+        json={
+            "prompt_text": "On-device stress prompt",
+            "reframed_text": "On-device Gemma 3 270M reframed perspective",
+            "language": "en",
+        },
+    )
+    assert response_post.status_code == 200, f"Expected 200, got {response_post.status_code}"
+    created = response_post.json()
+    assert created["prompt_text"] == "On-device stress prompt"
+    assert created["reframed_text"] == "On-device Gemma 3 270M reframed perspective"
+    print("   ✅ On-Device Cloud Sync Record Persisted! ID:", created["id"])
+
     print("\n" + "=" * 55 + "\n🎉 CLOUD HISTORY API TEST PASSED 100%!\n")
 
 def test_history_api():
