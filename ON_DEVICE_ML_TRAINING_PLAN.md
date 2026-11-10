@@ -107,8 +107,11 @@ All ML training scripts, configs, and tooling live in an isolated top-level `ml_
      1. Must tokenize prompts with **`parse_special = true`** so `<start_of_turn>` (`105`) and `<end_of_turn>` (`106`) are parsed as Gemma 3 control tokens.
      2. Keep **`repeat_penalty = 1.0`** and **`temp = 0.0`–`0.1`** (penalizing prompt tokens like `"I"` in `"I took $50..."` otherwise suppresses `"I understand..., but I cannot..."` safety refusals!).
 
-### Phase 5: Free Global Model Hosting (Hugging Face Hub) — 🟡 Script Ready (`publish_to_hf.py`)
-1. Authored `ml_training/scripts/publish_to_hf.py` to upload `silver-lining-270m-q4_k_m.gguf` (`249.2 MB`) and `silver-lining-270m-q8_0.gguf` (`285.9 MB`) + SHA-256 Model Card to Hugging Face Hub ($0 CDN with resumable HTTP `Range` downloads).
+### Phase 5: Free Global Model Hosting (Hugging Face Hub) — ✅ COMPLETE
+1. Published `silver-lining-270m-q4_k_m.gguf` (`249.2 MB` / `261,317,920` bytes) and `silver-lining-270m-q8_0.gguf` (`285.9 MB` / `299,748,640` bytes) + SHA-256 Model Card via `ml_training/scripts/publish_to_hf.py` to **`ihor-matiushenko/silver-lining-gemma3-gguf`**.
+2. Verified live CDN URLs (`200 OK`, `accept-ranges: bytes` for resumable mobile downloads):
+   - **Q4_K_M (`249.2 MB`)**: `https://huggingface.co/ihor-matiushenko/silver-lining-gemma3-gguf/resolve/main/silver-lining-270m-q4_k_m.gguf`
+   - **Q8_0 (`285.9 MB`)**: `https://huggingface.co/ihor-matiushenko/silver-lining-gemma3-gguf/resolve/main/silver-lining-270m-q8_0.gguf`
 
 ### Phase 6: Pure 100% On-Device Flutter Integration (`app/`)
 1. Add `llamadart: ^0.17.5` (MIT-licensed cross-platform `llama.cpp` FFI for iOS Metal & Android Vulkan/CPU) and `path_provider` to `app/pubspec.yaml`.

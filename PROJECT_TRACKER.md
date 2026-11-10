@@ -46,8 +46,8 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 | **Step 34.5** | **100% Real Production Case & Full E2E Suite** (`live_supabase_auth_sync_test.dart`, `live_supabase_account_deletion_test.dart`, `account_deletion_test.dart`, `content_reporting_test.dart`, `guest_rate_limit_test.dart`, `policy_refusal_test.dart`, `language_switcher_test.dart` verified on Android emulator) | 🟢 Complete |
 | **Step 34.6** | **iOS Simulator Full E2E Suite Verification** (CocoaPods & Xcode 27 configured; 100% of integration suites verified on iPhone 17 Simulator) | 🟢 Complete |
 | **Step 34.7a** | **M4 Max 5-Model SLM Benchmark & Route 1 Selection** (`qwen2.5:0.5b`, `gemma3:1b`, `qwen2.5:1.5b`, `llama3.2:1b`, `llama3.2:3b` benchmarked; selected Pure 100% On-Device Dual-Tier Gemma 3 architecture in `ON_DEVICE_ML_TRAINING_PLAN.md`) | 🟢 Complete |
-| **Step 34.7b** | **Custom MLX LoRA Fine-Tuning & GGUF Quantization** (**Phases 1–4 Complete**: `1,600` examples distilled via `gemma3:12b`, `Gemma 3 270M` LoRA trained to `val_loss=2.304` (`-38.1%`), exported `silver-lining-270m-q4_k_m.gguf` (`249.2 MB`) & `q8_0` (`285.9 MB`) scoring **`5/5`** @ `323 tok/s`; **Phase 5**: publish to Hugging Face Hub) | 🟢 Phases 1–4 Done (Ready to Publish HF) |
-| **Step 34.8** | **Pure 100% On-Device Flutter Embedding (`llamadart`)** (`LocalSafetyService` `<1ms` Dart shield, `ModelManagerService` 200 MB Compact / 806 MB Pro downloader, `OnDeviceReframingService`, E2E verification on Android & iOS) | 🟡 Planned |
+| **Step 34.7b** | **Custom MLX LoRA Fine-Tuning & GGUF Quantization** (**All Phases 1–5 Complete**: `1,600` examples distilled via `gemma3:12b`, `Gemma 3 270M` LoRA trained to `val_loss=2.304` (`-38.1%`), exported `silver-lining-270m-q4_k_m.gguf` (`249.2 MB`) & `q8_0` (`285.9 MB`) scoring **`5/5`** @ `323 tok/s`, and published live to `ihor-matiushenko/silver-lining-gemma3-gguf`) | 🟢 Complete |
+| **Step 34.8** | **Pure 100% On-Device Flutter Embedding (`llamadart`)** (`LocalSafetyService` `<1ms` Dart shield, `ModelManagerService` 249.2 MB Compact / 806 MB Pro downloader from Hugging Face CDN, `OnDeviceReframingService`, E2E verification on Android & iOS) | 🟡 Next Up |
 | **Step 35** | **Release Binary Build & Signing** (`flutter build ipa` & `flutter build appbundle`) | 🟡 Planned |
 | **Step 36** | **App Store Connect & Google Play Console Submission** (Store metadata & upload) | 🟡 Planned |
 
@@ -56,13 +56,10 @@ An AI-powered mobile application (iOS & Android) that takes user problems, stres
 
 ## 🚀 Immediate Resume Instructions for Next Session
 When resuming work:
-1. **Starting Point**: **Step 34.7b Phase 5 (Hugging Face Upload) -> Step 34.8 (Pure 100% On-Device Flutter Embedding)** (full guide in `ON_DEVICE_ML_TRAINING_PLAN.md`):
-   - **Step 34.7b Phases 1–4 (Complete)**: Distilled & validated `1,600` examples (`train.jsonl` `1,400`, `valid.jsonl` `100`, `test.jsonl` `100`), fine-tuned `Gemma 3 270M` via `mlx_lm lora` (`val_loss` `3.721 -> 2.304` at iter 700), deduplicated tied `lm_head.weight` (`-168M` redundant params), quantized `silver-lining-270m-q4_k_m.gguf` (`249.2 MB`) & `silver-lining-270m-q8_0.gguf` (`285.9 MB`), and verified `5/5` scenarios passing at `323.1 tok/s` (`parse_special=true, temp=0.0, repeat_penalty=1.0`).
-   - **Step 34.7b Phase 5 (Next)**: Run `HF_TOKEN=... ml_training/.venv/bin/python ml_training/scripts/publish_to_hf.py --repo-id <user>/silver-lining-gemma3-gguf` to publish the `.gguf` weights to Hugging Face Hub ($0 CDN).
-   - **Step 34.8**: Integrate `llamadart` (`^0.17.5`), `LocalSafetyService` (`<1ms` Dart shield), `ModelManagerService` (`249 MB` Compact default + optional `806 MB` Pro `1B`), and `OnDeviceReframingService`.
-2. **Step 34.8: Pure 100% On-Device Flutter Integration (Subsequent Step)**:
-   - Integrate `llamadart` (`^0.17.5`), `LocalSafetyService`, `ModelManagerService` (200 MB Compact default for older & modern phones + optional 806 MB Pro `1B`), and `OnDeviceReframingService`.
-3. **Step 35: Release Binary Build & Signing**:
+1. **Starting Point**: **Step 34.8 (Pure 100% On-Device Flutter Embedding via `llamadart`)** (full guide in `ON_DEVICE_ML_TRAINING_PLAN.md`):
+   - **Step 34.7b Phases 1–5 (Complete)**: Distilled & validated `1,600` examples (`train.jsonl` `1,400`, `valid.jsonl` `100`, `test.jsonl` `100`), fine-tuned `Gemma 3 270M` via `mlx_lm lora` (`val_loss` `3.721 -> 2.304` at iter 700), deduplicated tied `lm_head.weight` (`-168M` redundant params), quantized `silver-lining-270m-q4_k_m.gguf` (`249.2 MB`) & `silver-lining-270m-q8_0.gguf` (`285.9 MB`), verified `5/5` scenarios passing at `323.1 tok/s`, and published both artifacts + SHA-256 Model Card to **`https://huggingface.co/ihor-matiushenko/silver-lining-gemma3-gguf`**.
+   - **Step 34.8 (Next)**: Integrate `llamadart` (`^0.17.5`), `LocalSafetyService` (`<1ms` Dart shield), `ModelManagerService` (`249.2 MB` Compact default from `https://huggingface.co/ihor-matiushenko/silver-lining-gemma3-gguf/resolve/main/silver-lining-270m-q4_k_m.gguf` + optional `806 MB` Pro `1B`), and `OnDeviceReframingService`.
+2. **Step 35: Release Binary Build & Signing**:
    - Build Android release AppBundle: `cd app && flutter build appbundle --release`.
    - Prepare iOS production release archive: `cd app && flutter build ipa --release`.
 2. **Operational E2E Execution Protocol**:
