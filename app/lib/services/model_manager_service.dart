@@ -300,6 +300,7 @@ class ModelManagerService extends ChangeNotifier {
         temp: temp,
         penalty: penalty,
         stopSequences: stopSequences,
+        reusePromptPrefix: false,
       ),
     )) {
       buffer.write(tokenChunk);

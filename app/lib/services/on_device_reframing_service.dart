@@ -27,12 +27,34 @@ class OnDeviceReframingService implements ReframingServiceInterface {
   }) : _modelManager = modelManager ?? ModelManagerService.instance,
        _cloudService = cloudService ?? ApiReframingService();
 
+  /// Resolves 'auto' into one of the 5 ISO language codes trained into the SLM weights
+  /// (`en`, `uk`, `es`, `de`, `fr`).
+  static String resolvePromptLanguage(String inputText, String targetLanguage) {
+    final normalized = targetLanguage.trim().toLowerCase();
+    if (normalized.isNotEmpty && normalized != 'auto') {
+      return normalized;
+    }
+    if (RegExp(r'[\u0400-\u04FF]').hasMatch(inputText)) {
+      return 'uk';
+    }
+    if (RegExp(r'[áéíóúñ¿¡]', caseSensitive: false).hasMatch(inputText)) {
+      return 'es';
+    }
+    if (RegExp(r'[äöüß]', caseSensitive: false).hasMatch(inputText)) {
+      return 'de';
+    }
+    if (RegExp(r'[àâçèêëîïôùûœæ]', caseSensitive: false).hasMatch(inputText)) {
+      return 'fr';
+    }
+    return 'en';
+  }
+
   /// Builds the exact Gemma 3 instruction-tuned control prompt trained in Step 34.7b
   static String buildGemmaPrompt(
     String inputText, {
     String targetLanguage = 'auto',
   }) {
-    final lang = targetLanguage.trim().isEmpty ? 'auto' : targetLanguage.trim();
+    final lang = resolvePromptLanguage(inputText, targetLanguage);
     return '<start_of_turn>user\n'
         '[SilverLining | lang=$lang]\n'
         '${inputText.trim()}<end_of_turn>\n'

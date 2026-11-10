@@ -1,6 +1,6 @@
 from typing import List, Optional
 from fastapi import HTTPException
-from sqlmodel import Session, select, desc
+from sqlmodel import Session, col, select
 from app.models.db_models import User, ReframeRecord
 from app.models.schemas import HistoryCreateRequest
 
@@ -46,9 +46,9 @@ class HistoryService:
         statement = (
             select(ReframeRecord)
             .where(ReframeRecord.user_id == user_id)
-            .order_by(desc(ReframeRecord.created_at))
+            .order_by(col(ReframeRecord.created_at).desc())
         )
-        return db.exec(statement).all()
+        return list(db.exec(statement).all())
 
     @staticmethod
     def toggle_favorite(db: Session, record_id: str, user_id: str) -> ReframeRecord:

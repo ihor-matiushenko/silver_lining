@@ -78,14 +78,19 @@ class LocalSafetyService {
   /// Output markers emitted by the fine-tuned Gemma 3 270M model when refusing gray-area prompts
   static const List<String> modelRefusalMarkers = [
     '**i cannot',
+    'but i cannot',
     'i cannot help you with this request',
+    'i cannot provide assistance',
+    'cannot provide validation',
+    'actions involving theft',
     'i cannot reframe',
-    'i cannot assist with',
-    'я не можу допомогти з цим запитом',
+    'i cannot assist',
+    'i cannot support',
+    'я не можу допомогти',
     'не можу переосмислити',
-    'no puedo ayudarte con esta solicitud',
+    'no puedo ayudarte',
     'ich kann dir bei dieser anfrage nicht helfen',
-    'je ne peux pas vous aider avec cette demande',
+    'je ne peux pas vous aider',
   ];
 
   /// Evaluates input text against Tier-1 (Self-Harm Crisis) and Tier-2 (Crime/Illegal) rules.
@@ -136,3 +141,4 @@ class LocalSafetyService {
     return false;
   }
 }
+

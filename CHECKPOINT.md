@@ -14,7 +14,7 @@ This checkpoint records our latest milestones across Mobile E2E Verification and
    - Built [`LocalSafetyService`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/local_safety_service.dart) (`<1ms` pure-Dart Tier-1 988 Crisis Shield + Tier-2 Crime Regexes + output-level refusal detection across `en`, `uk`, `es`, `de`, `fr`).
    - Built [`ModelManagerService`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/model_manager_service.dart) supporting HTTP `Range` resumable downloads and SHA-256 verification from `https://huggingface.co/ihor-matiushenko/silver-lining-gemma3-gguf` for both `Compact Q4_K_M (249.2 MB)` and `High-Precision Q8_0 (285.9 MB)` tiers.
    - Built [`OnDeviceReframingService`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/services/on_device_reframing_service.dart) and [`AiModelStatusCard`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/lib/widgets/cards/ai_model_status_card.dart), plus `POST /api/v1/history` in [`history_router.py`](file:///Users/ihormatiushenko/Workspace/silver_lining/backend/app/api/v1/history_router.py) for authenticated cloud history sync.
-   - Verified `24/24` Flutter unit & widget tests passing (`test/on_device_slm_test.dart`), `16/16` backend tests passing, and `0` analyzer issues.
+   - Verified `24/24` Flutter unit & widget tests passing (`test/on_device_slm_test.dart`), `16/16` backend tests passing, `0` analyzer issues, and **100% PASS on [`integration_test/on_device_slm_e2e_test.dart`](file:///Users/ihormatiushenko/Workspace/silver_lining/app/integration_test/on_device_slm_e2e_test.dart)** on the `iPhone 17` Simulator (offline empathetic reframing, gray-area wallet theft refusal from fine-tuned weights, and `<1ms` 988 crisis shield).
 2. **Step 34.7b Phases 1–5 Completed — Dataset Distillation, MLX LoRA Fine-Tuning, `5/5` GGUF Quantization, & Hugging Face Hub CDN Publishing**:
    - **Phase 1 (Baseline & Toolchain)**: Built isolated `ml_training/.venv` (`mlx 0.32.4`, `mlx-lm 0.32.2`, `torch`) + native Apple Metal `llama.cpp` (`llama-quantize`, `llama-completion`) and recorded untuned `Gemma 3 270M` baseline (`0/5` pass @ `248.6 tok/s`).
    - **Phase 2 (Distillation & Validation)**: Pulled `gemma3:12b` locally in Ollama and synthesized `1,600` multilingual (`en`, `uk`, `es`, `de`, `fr`) reframing, gray-area refusal, and edge-case examples (`train.jsonl` `1,400`, `valid.jsonl` `100`, `test.jsonl` `100`), passing `validate_dataset.py` 100%.
@@ -68,6 +68,7 @@ This checkpoint records the completion of 100% real production-grade End-to-End 
 | `content_reporting_test.dart` | TC-S03 (Objectionable Content Reporting Modal) | `emulator-5554` & `iPhone 17` | ✅ 100% PASS |
 | `policy_refusal_test.dart` | TC-S02 (Tier-2 Crime/Theft Policy Refusal Card & Zero Storage) | `emulator-5554` & `iPhone 17` | ✅ 100% PASS |
 | `language_switcher_test.dart` | Dynamic Language Switcher (EN -> UK Ukrainian Modal & Re-render) | `emulator-5554` & `iPhone 17` | ✅ 100% PASS |
+| `on_device_slm_e2e_test.dart` | **100% Offline On-Device Gemma 3 270M (`llamadart` FFI)** (Empathetic Reframing, Gray-Area Theft Refusal, & `<1ms` 988 Crisis Shield) | `iPhone 17` | ✅ 100% PASS |
 
 ---
 

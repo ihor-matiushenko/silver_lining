@@ -78,6 +78,12 @@ void main() {
       );
       expect(
         LocalSafetyService.isModelOutputRefusal(
+          "I understand you're feeling conflicted, but I cannot provide assistance or validation for actions involving theft.",
+        ),
+        isTrue,
+      );
+      expect(
+        LocalSafetyService.isModelOutputRefusal(
           'Я не можу допомогти з цим запитом.',
         ),
         isTrue,
@@ -180,3 +186,4 @@ void main() {
     });
   });
 }
+
